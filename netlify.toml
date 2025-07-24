@@ -1,8 +1,25 @@
 [build]
   publish = "public"
   functions = "netlify/functions"
-  command = "npm install" # This line explicitly tells Netlify to run npm install
+  command = "npm install" # Keep this, as it ensures dependencies are installed at the root
 
-# Remove or comment out the [[plugins]] section if it's there
+# Explicitly configure functions bundling
+[functions]
+  # Use 'esbuild' as the bundler. It's often more robust than the default 'zip-it-and-ship-it'.
+  # If 'esbuild' still fails, you can try 'zip-it-and-ship-it' or even 'none' as a last resort.
+  node_bundler = "esbuild"
+
+  # Tell the bundler NOT to bundle these modules into the function zip.
+  # Instead, it should expect them to be available in the global node_modules context
+  # (which is provided by Netlify after `npm install` runs at the root).
+  external_node_modules = [
+    "pg",
+    "express",
+    "body-parser",
+    "serverless-http"
+  ]
+
+# You can remove or comment out the [[plugins]] section if it's still there,
+# as the explicit command and functions config should supersede it.
 # [[plugins]]
 # package = "@netlify/plugin-functions-install-core"
