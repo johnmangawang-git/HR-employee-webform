@@ -1,0 +1,6 @@
+[build]
+  publish = "public" # Directory containing your frontend files
+  functions = "netlify/functions" # Directory containing your Netlify Functions
+
+# Optional: If you have a build command for your frontend (e.g., React, Vue)
+# command = "npm run build"
