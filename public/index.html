@@ -58,23 +58,29 @@
             overflow: hidden; /* For pseudo-elements */
         }
 
-        /* Pseudo-element for subtle background pattern/texture */
-        .form-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at top left, rgba(var(--primary-color-rgb), 0.05) 0%, transparent 20%),
-                        radial-gradient(circle at bottom right, rgba(var(--secondary-color-rgb), 0.05) 0%, transparent 20%);
-            z-index: 0;
-            pointer-events: none;
-        }
+            /* Pseudo-element for subtle background pattern/texture */
+            .form-container::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: radial-gradient(circle at top left, rgba(var(--primary-color-rgb), 0.05) 0%, transparent 20%), radial-gradient(circle at bottom right, rgba(var(--secondary-color-rgb), 0.05) 0%, transparent 20%);
+                z-index: 0;
+                pointer-events: none;
+            }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Form Header */
@@ -85,22 +91,22 @@
             z-index: 1;
         }
 
-        .form-header h1 {
-            font-size: 2.8em;
-            font-weight: 700;
-            color: var(--primary-color);
-            text-shadow: 1px 1px 3px var(--shadow-light);
-            margin-bottom: 10px;
-            background: -webkit-linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+            .form-header h1 {
+                font-size: 2.8em;
+                font-weight: 700;
+                color: var(--primary-color);
+                text-shadow: 1px 1px 3px var(--shadow-light);
+                margin-bottom: 10px;
+                background: -webkit-linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
 
-        .form-header p {
-            font-size: 1.1em;
-            color: #666;
-            font-weight: 300;
-        }
+            .form-header p {
+                font-size: 1.1em;
+                color: #666;
+                font-weight: 300;
+            }
 
         /* Form Sections */
         .form-section {
@@ -115,41 +121,41 @@
             z-index: 1;
         }
 
-        .form-section:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 25px var(--shadow-strong);
-        }
+            .form-section:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 12px 25px var(--shadow-strong);
+            }
 
-        .form-section h2 {
-            font-size: 1.8em;
-            font-weight: 600;
-            margin-bottom: 25px;
-            color: var(--primary-color);
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--secondary-color);
-            display: inline-block; /* To make border-bottom only under text */
-            position: relative;
-            background: -webkit-linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+            .form-section h2 {
+                font-size: 1.8em;
+                font-weight: 600;
+                margin-bottom: 25px;
+                color: var(--primary-color);
+                padding-bottom: 10px;
+                border-bottom: 2px solid var(--secondary-color);
+                display: inline-block; /* To make border-bottom only under text */
+                position: relative;
+                background: -webkit-linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
 
-        .form-section h2::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: -2px; /* Adjust to sit right under the border */
-            width: 100%;
-            height: 2px;
-            background: var(--gradient-1); /* Gradient underline */
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.3s ease-out;
-        }
+                .form-section h2::after {
+                    content: '';
+                    position: absolute;
+                    left: 0;
+                    bottom: -2px; /* Adjust to sit right under the border */
+                    width: 100%;
+                    height: 2px;
+                    background: var(--gradient-1); /* Gradient underline */
+                    transform: scaleX(0);
+                    transform-origin: left;
+                    transition: transform 0.3s ease-out;
+                }
 
-        .form-section:hover h2::after {
-            transform: scaleX(1);
-        }
+            .form-section:hover h2::after {
+                transform: scaleX(1);
+            }
 
         /* Form Fields Layout */
         .form-fields-grid {
@@ -163,49 +169,49 @@
             margin-bottom: 15px; /* Adjust if gap is used */
         }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #555;
-            font-size: 0.95em;
-        }
+            .form-group label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 600;
+                color: #555;
+                font-size: 0.95em;
+            }
 
-        .form-group input[type="text"],
-        .form-group input[type="email"],
-        .form-group input[type="tel"],
-        .form-group input[type="number"],
-        .form-group input[type="date"],
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            font-size: 1em;
-            color: var(--text-color-dark);
-            background-color: var(--bg-light);
-            transition: all 0.3s ease;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
-        }
+            .form-group input[type="text"],
+            .form-group input[type="email"],
+            .form-group input[type="tel"],
+            .form-group input[type="number"],
+            .form-group input[type="date"],
+            .form-group select,
+            .form-group textarea {
+                width: 100%;
+                padding: 12px 15px;
+                border: 1px solid var(--border-color);
+                border-radius: 10px;
+                font-size: 1em;
+                color: var(--text-color-dark);
+                background-color: var(--bg-light);
+                transition: all 0.3s ease;
+                box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
+            }
 
-        .form-group input[type="text"]:focus,
-        .form-group input[type="email"]:focus,
-        .form-group input[type="tel"]:focus,
-        .form-group input[type="number"]:focus,
-        .form-group input[type="date"]:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2), inset 0 1px 3px rgba(0, 0, 0, 0.06);
-            outline: none;
-            background-color: #ffffff;
-        }
+                .form-group input[type="text"]:focus,
+                .form-group input[type="email"]:focus,
+                .form-group input[type="tel"]:focus,
+                .form-group input[type="number"]:focus,
+                .form-group input[type="date"]:focus,
+                .form-group select:focus,
+                .form-group textarea:focus {
+                    border-color: var(--primary-color);
+                    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2), inset 0 1px 3px rgba(0, 0, 0, 0.06);
+                    outline: none;
+                    background-color: #ffffff;
+                }
 
-        .form-group textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
+            .form-group textarea {
+                resize: vertical;
+                min-height: 80px;
+            }
 
         /* Radio Button Group */
         .radio-group {
@@ -215,47 +221,47 @@
             flex-wrap: wrap; /* Allow wrapping for smaller screens */
         }
 
-        .radio-group label {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            font-weight: 400;
-            color: #333;
-        }
+            .radio-group label {
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+                font-weight: 400;
+                color: #333;
+            }
 
-        .radio-group input[type="radio"] {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--primary-color);
-            border-radius: 50%;
-            margin-right: 8px;
-            position: relative;
-            outline: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
+            .radio-group input[type="radio"] {
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+                width: 20px;
+                height: 20px;
+                border: 2px solid var(--primary-color);
+                border-radius: 50%;
+                margin-right: 8px;
+                position: relative;
+                outline: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
 
-        .radio-group input[type="radio"]:checked {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 4px rgba(var(--primary-color-rgb), 0.2);
-        }
+                .radio-group input[type="radio"]:checked {
+                    background-color: var(--primary-color);
+                    border-color: var(--primary-color);
+                    box-shadow: 0 0 0 4px rgba(var(--primary-color-rgb), 0.2);
+                }
 
-        .radio-group input[type="radio"]:checked::before {
-            content: '';
-            display: block;
-            width: 10px;
-            height: 10px;
-            background-color: var(--text-color-light);
-            border-radius: 50%;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
+                    .radio-group input[type="radio"]:checked::before {
+                        content: '';
+                        display: block;
+                        width: 10px;
+                        height: 10px;
+                        background-color: var(--text-color-light);
+                        border-radius: 50%;
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                    }
 
         /* Error Messages */
         .error-message {
@@ -267,8 +273,15 @@
         }
 
         @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .form-group.error input,
@@ -301,15 +314,15 @@
             width: 100%;
         }
 
-        .file-upload-wrapper input[type="file"] {
-            position: absolute;
-            left: 0;
-            top: 0;
-            opacity: 0;
-            cursor: pointer;
-            width: 100%;
-            height: 100%;
-        }
+            .file-upload-wrapper input[type="file"] {
+                position: absolute;
+                left: 0;
+                top: 0;
+                opacity: 0;
+                cursor: pointer;
+                width: 100%;
+                height: 100%;
+            }
 
         .file-upload-button {
             display: inline-block;
@@ -327,11 +340,11 @@
             width: 100%;
         }
 
-        .file-upload-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-            background: var(--gradient-2);
-        }
+            .file-upload-button:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+                background: var(--gradient-2);
+            }
 
         .file-name {
             margin-top: 10px;
@@ -368,27 +381,27 @@
             justify-content: flex-end; /* Align buttons to the right */
         }
 
-        .signature-buttons button {
-            padding: 8px 15px;
-            border-radius: 8px;
-            font-size: 0.9em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            border: none;
-        }
+            .signature-buttons button {
+                padding: 8px 15px;
+                border-radius: 8px;
+                font-size: 0.9em;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                border: none;
+            }
 
-        .signature-buttons .clear-button {
-            background-color: #f44336; /* Red for clear */
-            color: var(--text-color-light);
-        }
+            .signature-buttons .clear-button {
+                background-color: #f44336; /* Red for clear */
+                color: var(--text-color-light);
+            }
 
-        .signature-buttons .clear-button:hover {
-            background-color: #d32f2f;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
+                .signature-buttons .clear-button:hover {
+                    background-color: #d32f2f;
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+                }
 
         /* Submit Button */
         .submit-button {
@@ -408,16 +421,16 @@
             text-transform: uppercase;
         }
 
-        .submit-button:hover {
-            background: var(--gradient-1);
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px var(--shadow-strong);
-        }
+            .submit-button:hover {
+                background: var(--gradient-1);
+                transform: translateY(-5px);
+                box-shadow: 0 15px 35px var(--shadow-strong);
+            }
 
-        .submit-button:active {
-            transform: translateY(0);
-            box-shadow: 0 5px 15px var(--shadow-medium);
-        }
+            .submit-button:active {
+                transform: translateY(0);
+                box-shadow: 0 5px 15px var(--shadow-medium);
+            }
 
         /* Responsive Design */
         @media (max-width: 768px) {
@@ -444,10 +457,10 @@
                 border-radius: 10px;
             }
 
-            .form-section h2 {
-                font-size: 1.5em;
-                margin-bottom: 20px;
-            }
+                .form-section h2 {
+                    font-size: 1.5em;
+                    margin-bottom: 20px;
+                }
 
             .form-fields-grid {
                 grid-template-columns: 1fr; /* Stack columns on small screens */
@@ -518,10 +531,10 @@
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
 
-        .modal-overlay.visible {
-            opacity: 1;
-            visibility: visible;
-        }
+            .modal-overlay.visible {
+                opacity: 1;
+                visibility: visible;
+            }
 
         .modal-content {
             background: linear-gradient(145deg, #ffffff, #f0f0f0);
@@ -567,11 +580,11 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
-        .modal-content .close-button:hover {
-            background: var(--gradient-2);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-        }
+            .modal-content .close-button:hover {
+                background: var(--gradient-2);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            }
 
         .modal-content.success h3 {
             color: #28a745; /* Green for success */
@@ -598,10 +611,10 @@
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
 
-        .loading-overlay.visible {
-            visibility: visible;
-            opacity: 1;
-        }
+            .loading-overlay.visible {
+                visibility: visible;
+                opacity: 1;
+            }
 
         .spinner {
             border: 8px solid #f3f3f3;
@@ -613,8 +626,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
@@ -942,7 +960,7 @@
                     formGroup.appendChild(inputElement); // Add canvas wrapper first
                     formGroup.appendChild(signatureButtons); // Then buttons
                     formGroup.appendChild(hiddenSignatureInput); // Then hidden input
-                    
+
                     // Skip adding to inputElement as it's already appended
                     return formGroup;
                 case 'text-block':
@@ -956,7 +974,7 @@
             }
 
             if (field.type !== 'text-block' && field.type !== 'signature-pad') {
-                 formGroup.appendChild(inputElement);
+                formGroup.appendChild(inputElement);
             } else if (field.type === 'text-block') {
                 formGroup.appendChild(inputElement); // For text-block, the element itself is the content
             }
@@ -1196,7 +1214,7 @@
                         const hiddenSignatureInput = document.getElementById(`${signatureCanvas.id}Data`);
                         if (fieldData && fieldData.required && hiddenSignatureInput && hiddenSignatureInput.dataset.drawn !== 'true') {
                             group.classList.add('error');
-                            errorMessageSpan.textContent = fieldData.errorMessage || 'This field is required.';
+                            errorMessageSpan.textContent = fieldData.errorMessage || 'Please provide your digital signature.';
                             isValid = false;
                         }
                     }
@@ -1263,7 +1281,7 @@
                     const profilePictureInput = document.getElementById('profilePicture');
                     if (profilePictureInput && profilePictureInput.files.length > 0) {
                         // In a real application, you would upload this to a cloud storage service
-                        // like Cloudinary, AWS S3, or Google Cloud Storage, and then save the URL.
+                        // like Supabase Storage, Cloudinary, AWS S3, or Google Cloud Storage, and then save the URL.
                         data.profilePictureName = profilePictureInput.files[0].name;
                     } else {
                         data.profilePictureName = null; // Ensure field exists even if no file
