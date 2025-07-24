@@ -1,8 +1,8 @@
 [build]
-  publish = "public" # Directory containing your frontend files
-  functions = "netlify/functions" # Directory containing your Netlify Functions
+  publish = "public"
+  functions = "netlify/functions"
+  command = "npm install" # This line explicitly tells Netlify to run npm install
 
-# Optional: If you have a build command for your frontend (e.g., React, Vue)
-# command = "npm run build"
-[[plugins]]
-package = "@netlify/plugin-functions-install-core"
+# Remove or comment out the [[plugins]] section if it's there
+# [[plugins]]
+# package = "@netlify/plugin-functions-install-core"
