@@ -1212,6 +1212,7 @@
                 if (hiddenInput) {
                     hiddenInput.dataset.drawn = 'true';
                     console.log(`Signature Pad: Marked ${canvasId} as drawn (dataset.drawn = true)`);
+                    console.log(`Signature Pad: Hidden input ID: ${hiddenInput.id}, Name: ${hiddenInput.name}`);
                 } else {
                     console.error(`Signature Pad: Hidden input ${canvasId}Data not found!`);
                 }
@@ -1291,8 +1292,13 @@
 
 
                 if (input) { // Check for non-radio inputs
+                    // Skip signature fields - they have their own validation logic
+                    if (input.id && input.id.endsWith('Data') && group.querySelector('.signature-canvas')) {
+                        console.log(`Skipping general validation for signature field: ${input.name}`);
+                        // Signature fields are handled by signature-specific validation below
+                    }
                     // Check for required fields
-                    if (input.required && !input.value.trim()) {
+                    else if (input.required && !input.value.trim()) {
                         group.classList.add('error');
                         if (errorMessageSpan) errorMessageSpan.textContent = 'This field is required.';
                         isValid = false;
