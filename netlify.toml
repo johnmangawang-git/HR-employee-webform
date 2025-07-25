@@ -1,4 +1,4 @@
 [build]
-  command = "npm install && netlify build"
+  command = "npm install"
   publish = "public"
-  functions = "netlify/functions" # This line tells Netlify where your serverless functions are
+  functions = "netlify/functions"
