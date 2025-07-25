@@ -110,9 +110,9 @@ app.post('/.netlify/functions/submit-form', async (req, res) => {
     if (!formData.dateAccomplished) {
         errors.dateAccomplished = 'Date Accomplished is required.';
     }
-    // For digital signature, check if it's present if required
-    if (formData.digitalSignature === null || formData.digitalSignature === '') { // Check for null or empty string
-        errors.digitalSignature = 'Digital Signature is required.';
+    // For digital signature (now checkbox agreement), check if it's present if required
+    if (formData.digitalSignature !== 'agreed') {
+        errors.digitalSignature = 'You must agree to the certification to proceed.';
     }
 
     if (Object.keys(errors).length > 0) {
@@ -201,12 +201,7 @@ app.post('/.netlify/functions/submit-form', async (req, res) => {
                     content: excelBuffer,
                     contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 },
-                // Add digital signature as separate PNG attachment if available
-                ...(formData.digitalSignature && formData.digitalSignature.startsWith('data:image/png;base64,') ? [{
-                    filename: `Digital_Signature_${formData.fullName.replace(/\s/g, '_')}_${newRecordId}.png`,
-                    content: Buffer.from(formData.digitalSignature.replace(/^data:image\/png;base64,/, ''), 'base64'),
-                    contentType: 'image/png',
-                }] : [])
+                // Digital signature is now a checkbox agreement, no separate attachment needed
             ],
         });
 

@@ -403,6 +403,40 @@
                     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
                 }
 
+        /* Checkbox Styling */
+        .checkbox-wrapper {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin: 0;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+            flex-shrink: 0;
+            margin-top: 2px; /* Align with first line of text */
+        }
+
+        .checkbox-label {
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: var(--text-color);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .form-group.error .checkbox-wrapper {
+            border-color: var(--error-color);
+        }
+
+        .form-group.error .checkbox-label {
+            color: var(--error-color);
+        }
+
         /* Submit Button */
         .submit-button {
             display: block;
@@ -895,7 +929,14 @@
                     },
                     { label: "Signature Over Complete Name", type: "text", name: "signatureName", required: true, placeholder: "Your Full Name" },
                     { label: "Date Accomplished", type: "date", name: "dateAccomplished", required: true },
-                    { label: "Digital Signature", type: "signature-pad", name: "digitalSignature", required: true, errorMessage: "Please provide your digital signature." },
+                    { 
+                        label: "Agreement and Certification", 
+                        type: "checkbox", 
+                        name: "digitalSignature", 
+                        required: true, 
+                        checkboxText: "By checking this box, I hereby certify that all information provided in this application is true, complete, and accurate to the best of my knowledge. I understand that any false or misleading information may result in the rejection of my application or termination of employment if discovered after hiring. I authorize the company to verify the information provided and consent to background checks as deemed necessary.",
+                        errorMessage: "You must agree to the certification to proceed." 
+                    },
                     { label: "Attach 2x2 Picture", type: "file", name: "profilePicture", accept: "image/*" }
                 ]
             }
@@ -1025,37 +1066,24 @@
                     inputElement.appendChild(fileNameSpan);
                     formGroup.appendChild(inputElement); // Append here for these types
                     break;
-                case 'signature-pad':
+                case 'checkbox':
                     inputElement = document.createElement('div');
-                    inputElement.classList.add('signature-canvas-wrapper');
+                    inputElement.classList.add('checkbox-wrapper');
 
-                    const canvas = document.createElement('canvas');
-                    canvas.id = field.name; // Use field name as canvas ID
-                    canvas.classList.add('signature-canvas');
-                    inputElement.appendChild(canvas);
+                    const checkboxInput = document.createElement('input');
+                    checkboxInput.type = 'checkbox';
+                    checkboxInput.name = field.name;
+                    checkboxInput.id = field.name;
+                    if (field.required) checkboxInput.required = true;
 
-                    const signatureButtons = document.createElement('div');
-                    signatureButtons.classList.add('signature-buttons');
+                    const checkboxLabel = document.createElement('label');
+                    checkboxLabel.htmlFor = field.name;
+                    checkboxLabel.classList.add('checkbox-label');
+                    checkboxLabel.innerHTML = field.checkboxText || field.label;
 
-                    const clearButton = document.createElement('button');
-                    clearButton.type = 'button';
-                    clearButton.classList.add('clear-button');
-                    clearButton.textContent = 'Clear Signature';
-                    clearButton.onclick = () => clearSignature(canvas.id);
-                    signatureButtons.appendChild(clearButton);
-
-                    // Hidden input to store the base64 signature data
-                    const hiddenSignatureInput = document.createElement('input');
-                    hiddenSignatureInput.type = 'hidden';
-                    hiddenSignatureInput.name = field.name; // Same name as the field
-                    hiddenSignatureInput.id = `${field.name}Data`; // Unique ID for the hidden input
-                    if (field.required) hiddenSignatureInput.required = true; // Mark as required
-
-                    formGroup.appendChild(inputElement); // Add canvas wrapper first
-                    formGroup.appendChild(signatureButtons); // Then buttons
-                    formGroup.appendChild(hiddenSignatureInput); // Then hidden input
-
-                    // No break here, allow flow to append errorMessageSpan
+                    inputElement.appendChild(checkboxInput);
+                    inputElement.appendChild(checkboxLabel);
+                    formGroup.appendChild(inputElement);
                     break;
                 case 'text-block':
                     inputElement = document.createElement('div');
@@ -1292,13 +1320,14 @@
 
 
                 if (input) { // Check for non-radio inputs
-                    // Skip signature fields - they have their own validation logic
-                    if (input.id && input.id.endsWith('Data') && group.querySelector('.signature-canvas')) {
-                        console.log(`Skipping general validation for signature field: ${input.name}`);
-                        // Signature fields are handled by signature-specific validation below
-                    }
                     // Check for required fields
-                    else if (input.required && !input.value.trim()) {
+                    if (input.type === 'checkbox' && input.required && !input.checked) {
+                        group.classList.add('error');
+                        if (errorMessageSpan) errorMessageSpan.textContent = 'You must agree to proceed.';
+                        isValid = false;
+                        console.log(`Validation failed for ${input.name}: Checkbox not checked.`);
+                    }
+                    else if (input.type !== 'checkbox' && input.required && !input.value.trim()) {
                         group.classList.add('error');
                         if (errorMessageSpan) errorMessageSpan.textContent = 'This field is required.';
                         isValid = false;
@@ -1342,25 +1371,7 @@
                         console.log(`Validation failed for file input: No file selected.`);
                     }
 
-                    // Handle signature pad validation
-                    const signatureCanvas = group.querySelector('.signature-canvas');
-                    if (signatureCanvas) {
-                        const fieldData = formFields.flatMap(s => s.fields).find(f => f.name === signatureCanvas.id);
-                        const hiddenSignatureInput = document.getElementById(`${signatureCanvas.id}Data`);
-                        console.log(`Signature validation for ${signatureCanvas.id}:`);
-                        console.log(`- Hidden input found:`, !!hiddenSignatureInput);
-                        console.log(`- Hidden input dataset.drawn:`, hiddenSignatureInput ? hiddenSignatureInput.dataset.drawn : 'N/A');
-                        console.log(`- Field required:`, fieldData ? fieldData.required : 'N/A');
-                        
-                        if (fieldData && fieldData.required && hiddenSignatureInput && hiddenSignatureInput.dataset.drawn !== 'true') {
-                            group.classList.add('error');
-                            if (errorMessageSpan) errorMessageSpan.textContent = fieldData.errorMessage || 'Please provide your digital signature.';
-                            isValid = false;
-                            console.log(`Validation failed for signature pad: No signature drawn.`);
-                        } else {
-                            console.log(`Signature validation passed for ${signatureCanvas.id}`);
-                        }
-                    }
+                    // Signature pad validation is no longer needed - using checkbox instead
                 }
             });
 
@@ -1412,19 +1423,16 @@
                         data[key] = value;
                     }
 
-                    // Capture digital signature
-                    const signatureField = formFields.flatMap(s => s.fields).find(f => f.type === 'signature-pad');
+                    // Capture digital signature (now checkbox agreement)
+                    const signatureField = formFields.flatMap(s => s.fields).find(f => f.type === 'checkbox' && f.name === 'digitalSignature');
                     if (signatureField) {
-                        const canvasId = signatureField.name;
-                        const canvas = document.getElementById(canvasId);
-                        const hiddenSignatureInput = document.getElementById(`${canvasId}Data`);
-                        // Only capture if something was actually drawn
-                        if (canvas && hiddenSignatureInput && hiddenSignatureInput.dataset.drawn === 'true') {
-                            data[signatureField.name] = canvas.toDataURL('image/png');
-                            console.log('Digital signature captured.');
+                        const checkboxInput = document.getElementById(signatureField.name);
+                        if (checkboxInput && checkboxInput.checked) {
+                            data[signatureField.name] = 'agreed'; // User agreed to certification
+                            console.log('Digital certification agreement captured.');
                         } else {
-                            data[signatureField.name] = null; // No signature provided
-                            console.log('No digital signature provided or drawn.');
+                            data[signatureField.name] = null; // No agreement
+                            console.log('No digital certification agreement provided.');
                         }
                     }
 

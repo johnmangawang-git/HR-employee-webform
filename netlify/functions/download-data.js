@@ -168,17 +168,9 @@ app.post('/.netlify/functions/download-data', async (req, res) => {
         const signaturesFolder = zip.folder('digital_signatures');
         let signatureCount = 0;
         
-        applications.forEach((app, index) => {
-            if (app.digitalSignature && app.digitalSignature.startsWith('data:image/png;base64,')) {
-                // Extract base64 data (remove the data:image/png;base64, prefix)
-                const base64Data = app.digitalSignature.replace(/^data:image\/png;base64,/, '');
-                const fileName = `signature_${app.id || index + 1}_${(app.fullName || 'unknown').replace(/[^a-zA-Z0-9]/g, '_')}.png`;
-                
-                signaturesFolder.file(fileName, base64Data, { base64: true });
-                signatureCount++;
-                console.log(`Added signature file: ${fileName}`);
-            }
-        });
+        // Digital signatures are now checkbox agreements, no separate files needed
+        // The agreement status is included in the Excel file
+        console.log('Digital signatures are now checkbox agreements - included in Excel data.');
         
         console.log(`Added ${signatureCount} signature files to ZIP.`);
         
