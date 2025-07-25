@@ -1468,6 +1468,9 @@
 
                     try {
                         console.log('Sending data to Netlify Function...');
+                        console.log('Data being sent:', JSON.stringify(data));
+                        console.log('Data size:', JSON.stringify(data).length);
+                        
                         // Send data to your Netlify Function
                         const response = await fetch('/.netlify/functions/submit-form', {
                             method: 'POST',

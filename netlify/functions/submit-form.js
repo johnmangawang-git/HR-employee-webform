@@ -78,12 +78,18 @@ async function generateExcelBuffer(formData) {
 app.post('/.netlify/functions/submit-form', async (req, res) => {
     const formData = req.body;
 
-    console.log('Received form data keys:', Object.keys(formData));
+    console.log('=== SERVER DEBUG START ===');
+    console.log('Request body type:', typeof req.body);
+    console.log('Request body:', req.body);
+    console.log('Form data type:', typeof formData);
+    console.log('Form data:', formData);
+    console.log('Received form data keys:', Object.keys(formData || {}));
     console.log('Form data sample:', {
-        fullName: formData.fullName,
-        emailAdd: formData.emailAdd,
-        digitalSignature: formData.digitalSignature
+        fullName: formData ? formData.fullName : 'N/A',
+        emailAdd: formData ? formData.emailAdd : 'N/A',
+        digitalSignature: formData ? formData.digitalSignature : 'N/A'
     });
+    console.log('=== SERVER DEBUG END ===');
 
     if (!formData) {
         return res.status(400).json({ message: 'No form data provided.' });
