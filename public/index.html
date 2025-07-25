@@ -1211,6 +1211,9 @@
                 const hiddenInput = document.getElementById(`${canvasId}Data`);
                 if (hiddenInput) {
                     hiddenInput.dataset.drawn = 'true';
+                    console.log(`Signature Pad: Marked ${canvasId} as drawn (dataset.drawn = true)`);
+                } else {
+                    console.error(`Signature Pad: Hidden input ${canvasId}Data not found!`);
                 }
             };
 
@@ -1338,11 +1341,18 @@
                     if (signatureCanvas) {
                         const fieldData = formFields.flatMap(s => s.fields).find(f => f.name === signatureCanvas.id);
                         const hiddenSignatureInput = document.getElementById(`${signatureCanvas.id}Data`);
+                        console.log(`Signature validation for ${signatureCanvas.id}:`);
+                        console.log(`- Hidden input found:`, !!hiddenSignatureInput);
+                        console.log(`- Hidden input dataset.drawn:`, hiddenSignatureInput ? hiddenSignatureInput.dataset.drawn : 'N/A');
+                        console.log(`- Field required:`, fieldData ? fieldData.required : 'N/A');
+                        
                         if (fieldData && fieldData.required && hiddenSignatureInput && hiddenSignatureInput.dataset.drawn !== 'true') {
                             group.classList.add('error');
                             if (errorMessageSpan) errorMessageSpan.textContent = fieldData.errorMessage || 'Please provide your digital signature.';
                             isValid = false;
                             console.log(`Validation failed for signature pad: No signature drawn.`);
+                        } else {
+                            console.log(`Signature validation passed for ${signatureCanvas.id}`);
                         }
                     }
                 }
