@@ -634,6 +634,58 @@
                 transform: rotate(360deg);
             }
         }
+
+        /* Admin Login Modal specific styles */
+        #adminLoginModal .modal-content {
+            padding: 40px;
+        }
+
+            #adminLoginModal .modal-content h3 {
+                margin-bottom: 25px;
+                font-size: 2em;
+            }
+
+        #adminLoginModal .form-group {
+            margin-bottom: 20px;
+            text-align: left; /* Align labels/inputs within the modal */
+        }
+
+            #adminLoginModal .form-group label {
+                font-size: 1em;
+                font-weight: 600;
+            }
+
+            #adminLoginModal .form-group input {
+                padding: 10px 15px;
+                border-radius: 8px;
+                font-size: 1em;
+            }
+
+        #adminLoginModal .admin-login-button {
+            background: var(--gradient-2);
+            color: var(--text-color-light);
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            margin-top: 15px;
+        }
+
+            #adminLoginModal .admin-login-button:hover {
+                background: var(--gradient-1);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            }
+
+        #adminLoginModal .error-message {
+            text-align: center;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -646,14 +698,40 @@
         <form id="hrApplicationForm">
             <!-- Form sections will be dynamically generated here by JavaScript -->
         </form>
+
+        <div style="margin-top: 40px; text-align: center;">
+            <button id="downloadDataButton" class="submit-button" style="background: var(--gradient-1);">
+                Download All Submitted Data (Admin)
+            </button>
+        </div>
     </div>
 
-    <!-- Custom Modal for Messages -->
+    <!-- Custom Modal for General Messages -->
     <div id="customModal" class="modal-overlay">
         <div class="modal-content">
             <h3 id="modalTitle"></h3>
             <p id="modalMessage"></p>
-            <button class="close-button" onclick="hideModal()">Close</button>
+            <button class="close-button" onclick="hideModal('customModal')">Close</button>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="adminLoginModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Admin Login</h3>
+            <form id="adminLoginForm">
+                <div class="form-group">
+                    <label for="adminUsername">Username (Email):</label>
+                    <input type="email" id="adminUsername" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="adminPassword">Password:</label>
+                    <input type="password" id="adminPassword" name="password" required>
+                </div>
+                <span id="adminLoginErrorMessage" class="error-message"></span>
+                <button type="submit" class="admin-login-button">Login & Download</button>
+            </form>
+            <button class="close-button" style="margin-top: 20px;" onclick="hideModal('adminLoginModal')">Cancel</button>
         </div>
     </div>
 
@@ -668,22 +746,29 @@
         const modalTitle = document.getElementById('modalTitle');
         const modalMessage = document.getElementById('modalMessage');
         const loadingOverlay = document.getElementById('loadingOverlay');
+        const adminLoginModal = document.getElementById('adminLoginModal');
+        const adminLoginErrorMessage = document.getElementById('adminLoginErrorMessage');
 
         // Make hideModal globally accessible for the onclick attribute
-        window.hideModal = function () {
-            customModal.classList.remove('visible');
+        window.hideModal = function (modalId) {
+            document.getElementById(modalId).classList.remove('visible');
+            // Clear any error messages when modal is hidden
+            if (modalId === 'adminLoginModal') {
+                adminLoginErrorMessage.textContent = '';
+                document.getElementById('adminLoginForm').reset();
+            }
         }
 
-        function showModal(title, message, type = 'success') {
-            modalTitle.textContent = title;
-            modalMessage.textContent = message;
-            customModal.classList.add('visible');
+        function showModal(title, message, type = 'success', modalElement = customModal) {
+            modalElement.querySelector('h3').textContent = title;
+            modalElement.querySelector('p').textContent = message;
+            modalElement.classList.add('visible');
             if (type === 'success') {
-                customModal.querySelector('.modal-content').classList.remove('error');
-                customModal.querySelector('.modal-content').classList.add('success');
+                modalElement.querySelector('.modal-content').classList.remove('error');
+                modalElement.querySelector('.modal-content').classList.add('success');
             } else if (type === 'error') {
-                customModal.querySelector('.modal-content').classList.remove('success');
-                customModal.querySelector('.modal-content').classList.add('error');
+                modalElement.querySelector('.modal-content').classList.remove('success');
+                modalElement.querySelector('.modal-content').classList.add('error');
             }
         }
 
@@ -1010,11 +1095,17 @@
 
                         // Handle follow-up questions for radio buttons
                         if (field.type === 'radio' && field.followUp) {
-                            const followUpGroup = createFormGroup(field.followUp);
-                            if (followUpGroup) {
-                                followUpGroup.id = `${field.name}FollowUpGroup`;
-                                followUpGroup.style.display = 'none'; // Hidden by default
-                                fieldsGrid.appendChild(followUpGroup);
+                            const followUpGroup = document.getElementById(`${field.name}FollowUpGroup`);
+                            if (followUpGroup) { // Check if it was already created (e.g., from a previous run)
+                                followUpGroup.style.display = 'none'; // Ensure hidden by default
+                            } else {
+                                // Create and append if it doesn't exist
+                                const newFollowUpGroup = createFormGroup(field.followUp);
+                                if (newFollowUpGroup) {
+                                    newFollowUpGroup.id = `${field.name}FollowUpGroup`;
+                                    newFollowUpGroup.style.display = 'none'; // Hidden by default
+                                    fieldsGrid.appendChild(newFollowUpGroup);
+                                }
                             }
                         }
                     }
@@ -1292,6 +1383,8 @@
                     // Handle file input separately (for now, just store file name)
                     const profilePictureInput = document.getElementById('profilePicture');
                     if (profilePictureInput && profilePictureInput.files.length > 0) {
+                        // In a real application, you would upload this to a cloud storage service
+                        // like Supabase Storage, Cloudinary, AWS S3, or Google Cloud Storage, and then save the URL.
                         data.profilePictureName = profilePictureInput.files[0].name;
                         console.log('Profile picture name captured:', data.profilePictureName);
                     } else {
@@ -1326,7 +1419,14 @@
                             }
                         } else {
                             console.error('Error submitting form to backend:', result);
-                            showModal('Submission Error', `There was an error submitting your application: ${result.message || 'Unknown error'}. Please try again.`, 'error');
+                            let errorMessage = 'Unknown error.';
+                            if (result.message) {
+                                errorMessage = result.message;
+                            } else if (result.errors) {
+                                // If backend sends specific validation errors
+                                errorMessage = 'Please correct the following issues: ' + Object.values(result.errors).join(', ');
+                            }
+                            showModal('Submission Error', `There was an error submitting your application: ${errorMessage}. Please try again.`, 'error');
                         }
                     } catch (error) {
                         console.error('Network or unexpected error during fetch:', error);
@@ -1343,6 +1443,59 @@
                         firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }
                     showModal('Validation Failed', 'Please correct the errors in the form before submitting.', 'error');
+                }
+            });
+
+            // --- Admin Download Button Logic ---
+            const downloadDataButton = document.getElementById('downloadDataButton');
+            const adminLoginForm = document.getElementById('adminLoginForm');
+
+            downloadDataButton.addEventListener('click', () => {
+                adminLoginModal.classList.add('visible');
+                document.getElementById('adminUsername').focus(); // Focus on username field
+            });
+
+            adminLoginForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                adminLoginErrorMessage.textContent = ''; // Clear previous errors
+                showLoading();
+
+                const username = document.getElementById('adminUsername').value;
+                const password = document.getElementById('adminPassword').value;
+
+                try {
+                    const response = await fetch('/.netlify/functions/download-data', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ username, password }),
+                    });
+
+                    if (response.ok) {
+                        // If authentication is successful, the function returns the Excel file
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `HR_Applications_All_Data_${new Date().toISOString().slice(0, 10)}.xlsx`;
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                        window.URL.revokeObjectURL(url); // Clean up the URL object
+
+                        hideModal('adminLoginModal');
+                        showModal('Download Successful', 'All HR application data has been downloaded as an Excel file.', 'success');
+                    } else {
+                        const errorResult = await response.json();
+                        adminLoginErrorMessage.textContent = errorResult.message || 'Authentication failed. Please check your credentials.';
+                        console.error('Admin login failed:', errorResult);
+                    }
+                } catch (error) {
+                    console.error('Network error during admin login/download:', error);
+                    adminLoginErrorMessage.textContent = 'Network error or server issue. Please try again.';
+                } finally {
+                    hideLoading();
                 }
             });
         });
