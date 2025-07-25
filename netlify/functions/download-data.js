@@ -1,7 +1,7 @@
 // Native Netlify function for data download (without Express)
 const ExcelJS = require('exceljs'); // Import ExcelJS
 const JSZip = require('jszip'); // For creating ZIP files with multiple files
-// const { Pool } = require('pg'); // Uncomment this line if you are using PostgreSQL
+const { Pool } = require('pg'); // PostgreSQL client for database connection
 
 // Define the API endpoint for downloading data
 exports.handler = async (event, context) => {
@@ -73,11 +73,9 @@ exports.handler = async (event, context) => {
 
     try {
         // --- Database Connection and Data Fetching ---
-        // Uncomment and configure this section for actual database interaction
         let applications = [];
 
-        // Example PostgreSQL connection (requires 'pg' package installed in netlify/functions)
-        /*
+        // PostgreSQL connection to fetch real application data
         const pool = new Pool({
             connectionString: process.env.DATABASE_URL, // Your PostgreSQL connection string from Netlify env
             ssl: {
@@ -88,56 +86,16 @@ exports.handler = async (event, context) => {
         console.log('Attempting to connect to database and fetch data...');
         const client = await pool.connect();
         try {
-            const result = await client.query('SELECT * FROM applications ORDER BY submission_timestamp DESC'); // Replace 'applications' with your table name
+            const result = await client.query('SELECT * FROM applications ORDER BY submission_timestamp DESC');
             applications = result.rows;
             console.log(`Fetched ${applications.length} applications from database.`);
         } finally {
             client.release();
             console.log('Database client released.');
         }
-        */
 
-        // --- Mock Data for Testing (Remove or comment out when using actual database) ---
-        if (applications.length === 0) {
-            console.log('Using mock data as no database data was fetched.');
-            applications = [
-                {
-                    id: 1,
-                    full_name: 'John Doe',
-                    email_add: 'john.doe@example.com',
-                    mobile_no: '09171234567',
-                    birth_date: '1990-05-15',
-                    current_address: '123 Main St, City, Country',
-                    past_employment_issues: 'no',
-                    legal_issues: 'no',
-                    medical_history: 'yes',
-                    medical_history_specify: 'Appendectomy in 2010',
-                    signature_name: 'John Doe',
-                    date_accomplished: '2024-07-25',
-                    profile_picture_name: 'john_doe_pic.jpg',
-                    digital_signature: 'agreed',
-                    submission_timestamp: new Date().toISOString()
-                },
-                {
-                    id: 2,
-                    full_name: 'Jane Smith',
-                    email_add: 'jane.smith@example.com',
-                    mobile_no: '09187654321',
-                    birth_date: '1992-11-20',
-                    current_address: '456 Oak Ave, Town, Country',
-                    past_employment_issues: 'yes',
-                    past_employment_issues_specify: 'Resigned due to company restructuring',
-                    legal_issues: 'no',
-                    medical_history: 'no',
-                    signature_name: 'Jane Smith',
-                    date_accomplished: '2024-07-24',
-                    profile_picture_name: 'jane_smith_pic.png',
-                    digital_signature: 'agreed',
-                    submission_timestamp: new Date().toISOString()
-                }
-            ];
-        }
-        // --- End Mock Data ---
+        // Now using real database data only
+        console.log(`Ready to generate Excel with ${applications.length} real applications.`);
 
         // --- Excel File Generation using ExcelJS ---
         console.log('Starting Excel file generation...');
