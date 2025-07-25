@@ -789,7 +789,7 @@
                     { label: "Complete Name", type: "text", name: "fullName", placeholder: "First Name, Middle Name, Last Name", required: true },
                     { label: "Nick Name", type: "text", name: "nickName" },
                     { label: "Mobile No.", type: "tel", name: "mobileNo", required: true, pattern: "^[0-9]{10,15}$", errorMessage: "Please enter a valid mobile number (10-15 digits)." },
-                    { label: "Email Add", type: "email", name: "emailAdd", required: true, pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$", errorMessage: "Please enter a valid email address." },
+                    { label: "Email Add", type: "email", name: "emailAdd", required: true }, // Pattern removed
                     { label: "Birth Date", type: "date", name: "birthDate", required: true },
                     { label: "Civil Status", type: "select", name: "civilStatus", options: ["Single", "Married", "Divorced", "Widowed"] },
                     { label: "Age", type: "number", name: "age", min: "18", max: "100", errorMessage: "Age must be between 18 and 100." },
@@ -934,6 +934,7 @@
                     // Add autocomplete for password/username fields for better UX and to clear console warnings
                     if (field.name === 'adminUsername') inputElement.setAttribute('autocomplete', 'username');
                     if (field.name === 'adminPassword') inputElement.setAttribute('autocomplete', 'current-password');
+                    formGroup.appendChild(inputElement); // Append here for these types
                     break;
                 case 'textarea':
                     inputElement = document.createElement('textarea');
@@ -941,6 +942,7 @@
                     inputElement.name = field.name;
                     if (field.placeholder) inputElement.placeholder = field.placeholder;
                     if (field.required) inputElement.required = true;
+                    formGroup.appendChild(inputElement); // Append here for these types
                     break;
                 case 'select':
                     inputElement = document.createElement('select');
@@ -953,6 +955,7 @@
                         option.textContent = optionText;
                         inputElement.appendChild(option);
                     });
+                    formGroup.appendChild(inputElement); // Append here for these types
                     break;
                 case 'radio':
                     inputElement = document.createElement('div');
@@ -987,6 +990,7 @@
                             }
                         });
                     });
+                    formGroup.appendChild(inputElement); // Append here for these types
                     break;
                 case 'file':
                     inputElement = document.createElement('div');
@@ -1019,6 +1023,7 @@
                     inputElement.appendChild(fileInput);
                     inputElement.appendChild(fileButton);
                     inputElement.appendChild(fileNameSpan);
+                    formGroup.appendChild(inputElement); // Append here for these types
                     break;
                 case 'signature-pad':
                     inputElement = document.createElement('div');
@@ -1050,25 +1055,20 @@
                     formGroup.appendChild(signatureButtons); // Then buttons
                     formGroup.appendChild(hiddenSignatureInput); // Then hidden input
 
-                    // Skip adding to inputElement as it's already appended
-                    return formGroup;
+                    // No break here, allow flow to append errorMessageSpan
+                    break;
                 case 'text-block':
                     inputElement = document.createElement('div');
                     inputElement.classList.add('text-block');
                     inputElement.innerHTML = field.content; // Use innerHTML for rich text
+                    formGroup.appendChild(inputElement); // Append here for these types
                     break;
                 default:
                     console.error('Unknown field type:', field.type);
                     return null;
             }
 
-            if (field.type !== 'text-block' && field.type !== 'signature-pad') {
-                formGroup.appendChild(inputElement);
-            } else if (field.type === 'text-block') {
-                formGroup.appendChild(inputElement); // For text-block, the element itself is the content
-            }
-
-            // Add error message span
+            // Ensure errorMessageSpan is always appended regardless of inputElement type
             const errorMessageSpan = document.createElement('span');
             errorMessageSpan.classList.add('error-message');
             errorMessageSpan.setAttribute('aria-live', 'polite'); // For accessibility
@@ -1189,6 +1189,7 @@
 
             const startDrawing = (e) => {
                 isDrawing = true;
+                e.preventDefault(); // Prevent default touch/mouse behavior that might interfere
                 const pos = e.touches ? getTouchPos(e) : getMousePos(e);
                 [lastX, lastY] = [pos.x, pos.y];
                 console.log(`Signature Pad: Start drawing on ${canvasId} at (${lastX}, ${lastY})`);
@@ -1204,12 +1205,12 @@
                 ctx.lineTo(pos.x, pos.y);
                 ctx.stroke();
                 [lastX, lastY] = [pos.x, pos.y];
+                console.log(`Signature Pad: Drawing on ${canvasId} to (${pos.x}, ${pos.y})`); // Added log for draw event
 
                 // Mark signature as drawn for validation
                 const hiddenInput = document.getElementById(`${canvasId}Data`);
                 if (hiddenInput) {
                     hiddenInput.dataset.drawn = 'true';
-                    // console.log(`Signature Pad: Drawing on ${canvasId}, dataset.drawn set to true.`);
                 }
             };
 
@@ -1227,8 +1228,8 @@
             canvas.addEventListener('mouseout', stopDrawing); // Stop drawing if mouse leaves canvas
 
             // Touch events
-            canvas.addEventListener('touchstart', startDrawing);
-            canvas.addEventListener('touchmove', draw);
+            canvas.addEventListener('touchstart', startDrawing, { passive: false }); // Set passive to false
+            canvas.addEventListener('touchmove', draw, { passive: false });    // Set passive to false
             canvas.addEventListener('touchend', stopDrawing);
             canvas.addEventListener('touchcancel', stopDrawing); // Handle touch being interrupted
 
@@ -1275,7 +1276,7 @@
 
                 // Defensive check: Ensure errorMessageSpan exists before trying to modify it
                 if (!errorMessageSpan) {
-                    console.warn('Validation: Could not find .error-message span for group:', group);
+                    console.warn('Validation: Could not find .error-message span for group:', group.innerHTML); // Log innerHTML for debugging
                     // If a group doesn't have an error span, it's a structural issue.
                     // We might still proceed with validation but won't show an error for this field.
                     // For now, we'll just skip clearing its error message.
@@ -1508,6 +1509,16 @@
                         body: JSON.stringify({ username, password }),
                     });
 
+                    // Check content type before parsing as JSON
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        const textResponse = await response.text();
+                        console.error('Server response was not JSON:', textResponse);
+                        adminLoginErrorMessage.textContent = `Server error: Expected JSON, but received unexpected content. Status: ${response.status}. This often means the Netlify Function crashed or wasn't found. Check Netlify logs for 'download-data.js'.`;
+                        hideLoading();
+                        return; // Stop execution here
+                    }
+
                     if (response.ok) {
                         // If authentication is successful, the function returns the Excel file
                         const blob = await response.blob();
@@ -1523,7 +1534,7 @@
                         hideModal('adminLoginModal');
                         showModal('Download Successful', 'All HR application data has been downloaded as an Excel file.', 'success');
                     } else {
-                        const errorResult = await response.json();
+                        const errorResult = await response.json(); // Now safe to parse as JSON
                         adminLoginErrorMessage.textContent = errorResult.message || 'Authentication failed. Please check your credentials.';
                         console.error('Admin login failed:', errorResult);
                     }
