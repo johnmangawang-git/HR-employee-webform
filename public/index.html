@@ -722,11 +722,11 @@
             <form id="adminLoginForm">
                 <div class="form-group">
                     <label for="adminUsername">Username (Email):</label>
-                    <input type="email" id="adminUsername" name="username" required>
+                    <input type="email" id="adminUsername" name="username" required autocomplete="username">
                 </div>
                 <div class="form-group">
                     <label for="adminPassword">Password:</label>
-                    <input type="password" id="adminPassword" name="password" required>
+                    <input type="password" id="adminPassword" name="password" required autocomplete="current-password">
                 </div>
                 <span id="adminLoginErrorMessage" class="error-message"></span>
                 <button type="submit" class="admin-login-button">Login & Download</button>
@@ -789,7 +789,7 @@
                     { label: "Complete Name", type: "text", name: "fullName", placeholder: "First Name, Middle Name, Last Name", required: true },
                     { label: "Nick Name", type: "text", name: "nickName" },
                     { label: "Mobile No.", type: "tel", name: "mobileNo", required: true, pattern: "^[0-9]{10,15}$", errorMessage: "Please enter a valid mobile number (10-15 digits)." },
-                    { label: "Email Add", type: "email", name: "emailAdd", required: true, pattern: "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$", errorMessage: "Please enter a valid email address." },
+                    { label: "Email Add", type: "email", name: "emailAdd", required: true, pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$", errorMessage: "Please enter a valid email address." },
                     { label: "Birth Date", type: "date", name: "birthDate", required: true },
                     { label: "Civil Status", type: "select", name: "civilStatus", options: ["Single", "Married", "Divorced", "Widowed"] },
                     { label: "Age", type: "number", name: "age", min: "18", max: "100", errorMessage: "Age must be between 18 and 100." },
@@ -931,6 +931,9 @@
                     if (field.min) inputElement.min = field.min;
                     if (field.max) inputElement.max = field.max;
                     if (field.pattern) inputElement.pattern = field.pattern;
+                    // Add autocomplete for password/username fields for better UX and to clear console warnings
+                    if (field.name === 'adminUsername') inputElement.setAttribute('autocomplete', 'username');
+                    if (field.name === 'adminPassword') inputElement.setAttribute('autocomplete', 'current-password');
                     break;
                 case 'textarea':
                     inputElement = document.createElement('textarea');
@@ -1270,15 +1273,24 @@
                 const input = group.querySelector('input:not([type="radio"]), select, textarea');
                 const errorMessageSpan = group.querySelector('.error-message');
 
-                // Clear previous errors
-                group.classList.remove('error');
-                errorMessageSpan.textContent = '';
+                // Defensive check: Ensure errorMessageSpan exists before trying to modify it
+                if (!errorMessageSpan) {
+                    console.warn('Validation: Could not find .error-message span for group:', group);
+                    // If a group doesn't have an error span, it's a structural issue.
+                    // We might still proceed with validation but won't show an error for this field.
+                    // For now, we'll just skip clearing its error message.
+                } else {
+                    // Clear previous errors
+                    group.classList.remove('error');
+                    errorMessageSpan.textContent = '';
+                }
+
 
                 if (input) { // Check for non-radio inputs
                     // Check for required fields
                     if (input.required && !input.value.trim()) {
                         group.classList.add('error');
-                        errorMessageSpan.textContent = 'This field is required.';
+                        if (errorMessageSpan) errorMessageSpan.textContent = 'This field is required.';
                         isValid = false;
                         console.log(`Validation failed for ${input.name}: Required field is empty.`);
                     }
@@ -1286,7 +1298,7 @@
                     else if (input.pattern && input.value.trim() && !new RegExp(input.pattern).test(input.value.trim())) {
                         group.classList.add('error');
                         const fieldData = formFields.flatMap(s => s.fields).find(f => f.name === input.name);
-                        errorMessageSpan.textContent = fieldData && fieldData.errorMessage ? fieldData.errorMessage : 'Invalid format.';
+                        if (errorMessageSpan) errorMessageSpan.textContent = fieldData && fieldData.errorMessage ? fieldData.errorMessage : 'Invalid format.';
                         isValid = false;
                         console.log(`Validation failed for ${input.name}: Invalid format.`);
                     }
@@ -1294,7 +1306,7 @@
                     else if (input.type === 'number' && input.value !== '' && (parseFloat(input.value) < parseFloat(input.min) || parseFloat(input.value) > parseFloat(input.max))) {
                         group.classList.add('error');
                         const fieldData = formFields.flatMap(s => s.fields).find(f => f.name === input.name);
-                        errorMessageSpan.textContent = fieldData && fieldData.errorMessage ? fieldData.errorMessage : `Value must be between ${input.min} and ${input.max}.`;
+                        if (errorMessageSpan) errorMessageSpan.textContent = fieldData && fieldData.errorMessage ? fieldData.errorMessage : `Value must be between ${input.min} and ${input.max}.`;
                         isValid = false;
                         console.log(`Validation failed for ${input.name}: Out of range.`);
                     }
@@ -1306,7 +1318,7 @@
                         const isChecked = Array.from(radioInputs).some(radio => radio.checked);
                         if (isRequired && !isChecked) {
                             group.classList.add('error');
-                            errorMessageSpan.textContent = 'This field is required.';
+                            if (errorMessageSpan) errorMessageSpan.textContent = 'This field is required.';
                             isValid = false;
                             console.log(`Validation failed for radio group: Required option not selected.`);
                         }
@@ -1315,7 +1327,7 @@
                     const fileInput = group.querySelector('input[type="file"]');
                     if (fileInput && fileInput.required && fileInput.files.length === 0) {
                         group.classList.add('error');
-                        errorMessageSpan.textContent = 'This field is required.';
+                        if (errorMessageSpan) errorMessageSpan.textContent = 'This field is required.';
                         isValid = false;
                         console.log(`Validation failed for file input: No file selected.`);
                     }
@@ -1327,7 +1339,7 @@
                         const hiddenSignatureInput = document.getElementById(`${signatureCanvas.id}Data`);
                         if (fieldData && fieldData.required && hiddenSignatureInput && hiddenSignatureInput.dataset.drawn !== 'true') {
                             group.classList.add('error');
-                            errorMessageSpan.textContent = fieldData.errorMessage || 'Please provide your digital signature.';
+                            if (errorMessageSpan) errorMessageSpan.textContent = fieldData.errorMessage || 'Please provide your digital signature.';
                             isValid = false;
                             console.log(`Validation failed for signature pad: No signature drawn.`);
                         }
@@ -1343,15 +1355,18 @@
                         const yesRadio = Array.from(radioButtons).find(radio => radio.value === 'yes');
                         const followUpInput = document.getElementById(field.followUp.name);
 
-                        if (yesRadio && yesRadio.checked && followUpInput && followUpInput.required && !followUpInput.value.trim()) {
-                            followUpInput.closest('.form-group').classList.add('error');
-                            followUpInput.closest('.form-group').querySelector('.error-message').textContent = 'This field is required when "YES" is selected.';
-                            isValid = false;
-                            console.log(`Validation failed for follow-up field ${field.followUp.name}: Required when YES.`);
-                        } else if (followUpInput) {
-                            followUpInput.closest('.form-group').classList.remove('error');
-                            followUpInput.closest('.form-group').querySelector('.error-message').textContent = '';
-                            followUpInput.closest('.form-group').classList.remove('error'); // Ensure error class is removed if value is present
+                        if (followUpInput) { // Ensure followUpInput exists before accessing its properties
+                            const followUpErrorMessageSpan = followUpInput.closest('.form-group')?.querySelector('.error-message');
+
+                            if (yesRadio && yesRadio.checked && followUpInput.required && !followUpInput.value.trim()) {
+                                followUpInput.closest('.form-group').classList.add('error');
+                                if (followUpErrorMessageSpan) followUpErrorMessageSpan.textContent = 'This field is required when "YES" is selected.';
+                                isValid = false;
+                                console.log(`Validation failed for follow-up field ${field.followUp.name}: Required when YES.`);
+                            } else {
+                                followUpInput.closest('.form-group').classList.remove('error');
+                                if (followUpErrorMessageSpan) followUpErrorMessageSpan.textContent = '';
+                            }
                         }
                     }
                 });
