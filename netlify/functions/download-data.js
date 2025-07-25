@@ -25,6 +25,10 @@ app.use((req, res, next) => {
 app.post('/.netlify/functions/download-data', async (req, res) => {
     console.log('--- download-data function invoked! ---');
     const { username, password } = req.body;
+    
+    // Trim whitespace from inputs
+    const trimmedUsername = username ? username.trim() : '';
+    const trimmedPassword = password ? password.trim() : '';
 
     // --- Admin Authentication (IMPORTANT: Use environment variables in production) ---
     // In a real application, fetch these securely from Netlify environment variables
@@ -33,10 +37,18 @@ app.post('/.netlify/functions/download-data', async (req, res) => {
     const ADMIN_PASS = process.env.ADMIN_PASS || 'adminpassword123'; // Replace with your actual admin password
 
     console.log('Received username:', username);
+    console.log('Trimmed username:', trimmedUsername);
+    console.log('Expected ADMIN_USER:', ADMIN_USER);
+    console.log('ADMIN_USER from env:', process.env.ADMIN_USER);
+    console.log('ADMIN_PASS from env exists:', !!process.env.ADMIN_PASS);
+    console.log('Username match:', trimmedUsername === ADMIN_USER);
+    console.log('Password match:', trimmedPassword === ADMIN_PASS);
     console.log('Attempting authentication...');
 
-    if (username !== ADMIN_USER || password !== ADMIN_PASS) {
+    if (trimmedUsername !== ADMIN_USER || trimmedPassword !== ADMIN_PASS) {
         console.warn('Authentication failed: Invalid credentials.');
+        console.warn('Username comparison:', `"${trimmedUsername}" !== "${ADMIN_USER}"`);
+        console.warn('Password comparison:', `"${trimmedPassword}" !== "${ADMIN_PASS}"`);
         return res.status(401).json({ message: 'Unauthorized: Invalid username or password.' });
     }
     console.log('Authentication successful.');
