@@ -1582,34 +1582,40 @@
                         body: JSON.stringify({ username, password }),
                     });
 
-                    // Check content type before parsing as JSON
-                    const contentType = response.headers.get('content-type');
-                    if (!contentType || !contentType.includes('application/json')) {
-                        const textResponse = await response.text();
-                        console.error('Server response was not JSON:', textResponse);
-                        adminLoginErrorMessage.textContent = `Server error: Expected JSON, but received unexpected content. Status: ${response.status}. This often means the Netlify Function crashed or wasn't found. Check Netlify logs for 'download-data.js'.`;
-                        hideLoading();
-                        return; // Stop execution here
-                    }
-
                     if (response.ok) {
-                        // If authentication is successful, the function returns the Excel file
-                        const blob = await response.blob();
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = `HR_Applications_All_Data_${new Date().toISOString().slice(0, 10)}.xlsx`;
-                        document.body.appendChild(a);
-                        a.click();
-                        a.remove();
-                        window.URL.revokeObjectURL(url); // Clean up the URL object
+                        // Check content type to determine if it's a file download or JSON error
+                        const contentType = response.headers.get('content-type');
+                        
+                        if (contentType && contentType.includes('application/zip')) {
+                            // Success! Download the ZIP file
+                            const blob = await response.blob();
+                            const url = window.URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = `HR_Applications_Complete_${new Date().toISOString().slice(0, 10)}.zip`;
+                            document.body.appendChild(a);
+                            a.click();
+                            a.remove();
+                            window.URL.revokeObjectURL(url); // Clean up the URL object
 
-                        hideModal('adminLoginModal');
-                        showModal('Download Successful', 'All HR application data has been downloaded as a ZIP file containing the Excel spreadsheet and individual digital signature images.', 'success');
+                            hideModal('adminLoginModal');
+                            showModal('Download Successful', 'All HR application data has been downloaded as a ZIP file containing the Excel spreadsheet.', 'success');
+                        } else {
+                            // Unknown content type, try to handle as text
+                            const textResponse = await response.text();
+                            console.error('Unexpected content type:', contentType, 'Response:', textResponse);
+                            adminLoginErrorMessage.textContent = 'Unexpected server response. Please try again.';
+                        }
                     } else {
-                        const errorResult = await response.json(); // Now safe to parse as JSON
-                        adminLoginErrorMessage.textContent = errorResult.message || 'Authentication failed. Please check your credentials.';
-                        console.error('Admin login failed:', errorResult);
+                        // Error response - should be JSON
+                        try {
+                            const errorResult = await response.json();
+                            adminLoginErrorMessage.textContent = errorResult.message || 'Authentication failed. Please check your credentials.';
+                            console.error('Admin login failed:', errorResult);
+                        } catch (parseError) {
+                            console.error('Failed to parse error response:', parseError);
+                            adminLoginErrorMessage.textContent = 'Authentication failed. Please check your credentials.';
+                        }
                     }
                 } catch (error) {
                     console.error('Network error during admin login/download:', error);
