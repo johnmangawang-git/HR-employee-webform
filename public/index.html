@@ -1416,30 +1416,41 @@
                 const validationResult = validateForm();
                 console.log('Validation result:', validationResult);
                 
-                // TEMPORARY: Force validation to pass for debugging
-                console.log('FORCING validation to pass for debugging...');
-                alert('DEBUG: About to start data collection');
-                
-                if (true) { // Changed from validationResult to true
+                if (validationResult) {
                     console.log('Client-side validation passed. Showing loading indicator...');
-                    alert('DEBUG: Inside validation passed block');
                     
                     showLoading(); // Show loading indicator
 
-                    // TEMPORARY: Send hardcoded test data to see if the issue is data collection or server
-                    const data = {
-                        fullName: 'Test User',
-                        emailAdd: 'test@example.com',
-                        mobileNo: '1234567890',
-                        birthDate: '1990-01-01',
-                        currentAddress: 'Test Address',
-                        signatureName: 'Test Signature',
-                        dateAccomplished: '2024-01-01',
-                        digitalSignature: 'agreed'
-                    };
+                    // If validation passes, collect form data manually
+                    const data = {};
                     
-                    console.log('Using hardcoded test data:', data);
-                    alert('DEBUG: Using hardcoded test data');
+                    // Debug: Check what form elements exist and collect their values
+                    const allInputs = form.querySelectorAll('input, select, textarea');
+                    console.log('Form elements found:', allInputs.length);
+                    allInputs.forEach(input => {
+                        console.log(`Processing: ${input.tagName}, name: ${input.name}, value: ${input.value}, type: ${input.type}`);
+                        
+                        if (input.type === 'radio') {
+                            if (input.checked) {
+                                data[input.name] = input.value;
+                                console.log(`Radio selected: ${input.name} = ${input.value}`);
+                            }
+                        } else if (input.type === 'checkbox') {
+                            if (input.name !== 'digitalSignature') { // Handle digitalSignature separately
+                                data[input.name] = input.checked;
+                                console.log(`Checkbox: ${input.name} = ${input.checked}`);
+                            }
+                        } else if (input.type === 'file') {
+                            // Handle file inputs separately
+                            console.log(`File input: ${input.name} (handled separately)`);
+                        } else {
+                            data[input.name] = input.value;
+                            console.log(`Input: ${input.name} = ${input.value}`);
+                        }
+                    });
+                    
+                    console.log('Manually collected data:', data);
+                    console.log('Data keys:', Object.keys(data));
 
                     // Capture digital signature (now checkbox agreement)
                     const signatureField = formFields.flatMap(s => s.fields).find(f => f.type === 'checkbox' && f.name === 'digitalSignature');
@@ -1471,8 +1482,8 @@
                         console.log('Data being sent:', JSON.stringify(data));
                         console.log('Data size:', JSON.stringify(data).length);
                         
-                        // Send data to your Netlify Function (using simple test function)
-                        const response = await fetch('/.netlify/functions/submit-form-simple', {
+                        // Send data to your Netlify Function
+                        const response = await fetch('/.netlify/functions/submit-form', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',

@@ -1,4 +1,4 @@
-// Native Netlify function for form submission (without Express)
+// netlify/functions/submit-form.js
 const { Pool } = require('pg'); // PostgreSQL client for Supabase
 const ExcelJS = require('exceljs'); // For Excel file generation
 const nodemailer = require('nodemailer'); // For sending emails
@@ -12,7 +12,7 @@ const pool = new Pool({
 });
 
 // Configure Nodemailer transporter using environment variables
-const transporter = nodemailer.createTransporter({
+const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT,
     secure: process.env.SMTP_PORT == 465, // Use 'true' if port is 465 (SSL/TLS), 'false' otherwise
@@ -54,6 +54,7 @@ async function generateExcelBuffer(formData) {
     return await workbook.xlsx.writeBuffer();
 }
 
+// Netlify function handler
 exports.handler = async (event, context) => {
     // Handle CORS
     const headers = {
@@ -78,7 +79,7 @@ exports.handler = async (event, context) => {
     let formData;
     try {
         formData = JSON.parse(event.body);
-        console.log('Form data received:', formData);
+        console.log('Received form data:', formData);
     } catch (error) {
         console.error('Failed to parse JSON:', error);
         return {
@@ -87,13 +88,16 @@ exports.handler = async (event, context) => {
             body: JSON.stringify({ message: 'Invalid JSON' }),
         };
     }
+    console.log('Received form data keys:', Object.keys(formData || {}));
+    console.log('Form data sample:', {
+        fullName: formData ? formData.fullName : 'N/A',
+        emailAdd: formData ? formData.emailAdd : 'N/A',
+        digitalSignature: formData ? formData.digitalSignature : 'N/A'
+    });
+    console.log('=== SERVER DEBUG END ===');
 
     if (!formData) {
-        return {
-            statusCode: 400,
-            headers,
-            body: JSON.stringify({ message: 'No form data provided.' }),
-        };
+        return res.status(400).json({ message: 'No form data provided.' });
     }
 
     // --- Server-side Validation ---
@@ -125,22 +129,24 @@ exports.handler = async (event, context) => {
         errors.dateAccomplished = 'Date Accomplished is required.';
     }
     // For digital signature (now checkbox agreement), check if it's present if required
+    console.log('Server received digitalSignature:', formData.digitalSignature);
+    console.log('digitalSignature type:', typeof formData.digitalSignature);
     if (formData.digitalSignature !== 'agreed') {
         errors.digitalSignature = 'You must agree to the certification to proceed.';
+        console.log('digitalSignature validation failed');
+    } else {
+        console.log('digitalSignature validation passed');
     }
 
     if (Object.keys(errors).length > 0) {
-        return {
-            statusCode: 400,
-            headers,
-            body: JSON.stringify({ message: 'Validation failed', errors: errors }),
-        };
+        return res.status(400).json({ message: 'Validation failed', errors: errors });
     }
 
     // --- Database Integration (PostgreSQL via Supabase) ---
     let newRecordId;
     try {
         // Prepare data for insertion. Ensure all fields are handled.
+        // For complex objects or arrays, you might need to JSON.stringify them.
         const insertQuery = `
       INSERT INTO applications (
         full_name, email_add, mobile_no, birth_date, civil_status, age, birth_place,
@@ -190,11 +196,7 @@ exports.handler = async (event, context) => {
 
     } catch (error) {
         console.error('Database error or server-side validation issue:', error);
-        return {
-            statusCode: 500,
-            headers,
-            body: JSON.stringify({ message: 'Error saving form data to database.', error: error.message }),
-        };
+        return res.status(500).json({ message: 'Error saving form data to database.', error: error.message });
     }
 
     // --- Email Sending with Excel Attachment ---
@@ -227,23 +229,13 @@ exports.handler = async (event, context) => {
         });
 
         console.log('Email sent successfully!');
-        return {
-            statusCode: 200,
-            headers,
-            body: JSON.stringify({ message: 'Form submitted and email sent successfully!', dataId: newRecordId }),
-        };
+        res.status(200).json({ message: 'Form submitted and email sent successfully!', dataId: newRecordId });
 
     } catch (emailError) {
         console.error('Error sending email:', emailError);
         // Even if email fails, we should still confirm form submission to user if DB save was successful
-        return {
-            statusCode: 200,
-            headers,
-            body: JSON.stringify({ 
-                message: 'Form submitted successfully, but failed to send email notification.', 
-                dataId: newRecordId, 
-                emailError: emailError.message 
-            }),
-        };
+        res.status(200).json({ message: 'Form submitted successfully, but failed to send email notification.', dataId: newRecordId, emailError: emailError.message });
     }
-};
+});
+
+}; // End of exports.handler function
