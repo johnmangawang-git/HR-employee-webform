@@ -37,6 +37,7 @@ app.post('/.netlify/functions/download-data', async (req, res) => {
     const ADMIN_USER = process.env.ADMIN_USER || 'admin@example.com'; // Replace with your actual admin username
     const ADMIN_PASS = process.env.ADMIN_PASS || 'adminpassword123'; // Replace with your actual admin password
 
+    console.log('=== ADMIN LOGIN DEBUG ===');
     console.log('Received username:', username);
     console.log('Trimmed username:', trimmedUsername);
     console.log('Expected ADMIN_USER:', ADMIN_USER);
@@ -44,7 +45,7 @@ app.post('/.netlify/functions/download-data', async (req, res) => {
     console.log('ADMIN_PASS from env exists:', !!process.env.ADMIN_PASS);
     console.log('Username match:', trimmedUsername === ADMIN_USER);
     console.log('Password match:', trimmedPassword === ADMIN_PASS);
-    console.log('Attempting authentication...');
+    console.log('=== END DEBUG ===');
 
     if (trimmedUsername !== ADMIN_USER || trimmedPassword !== ADMIN_PASS) {
         console.warn('Authentication failed: Invalid credentials.');
