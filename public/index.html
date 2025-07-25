@@ -1471,8 +1471,8 @@
                         console.log('Data being sent:', JSON.stringify(data));
                         console.log('Data size:', JSON.stringify(data).length);
                         
-                        // Send data to your Netlify Function
-                        const response = await fetch('/.netlify/functions/submit-form', {
+                        // Send data to your Netlify Function (using simple test function)
+                        const response = await fetch('/.netlify/functions/submit-form-simple', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
