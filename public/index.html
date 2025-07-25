@@ -1095,16 +1095,20 @@
 
                         // Handle follow-up questions for radio buttons
                         if (field.type === 'radio' && field.followUp) {
-                            const followUpGroup = document.getElementById(`${field.name}FollowUpGroup`);
-                            if (followUpGroup) { // Check if it was already created (e.g., from a previous run)
-                                followUpGroup.style.display = 'none'; // Ensure hidden by default
+                            // Check if the follow-up group already exists to prevent re-creation
+                            let followUpGroup = document.getElementById(`${field.name}FollowUpGroup`);
+                            if (!followUpGroup) {
+                                followUpGroup = createFormGroup(field.followUp);
+                                if (followUpGroup) {
+                                    followUpGroup.id = `${field.name}FollowUpGroup`;
+                                    followUpGroup.style.display = 'none'; // Hidden by default
+                                    fieldsGrid.appendChild(followUpGroup);
+                                }
                             } else {
-                                // Create and append if it doesn't exist
-                                const newFollowUpGroup = createFormGroup(field.followUp);
-                                if (newFollowUpGroup) {
-                                    newFollowUpGroup.id = `${field.name}FollowUpGroup`;
-                                    newFollowUpGroup.style.display = 'none'; // Hidden by default
-                                    fieldsGrid.appendChild(newFollowUpGroup);
+                                // Ensure it's hidden if the 'yes' option is not selected initially
+                                const radioInput = formGroup.querySelector(`input[name="${field.name}"]:checked`);
+                                if (!radioInput || radioInput.value !== 'yes') {
+                                    followUpGroup.style.display = 'none';
                                 }
                             }
                         }
@@ -1137,7 +1141,7 @@
         function initializeSignaturePad(canvasId) {
             const canvas = document.getElementById(canvasId);
             if (!canvas) {
-                console.error(`Canvas with ID ${canvasId} not found.`);
+                console.error(`Signature Pad: Canvas with ID ${canvasId} not found.`);
                 return;
             }
 
@@ -1155,6 +1159,9 @@
                 ctx.lineWidth = 2;
                 ctx.lineCap = 'round';
                 ctx.strokeStyle = '#000'; // Black signature color
+                ctx.fillStyle = '#fff'; // Ensure fill style is white for clearRect
+                ctx.fillRect(0, 0, canvas.width, canvas.height); // Fill with white background
+                console.log(`Signature Pad: Canvas ${canvasId} resized to ${canvas.width}x${canvas.height}`);
             };
 
             // Initial setup and on resize
@@ -1181,6 +1188,7 @@
                 isDrawing = true;
                 const pos = e.touches ? getTouchPos(e) : getMousePos(e);
                 [lastX, lastY] = [pos.x, pos.y];
+                console.log(`Signature Pad: Start drawing on ${canvasId} at (${lastX}, ${lastY})`);
             };
 
             const draw = (e) => {
@@ -1198,10 +1206,14 @@
                 const hiddenInput = document.getElementById(`${canvasId}Data`);
                 if (hiddenInput) {
                     hiddenInput.dataset.drawn = 'true';
+                    // console.log(`Signature Pad: Drawing on ${canvasId}, dataset.drawn set to true.`);
                 }
             };
 
             const stopDrawing = () => {
+                if (isDrawing) { // Only log if drawing was actually happening
+                    console.log(`Signature Pad: Stop drawing on ${canvasId}.`);
+                }
                 isDrawing = false;
             };
 
@@ -1228,6 +1240,7 @@
             const hiddenInput = document.getElementById(`${canvasId}Data`);
             if (hiddenInput) {
                 hiddenInput.dataset.drawn = 'false';
+                console.log(`Signature Pad: Initializing ${canvasId}, dataset.drawn set to false.`);
             }
         }
 
@@ -1235,10 +1248,13 @@
             const pad = signaturePads[canvasId];
             if (pad && pad.ctx) {
                 pad.ctx.clearRect(0, 0, pad.canvas.width, pad.canvas.height);
+                pad.ctx.fillStyle = '#fff'; // Ensure fill style is white for clearRect
+                pad.ctx.fillRect(0, 0, pad.canvas.width, pad.canvas.height); // Re-fill with white background
                 // Reset the drawn state
                 const hiddenInput = document.getElementById(`${canvasId}Data`);
                 if (hiddenInput) {
                     hiddenInput.dataset.drawn = 'false';
+                    console.log(`Signature Pad: Cleared ${canvasId}, dataset.drawn set to false.`);
                 }
             }
         }
@@ -1425,6 +1441,7 @@
                             } else if (result.errors) {
                                 // If backend sends specific validation errors
                                 errorMessage = 'Please correct the following issues: ' + Object.values(result.errors).join(', ');
+                                // You might want to also highlight specific fields here if backend errors map to frontend fields
                             }
                             showModal('Submission Error', `There was an error submitting your application: ${errorMessage}. Please try again.`, 'error');
                         }
@@ -1464,7 +1481,11 @@
                 const password = document.getElementById('adminPassword').value;
 
                 try {
-                    const response = await fetch('/.netlify/functions/download-data', {
+                    // Use window.location.origin to ensure an absolute URL for Netlify Functions
+                    const downloadUrl = `${window.location.origin}/.netlify/functions/download-data`;
+                    console.log('Attempting to fetch from:', downloadUrl); // Log the constructed URL
+
+                    const response = await fetch(downloadUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
