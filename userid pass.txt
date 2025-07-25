@@ -1,0 +1,2 @@
+the user ID is: hradmin@smegphillipines.com  
+and the password is: hradminpassword

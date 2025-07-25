@@ -669,6 +669,11 @@
         const modalMessage = document.getElementById('modalMessage');
         const loadingOverlay = document.getElementById('loadingOverlay');
 
+        // Make hideModal globally accessible for the onclick attribute
+        window.hideModal = function () {
+            customModal.classList.remove('visible');
+        }
+
         function showModal(title, message, type = 'success') {
             modalTitle.textContent = title;
             modalMessage.textContent = message;
@@ -680,10 +685,6 @@
                 customModal.querySelector('.modal-content').classList.remove('success');
                 customModal.querySelector('.modal-content').classList.add('error');
             }
-        }
-
-        function hideModal() {
-            customModal.classList.remove('visible');
         }
 
         function showLoading() {
@@ -1153,6 +1154,7 @@
 
         // Client-side validation function
         function validateForm() {
+            console.log('Starting client-side validation...');
             let isValid = true;
             const form = document.getElementById('hrApplicationForm');
             const formGroups = form.querySelectorAll('.form-group');
@@ -1171,14 +1173,15 @@
                         group.classList.add('error');
                         errorMessageSpan.textContent = 'This field is required.';
                         isValid = false;
+                        console.log(`Validation failed for ${input.name}: Required field is empty.`);
                     }
                     // Check for pattern validation (e.g., email, phone, SSS)
                     else if (input.pattern && input.value.trim() && !new RegExp(input.pattern).test(input.value.trim())) {
                         group.classList.add('error');
-                        // Use custom error message if provided in field data
                         const fieldData = formFields.flatMap(s => s.fields).find(f => f.name === input.name);
                         errorMessageSpan.textContent = fieldData && fieldData.errorMessage ? fieldData.errorMessage : 'Invalid format.';
                         isValid = false;
+                        console.log(`Validation failed for ${input.name}: Invalid format.`);
                     }
                     // Check for min/max for number inputs
                     else if (input.type === 'number' && input.value !== '' && (parseFloat(input.value) < parseFloat(input.min) || parseFloat(input.value) > parseFloat(input.max))) {
@@ -1186,6 +1189,7 @@
                         const fieldData = formFields.flatMap(s => s.fields).find(f => f.name === input.name);
                         errorMessageSpan.textContent = fieldData && fieldData.errorMessage ? fieldData.errorMessage : `Value must be between ${input.min} and ${input.max}.`;
                         isValid = false;
+                        console.log(`Validation failed for ${input.name}: Out of range.`);
                     }
                 } else {
                     // Handle radio groups (check if any radio in the group is required and not checked)
@@ -1197,6 +1201,7 @@
                             group.classList.add('error');
                             errorMessageSpan.textContent = 'This field is required.';
                             isValid = false;
+                            console.log(`Validation failed for radio group: Required option not selected.`);
                         }
                     }
                     // Handle file inputs (check if required and no file selected)
@@ -1205,6 +1210,7 @@
                         group.classList.add('error');
                         errorMessageSpan.textContent = 'This field is required.';
                         isValid = false;
+                        console.log(`Validation failed for file input: No file selected.`);
                     }
 
                     // Handle signature pad validation
@@ -1216,6 +1222,7 @@
                             group.classList.add('error');
                             errorMessageSpan.textContent = fieldData.errorMessage || 'Please provide your digital signature.';
                             isValid = false;
+                            console.log(`Validation failed for signature pad: No signature drawn.`);
                         }
                     }
                 }
@@ -1233,6 +1240,7 @@
                             followUpInput.closest('.form-group').classList.add('error');
                             followUpInput.closest('.form-group').querySelector('.error-message').textContent = 'This field is required when "YES" is selected.';
                             isValid = false;
+                            console.log(`Validation failed for follow-up field ${field.followUp.name}: Required when YES.`);
                         } else if (followUpInput) {
                             followUpInput.closest('.form-group').classList.remove('error');
                             followUpInput.closest('.form-group').querySelector('.error-message').textContent = '';
@@ -1241,7 +1249,7 @@
                     }
                 });
             });
-
+            console.log(`Client-side validation result: ${isValid}`);
             return isValid;
         }
 
@@ -1252,8 +1260,10 @@
             const form = document.getElementById('hrApplicationForm');
             form.addEventListener('submit', async (event) => {
                 event.preventDefault(); // Prevent default form submission
+                console.log('Submit button clicked. Preventing default form submission.');
 
                 if (validateForm()) {
+                    console.log('Client-side validation passed. Showing loading indicator...');
                     showLoading(); // Show loading indicator
 
                     // If validation passes, collect form data
@@ -1272,22 +1282,25 @@
                         // Only capture if something was actually drawn
                         if (canvas && hiddenSignatureInput && hiddenSignatureInput.dataset.drawn === 'true') {
                             data[signatureField.name] = canvas.toDataURL('image/png');
+                            console.log('Digital signature captured.');
                         } else {
                             data[signatureField.name] = null; // No signature provided
+                            console.log('No digital signature provided or drawn.');
                         }
                     }
 
                     // Handle file input separately (for now, just store file name)
                     const profilePictureInput = document.getElementById('profilePicture');
                     if (profilePictureInput && profilePictureInput.files.length > 0) {
-                        // In a real application, you would upload this to a cloud storage service
-                        // like Supabase Storage, Cloudinary, AWS S3, or Google Cloud Storage, and then save the URL.
                         data.profilePictureName = profilePictureInput.files[0].name;
+                        console.log('Profile picture name captured:', data.profilePictureName);
                     } else {
-                        data.profilePictureName = null; // Ensure field exists even if no file
+                        data.profilePictureName = null;
+                        console.log('No profile picture selected.');
                     }
 
                     try {
+                        console.log('Sending data to Netlify Function...');
                         // Send data to your Netlify Function
                         const response = await fetch('/.netlify/functions/submit-form', {
                             method: 'POST',
@@ -1298,9 +1311,10 @@
                         });
 
                         const result = await response.json();
+                        console.log('Response from Netlify Function:', response.status, result);
 
                         if (response.ok) {
-                            console.log('Success:', result);
+                            console.log('Form submission successful!');
                             showModal('Success!', 'Your application has been submitted successfully. We will review it shortly.', 'success');
                             form.reset(); // Clear the form
                             // Reset file input display
@@ -1311,17 +1325,18 @@
                                 clearSignature(signatureField.name);
                             }
                         } else {
-                            console.error('Error submitting form:', result);
+                            console.error('Error submitting form to backend:', result);
                             showModal('Submission Error', `There was an error submitting your application: ${result.message || 'Unknown error'}. Please try again.`, 'error');
                         }
                     } catch (error) {
-                        console.error('Network or unexpected error:', error);
+                        console.error('Network or unexpected error during fetch:', error);
                         showModal('Network Error', 'Could not connect to the server. Please check your internet connection and try again.', 'error');
                     } finally {
                         hideLoading(); // Hide loading indicator
+                        console.log('Loading indicator hidden.');
                     }
                 } else {
-                    console.log('Form validation failed.');
+                    console.log('Client-side validation failed. Showing validation error modal...');
                     // Optionally scroll to the first error
                     const firstError = document.querySelector('.form-group.error');
                     if (firstError) {
