@@ -1448,6 +1448,14 @@
                     
                     console.log('Manually collected data:', data);
                     console.log('Data keys:', Object.keys(data));
+                    console.log('Data has keys?', Object.keys(data).length > 0);
+                    
+                    // Force an alert to see the data
+                    if (Object.keys(data).length === 0) {
+                        alert('ERROR: No form data collected!');
+                    } else {
+                        alert(`SUCCESS: Collected ${Object.keys(data).length} fields`);
+                    }
 
                     // Capture digital signature (now checkbox agreement)
                     const signatureField = formFields.flatMap(s => s.fields).find(f => f.type === 'checkbox' && f.name === 'digitalSignature');
