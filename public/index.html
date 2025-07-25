@@ -1425,18 +1425,29 @@
                     
                     showLoading(); // Show loading indicator
 
-                    // If validation passes, collect form data
-                    const formData = new FormData(form);
+                    // If validation passes, collect form data manually
                     const data = {};
                     
-                    console.log('FormData entries:');
-                    for (let [key, value] of formData.entries()) {
-                        console.log(`${key}: ${value}`);
-                        data[key] = value;
-                    }
+                    // Collect all input, select, and textarea values
+                    const allInputs = form.querySelectorAll('input, select, textarea');
+                    allInputs.forEach(input => {
+                        if (input.type === 'radio') {
+                            if (input.checked) {
+                                data[input.name] = input.value;
+                            }
+                        } else if (input.type === 'checkbox') {
+                            if (input.name !== 'digitalSignature') { // Handle digitalSignature separately
+                                data[input.name] = input.checked;
+                            }
+                        } else if (input.type === 'file') {
+                            // Handle file inputs separately
+                        } else {
+                            data[input.name] = input.value;
+                        }
+                    });
                     
-                    console.log('Collected data object:', data);
-                    console.log('Data object keys:', Object.keys(data));
+                    console.log('Manually collected data:', data);
+                    console.log('Data keys:', Object.keys(data));
 
                     // Capture digital signature (now checkbox agreement)
                     const signatureField = formFields.flatMap(s => s.fields).find(f => f.type === 'checkbox' && f.name === 'digitalSignature');
