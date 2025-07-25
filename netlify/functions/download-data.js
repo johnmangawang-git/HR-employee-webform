@@ -3,6 +3,7 @@ const express = require('express');
 const serverless = require('serverless-http');
 const bodyParser = require('body-parser');
 const ExcelJS = require('exceljs'); // Import ExcelJS
+const JSZip = require('jszip'); // For creating ZIP files with multiple files
 // const { Pool } = require('pg'); // Uncomment this line if you are using PostgreSQL
 
 const app = express();
@@ -153,17 +154,46 @@ app.post('/.netlify/functions/download-data', async (req, res) => {
         console.log(`Added ${applications.length} rows to the Excel worksheet.`);
 
         // Generate the Excel buffer
-        const buffer = await workbook.xlsx.writeBuffer();
+        const excelBuffer = await workbook.xlsx.writeBuffer();
         console.log('Excel buffer generated successfully.');
 
-        // --- Set Headers for File Download ---
-        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        res.setHeader('Content-Disposition', `attachment; filename=HR_Applications_All_Data_${new Date().toISOString().slice(0, 10)}.xlsx`);
-        res.setHeader('Content-Length', buffer.length); // Important for some browsers
+        // --- Create ZIP file with Excel and signature images ---
+        const zip = new JSZip();
+        const dateStr = new Date().toISOString().slice(0, 10);
+        
+        // Add Excel file to ZIP
+        zip.file(`HR_Applications_Data_${dateStr}.xlsx`, excelBuffer);
+        
+        // Add signature images to ZIP
+        const signaturesFolder = zip.folder('digital_signatures');
+        let signatureCount = 0;
+        
+        applications.forEach((app, index) => {
+            if (app.digitalSignature && app.digitalSignature.startsWith('data:image/png;base64,')) {
+                // Extract base64 data (remove the data:image/png;base64, prefix)
+                const base64Data = app.digitalSignature.replace(/^data:image\/png;base64,/, '');
+                const fileName = `signature_${app.id || index + 1}_${(app.fullName || 'unknown').replace(/[^a-zA-Z0-9]/g, '_')}.png`;
+                
+                signaturesFolder.file(fileName, base64Data, { base64: true });
+                signatureCount++;
+                console.log(`Added signature file: ${fileName}`);
+            }
+        });
+        
+        console.log(`Added ${signatureCount} signature files to ZIP.`);
+        
+        // Generate ZIP buffer
+        const zipBuffer = await zip.generateAsync({ type: 'nodebuffer' });
+        console.log('ZIP file generated successfully.');
 
-        // Send the buffer as the response
-        res.send(buffer);
-        console.log('Excel file sent as response.');
+        // --- Set Headers for ZIP Download ---
+        res.setHeader('Content-Type', 'application/zip');
+        res.setHeader('Content-Disposition', `attachment; filename=HR_Applications_Complete_${dateStr}.zip`);
+        res.setHeader('Content-Length', zipBuffer.length);
+
+        // Send the ZIP buffer as the response
+        res.send(zipBuffer);
+        console.log('ZIP file sent as response.');
 
     } catch (error) {
         console.error('Error in download-data function:', error);

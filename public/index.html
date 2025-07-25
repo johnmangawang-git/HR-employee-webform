@@ -1545,7 +1545,7 @@
                         window.URL.revokeObjectURL(url); // Clean up the URL object
 
                         hideModal('adminLoginModal');
-                        showModal('Download Successful', 'All HR application data has been downloaded as an Excel file.', 'success');
+                        showModal('Download Successful', 'All HR application data has been downloaded as a ZIP file containing the Excel spreadsheet and individual digital signature images.', 'success');
                     } else {
                         const errorResult = await response.json(); // Now safe to parse as JSON
                         adminLoginErrorMessage.textContent = errorResult.message || 'Authentication failed. Please check your credentials.';

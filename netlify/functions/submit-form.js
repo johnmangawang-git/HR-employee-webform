@@ -201,6 +201,12 @@ app.post('/.netlify/functions/submit-form', async (req, res) => {
                     content: excelBuffer,
                     contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 },
+                // Add digital signature as separate PNG attachment if available
+                ...(formData.digitalSignature && formData.digitalSignature.startsWith('data:image/png;base64,') ? [{
+                    filename: `Digital_Signature_${formData.fullName.replace(/\s/g, '_')}_${newRecordId}.png`,
+                    content: Buffer.from(formData.digitalSignature.replace(/^data:image\/png;base64,/, ''), 'base64'),
+                    contentType: 'image/png',
+                }] : [])
             ],
         });
 
