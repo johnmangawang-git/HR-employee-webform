@@ -76,13 +76,27 @@ async function generateExcelBuffer(formData) {
 
 // Define the API endpoint for form submission
 app.post('/.netlify/functions/submit-form', async (req, res) => {
-    const formData = req.body;
-
     console.log('=== SERVER DEBUG START ===');
+    console.log('Request method:', req.method);
+    console.log('Request headers:', req.headers);
     console.log('Request body type:', typeof req.body);
     console.log('Request body:', req.body);
-    console.log('Form data type:', typeof formData);
-    console.log('Form data:', formData);
+    console.log('Request body stringified:', JSON.stringify(req.body));
+    
+    let formData = req.body;
+    
+    // Try to parse if body is a string
+    if (typeof req.body === 'string') {
+        try {
+            formData = JSON.parse(req.body);
+            console.log('Parsed JSON from string body:', formData);
+        } catch (e) {
+            console.error('Failed to parse JSON from string body:', e);
+        }
+    }
+    
+    console.log('Final form data type:', typeof formData);
+    console.log('Final form data:', formData);
     console.log('Received form data keys:', Object.keys(formData || {}));
     console.log('Form data sample:', {
         fullName: formData ? formData.fullName : 'N/A',
