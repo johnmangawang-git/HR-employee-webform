@@ -1415,14 +1415,28 @@
 
                 if (validateForm()) {
                     console.log('Client-side validation passed. Showing loading indicator...');
+                    
+                    // Debug: Check what form elements exist
+                    const allInputs = form.querySelectorAll('input, select, textarea');
+                    console.log('Form elements found:', allInputs.length);
+                    allInputs.forEach(input => {
+                        console.log(`Element: ${input.tagName}, name: ${input.name}, value: ${input.value}, type: ${input.type}`);
+                    });
+                    
                     showLoading(); // Show loading indicator
 
                     // If validation passes, collect form data
                     const formData = new FormData(form);
                     const data = {};
+                    
+                    console.log('FormData entries:');
                     for (let [key, value] of formData.entries()) {
+                        console.log(`${key}: ${value}`);
                         data[key] = value;
                     }
+                    
+                    console.log('Collected data object:', data);
+                    console.log('Data object keys:', Object.keys(data));
 
                     // Capture digital signature (now checkbox agreement)
                     const signatureField = formFields.flatMap(s => s.fields).find(f => f.type === 'checkbox' && f.name === 'digitalSignature');
