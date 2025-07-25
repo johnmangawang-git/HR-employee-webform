@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HR Application Form - Mondo Cucina Inc.</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         /* Global Styles */
@@ -1475,6 +1476,20 @@
                             }
                         } else {
                             console.error('Error submitting form to backend:', result);
+                            console.error('Detailed validation errors:', result.errors);
+                            
+                            // Log each validation error in detail
+                            if (result.errors) {
+                                Object.keys(result.errors).forEach(field => {
+                                    console.error(`Validation error for ${field}:`, result.errors[field]);
+                                });
+                            }
+                            if (result.errors) {
+                                Object.keys(result.errors).forEach(field => {
+                                    console.error(`Validation error for ${field}: ${result.errors[field]}`);
+                                });
+                            }
+                            
                             let errorMessage = 'Unknown error.';
                             if (result.message) {
                                 errorMessage = result.message;

@@ -78,6 +78,13 @@ async function generateExcelBuffer(formData) {
 app.post('/.netlify/functions/submit-form', async (req, res) => {
     const formData = req.body;
 
+    console.log('Received form data keys:', Object.keys(formData));
+    console.log('Form data sample:', {
+        fullName: formData.fullName,
+        emailAdd: formData.emailAdd,
+        digitalSignature: formData.digitalSignature
+    });
+
     if (!formData) {
         return res.status(400).json({ message: 'No form data provided.' });
     }
@@ -111,8 +118,13 @@ app.post('/.netlify/functions/submit-form', async (req, res) => {
         errors.dateAccomplished = 'Date Accomplished is required.';
     }
     // For digital signature (now checkbox agreement), check if it's present if required
+    console.log('Server received digitalSignature:', formData.digitalSignature);
+    console.log('digitalSignature type:', typeof formData.digitalSignature);
     if (formData.digitalSignature !== 'agreed') {
         errors.digitalSignature = 'You must agree to the certification to proceed.';
+        console.log('digitalSignature validation failed');
+    } else {
+        console.log('digitalSignature validation passed');
     }
 
     if (Object.keys(errors).length > 0) {
