@@ -1416,33 +1416,33 @@
                 if (validateForm()) {
                     console.log('Client-side validation passed. Showing loading indicator...');
                     
-                    // Debug: Check what form elements exist
-                    const allInputs = form.querySelectorAll('input, select, textarea');
-                    console.log('Form elements found:', allInputs.length);
-                    allInputs.forEach(input => {
-                        console.log(`Element: ${input.tagName}, name: ${input.name}, value: ${input.value}, type: ${input.type}`);
-                    });
-                    
                     showLoading(); // Show loading indicator
 
                     // If validation passes, collect form data manually
                     const data = {};
                     
-                    // Collect all input, select, and textarea values
+                    // Debug: Check what form elements exist and collect their values
                     const allInputs = form.querySelectorAll('input, select, textarea');
+                    console.log('Form elements found:', allInputs.length);
                     allInputs.forEach(input => {
+                        console.log(`Processing: ${input.tagName}, name: ${input.name}, value: ${input.value}, type: ${input.type}`);
+                        
                         if (input.type === 'radio') {
                             if (input.checked) {
                                 data[input.name] = input.value;
+                                console.log(`Radio selected: ${input.name} = ${input.value}`);
                             }
                         } else if (input.type === 'checkbox') {
                             if (input.name !== 'digitalSignature') { // Handle digitalSignature separately
                                 data[input.name] = input.checked;
+                                console.log(`Checkbox: ${input.name} = ${input.checked}`);
                             }
                         } else if (input.type === 'file') {
                             // Handle file inputs separately
+                            console.log(`File input: ${input.name} (handled separately)`);
                         } else {
                             data[input.name] = input.value;
+                            console.log(`Input: ${input.name} = ${input.value}`);
                         }
                     });
                     
