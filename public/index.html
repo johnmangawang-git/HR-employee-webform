@@ -1469,6 +1469,7 @@
                     const profilePictureInput = document.getElementById('profilePicture');
                     if (profilePictureInput && profilePictureInput.files.length > 0) {
                         const file = profilePictureInput.files[0];
+                        console.log('Processing file:', file.name, 'Type:', file.type, 'Size:', file.size);
                         
                         // Validate file type
                         if (!file.type.startsWith('image/')) {
@@ -1485,17 +1486,24 @@
                         }
                         
                         try {
+                            console.log('Converting file to base64...');
                             // Convert file to base64
                             const base64 = await new Promise((resolve, reject) => {
                                 const reader = new FileReader();
-                                reader.onload = () => resolve(reader.result);
-                                reader.onerror = reject;
+                                reader.onload = () => {
+                                    console.log('File read successfully, base64 length:', reader.result.length);
+                                    resolve(reader.result);
+                                };
+                                reader.onerror = (error) => {
+                                    console.error('FileReader error:', error);
+                                    reject(error);
+                                };
                                 reader.readAsDataURL(file);
                             });
                             
                             data.profilePictureBase64 = base64;
                             data.profilePictureName = file.name;
-                            console.log('Profile picture prepared for upload:', file.name, 'Size:', file.size);
+                            console.log('Profile picture prepared for upload:', file.name, 'Base64 length:', base64.length);
                         } catch (error) {
                             console.error('Error processing image:', error);
                             alert('Error processing image. Please try again.');

@@ -221,7 +221,12 @@ exports.handler = async (event, context) => {
         ];
 
         console.log('Values array length:', values.length);
+        console.log('Expected: 50 values for database columns');
         console.log('Using complete INSERT with ALL form fields');
+        
+        // Debug: Log first few values to see what we're inserting
+        console.log('First 10 values:', values.slice(0, 10));
+        console.log('Last 10 values:', values.slice(-10));
 
         const result = await pool.query(insertQuery, values);
         newRecordId = result.rows[0].id; // Get the ID of the newly inserted row
