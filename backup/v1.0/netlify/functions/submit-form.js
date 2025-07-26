@@ -2,7 +2,6 @@
 const { Pool } = require('pg'); // PostgreSQL client for Supabase
 const ExcelJS = require('exceljs'); // For Excel file generation
 const nodemailer = require('nodemailer'); // For sending emails
-const cloudinary = require('cloudinary').v2; // For image upload
 
 // Initialize PostgreSQL Pool for Supabase
 const pool = new Pool({
@@ -10,13 +9,6 @@ const pool = new Pool({
     ssl: {
         rejectUnauthorized: false // Required for Supabase connections from serverless environments
     }
-});
-
-// Configure Cloudinary
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 // Configure Nodemailer transporter using environment variables
@@ -145,83 +137,34 @@ exports.handler = async (event, context) => {
         };
     }
 
-    // --- File Upload to Cloudinary ---
-    let profilePictureUrl = null;
-    if (formData.profilePictureBase64) {
-        try {
-            console.log('Uploading profile picture to Cloudinary...');
-            const uploadResult = await cloudinary.uploader.upload(formData.profilePictureBase64, {
-                folder: 'hr-applications', // Organize uploads in a folder
-                public_id: `profile_${Date.now()}_${formData.fullName.replace(/\s+/g, '_')}`, // Unique filename
-                resource_type: 'image',
-                transformation: [
-                    { width: 400, height: 400, crop: 'fill' }, // Resize to 400x400
-                    { quality: 'auto' } // Optimize quality
-                ]
-            });
-            
-            profilePictureUrl = uploadResult.secure_url;
-            console.log('Profile picture uploaded successfully:', profilePictureUrl);
-        } catch (uploadError) {
-            console.error('Error uploading to Cloudinary:', uploadError);
-            // Continue without image - don't fail the entire form submission
-            console.log('Continuing form submission without profile picture');
-        }
-    }
-
     // --- Database Integration (PostgreSQL via Supabase) ---
     let newRecordId;
     try {
         // Prepare data for insertion. Ensure all fields are handled.
-        // Complete INSERT with ALL form fields
+        // Simplified INSERT with only essential fields to avoid column mismatch
         const insertQuery = `
       INSERT INTO applications (
-        full_name, nick_name, mobile_no, email_add, birth_date, civil_status, age, birth_place,
-        nationality, religion, sss_no, philhealth_no, hdmf_no, national_id_no, drivers_license, tin_no,
-        current_address, provincial_address,
-        father_name, father_occupation, father_age, father_contact_no,
-        mother_name, mother_occupation, mother_age, mother_contact_no,
-        prev_company_1, position_1, dates_employed_1, reason_for_leaving_1,
-        prev_company_2, position_2, dates_employed_2, reason_for_leaving_2,
-        key_skills, certifications, languages,
-        ref_1_name, ref_1_relationship, ref_1_contact_no,
-        ref_2_name, ref_2_relationship, ref_2_contact_no,
-        past_employment_issues, past_employment_issues_specify,
-        legal_issues, legal_issues_specify,
-        medical_history, medical_history_specify,
-        referred_by, signature_name, date_accomplished, digital_signature,
-        profile_picture_url, submission_timestamp
+        full_name, email_add, mobile_no, birth_date, current_address,
+        signature_name, date_accomplished, digital_signature, submission_timestamp
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16,
-        $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30,
-        $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44,
-        $45, $46, $47, $48, $49, $50, $51, NOW()
+        $1, $2, $3, $4, $5, $6, $7, $8, NOW()
       ) RETURNING id;
     `;
 
-        // Complete values array with ALL form fields
+        // Simplified values array to match the essential columns
         const values = [
-            formData.fullName, formData.nickName, formData.mobileNo, formData.emailAdd, 
-            formData.birthDate, formData.civilStatus, formData.age, formData.birthPlace,
-            formData.nationality, formData.religion, formData.sssNo, formData.philhealthNo, 
-            formData.hdmfNo, formData.nationalIdNo, formData.driversLicense, formData.tinNo,
-            formData.currentAddress, formData.provincialAddress,
-            formData.fatherName, formData.fatherOccupation, formData.fatherAge, formData.fatherContactNo,
-            formData.motherName, formData.motherOccupation, formData.motherAge, formData.motherContactNo,
-            formData.prevCompany1, formData.position1, formData.datesEmployed1, formData.reasonForLeaving1,
-            formData.prevCompany2, formData.position2, formData.datesEmployed2, formData.reasonForLeaving2,
-            formData.keySkills, formData.certifications, formData.languages,
-            formData.ref1Name, formData.ref1Relationship, formData.ref1ContactNo,
-            formData.ref2Name, formData.ref2Relationship, formData.ref2ContactNo,
-            formData.pastEmploymentIssues, formData.pastEmploymentIssuesSpecify,
-            formData.legalIssues, formData.legalIssuesSpecify,
-            formData.medicalHistory, formData.medicalHistorySpecify,
-            formData.referredBy, formData.signatureName, formData.dateAccomplished, formData.digitalSignature,
-            profilePictureUrl // URL from Cloudinary upload
+            formData.fullName,
+            formData.emailAdd,
+            formData.mobileNo,
+            formData.birthDate,
+            formData.currentAddress,
+            formData.signatureName,
+            formData.dateAccomplished,
+            formData.digitalSignature
         ];
 
         console.log('Values array length:', values.length);
-        console.log('Using complete INSERT with ALL form fields');
+        console.log('Using simplified INSERT with essential fields only');
 
         const result = await pool.query(insertQuery, values);
         newRecordId = result.rows[0].id; // Get the ID of the newly inserted row

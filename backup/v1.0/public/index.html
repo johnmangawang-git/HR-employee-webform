@@ -1465,45 +1465,14 @@
                         }
                     }
 
-                    // Handle file input - convert to base64 for Cloudinary upload
+                    // Handle file input separately (for now, just store file name)
                     const profilePictureInput = document.getElementById('profilePicture');
                     if (profilePictureInput && profilePictureInput.files.length > 0) {
-                        const file = profilePictureInput.files[0];
-                        
-                        // Validate file type
-                        if (!file.type.startsWith('image/')) {
-                            alert('Please select a valid image file.');
-                            hideLoading();
-                            return;
-                        }
-                        
-                        // Validate file size (max 5MB)
-                        if (file.size > 5 * 1024 * 1024) {
-                            alert('Image file size must be less than 5MB.');
-                            hideLoading();
-                            return;
-                        }
-                        
-                        try {
-                            // Convert file to base64
-                            const base64 = await new Promise((resolve, reject) => {
-                                const reader = new FileReader();
-                                reader.onload = () => resolve(reader.result);
-                                reader.onerror = reject;
-                                reader.readAsDataURL(file);
-                            });
-                            
-                            data.profilePictureBase64 = base64;
-                            data.profilePictureName = file.name;
-                            console.log('Profile picture prepared for upload:', file.name, 'Size:', file.size);
-                        } catch (error) {
-                            console.error('Error processing image:', error);
-                            alert('Error processing image. Please try again.');
-                            hideLoading();
-                            return;
-                        }
+                        // In a real application, you would upload this to a cloud storage service
+                        // like Supabase Storage, Cloudinary, AWS S3, or Google Cloud Storage, and then save the URL.
+                        data.profilePictureName = profilePictureInput.files[0].name;
+                        console.log('Profile picture name captured:', data.profilePictureName);
                     } else {
-                        data.profilePictureBase64 = null;
                         data.profilePictureName = null;
                         console.log('No profile picture selected.');
                     }

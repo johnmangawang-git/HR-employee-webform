@@ -1,8 +1,7 @@
-// Native Netlify function for form submission (without Express)
+// netlify/functions/submit-form.js
 const { Pool } = require('pg'); // PostgreSQL client for Supabase
 const ExcelJS = require('exceljs'); // For Excel file generation
 const nodemailer = require('nodemailer'); // For sending emails
-const cloudinary = require('cloudinary').v2; // For image upload
 
 // Initialize PostgreSQL Pool for Supabase
 const pool = new Pool({
@@ -10,13 +9,6 @@ const pool = new Pool({
     ssl: {
         rejectUnauthorized: false // Required for Supabase connections from serverless environments
     }
-});
-
-// Configure Cloudinary
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 // Configure Nodemailer transporter using environment variables
@@ -62,6 +54,7 @@ async function generateExcelBuffer(formData) {
     return await workbook.xlsx.writeBuffer();
 }
 
+// Netlify function handler
 exports.handler = async (event, context) => {
     // Handle CORS
     const headers = {
@@ -86,7 +79,7 @@ exports.handler = async (event, context) => {
     let formData;
     try {
         formData = JSON.parse(event.body);
-        console.log('Form data received:', formData);
+        console.log('Received form data:', formData);
     } catch (error) {
         console.error('Failed to parse JSON:', error);
         return {
@@ -95,13 +88,16 @@ exports.handler = async (event, context) => {
             body: JSON.stringify({ message: 'Invalid JSON' }),
         };
     }
+    console.log('Received form data keys:', Object.keys(formData || {}));
+    console.log('Form data sample:', {
+        fullName: formData ? formData.fullName : 'N/A',
+        emailAdd: formData ? formData.emailAdd : 'N/A',
+        digitalSignature: formData ? formData.digitalSignature : 'N/A'
+    });
+    console.log('=== SERVER DEBUG END ===');
 
     if (!formData) {
-        return {
-            statusCode: 400,
-            headers,
-            body: JSON.stringify({ message: 'No form data provided.' }),
-        };
+        return res.status(400).json({ message: 'No form data provided.' });
     }
 
     // --- Server-side Validation ---
@@ -133,52 +129,29 @@ exports.handler = async (event, context) => {
         errors.dateAccomplished = 'Date Accomplished is required.';
     }
     // For digital signature (now checkbox agreement), check if it's present if required
+    console.log('Server received digitalSignature:', formData.digitalSignature);
+    console.log('digitalSignature type:', typeof formData.digitalSignature);
     if (formData.digitalSignature !== 'agreed') {
         errors.digitalSignature = 'You must agree to the certification to proceed.';
+        console.log('digitalSignature validation failed');
+    } else {
+        console.log('digitalSignature validation passed');
     }
 
     if (Object.keys(errors).length > 0) {
-        return {
-            statusCode: 400,
-            headers,
-            body: JSON.stringify({ message: 'Validation failed', errors: errors }),
-        };
-    }
-
-    // --- File Upload to Cloudinary ---
-    let profilePictureUrl = null;
-    if (formData.profilePictureBase64) {
-        try {
-            console.log('Uploading profile picture to Cloudinary...');
-            const uploadResult = await cloudinary.uploader.upload(formData.profilePictureBase64, {
-                folder: 'hr-applications', // Organize uploads in a folder
-                public_id: `profile_${Date.now()}_${formData.fullName.replace(/\s+/g, '_')}`, // Unique filename
-                resource_type: 'image',
-                transformation: [
-                    { width: 400, height: 400, crop: 'fill' }, // Resize to 400x400
-                    { quality: 'auto' } // Optimize quality
-                ]
-            });
-            
-            profilePictureUrl = uploadResult.secure_url;
-            console.log('Profile picture uploaded successfully:', profilePictureUrl);
-        } catch (uploadError) {
-            console.error('Error uploading to Cloudinary:', uploadError);
-            // Continue without image - don't fail the entire form submission
-            console.log('Continuing form submission without profile picture');
-        }
+        return res.status(400).json({ message: 'Validation failed', errors: errors });
     }
 
     // --- Database Integration (PostgreSQL via Supabase) ---
     let newRecordId;
     try {
         // Prepare data for insertion. Ensure all fields are handled.
-        // Complete INSERT with ALL form fields
+        // For complex objects or arrays, you might need to JSON.stringify them.
         const insertQuery = `
       INSERT INTO applications (
-        full_name, nick_name, mobile_no, email_add, birth_date, civil_status, age, birth_place,
-        nationality, religion, sss_no, philhealth_no, hdmf_no, national_id_no, drivers_license, tin_no,
-        current_address, provincial_address,
+        full_name, email_add, mobile_no, birth_date, civil_status, age, birth_place,
+        nationality, religion, sss_no, philhealth_no, hdmf_no, national_id_no,
+        drivers_license, tin_no, current_address, provincial_address,
         father_name, father_occupation, father_age, father_contact_no,
         mother_name, mother_occupation, mother_age, mother_contact_no,
         prev_company_1, position_1, dates_employed_1, reason_for_leaving_1,
@@ -190,22 +163,18 @@ exports.handler = async (event, context) => {
         legal_issues, legal_issues_specify,
         medical_history, medical_history_specify,
         referred_by, signature_name, date_accomplished, digital_signature,
-        profile_picture_url, submission_timestamp
+        profile_picture_name, submission_timestamp
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16,
-        $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30,
-        $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44,
-        $45, $46, $47, $48, $49, $50, $51, NOW()
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17,
+        $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33,
+        $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44, $45, $46, $47, $48, $49, $50, $51, NOW()
       ) RETURNING id;
     `;
 
-        // Complete values array with ALL form fields
         const values = [
-            formData.fullName, formData.nickName, formData.mobileNo, formData.emailAdd, 
-            formData.birthDate, formData.civilStatus, formData.age, formData.birthPlace,
-            formData.nationality, formData.religion, formData.sssNo, formData.philhealthNo, 
-            formData.hdmfNo, formData.nationalIdNo, formData.driversLicense, formData.tinNo,
-            formData.currentAddress, formData.provincialAddress,
+            formData.fullName, formData.emailAdd, formData.mobileNo, formData.birthDate, formData.civilStatus, formData.age, formData.birthPlace,
+            formData.nationality, formData.religion, formData.sssNo, formData.philhealthNo, formData.hdmfNo, formData.nationalIdNo,
+            formData.driversLicense, formData.tinNo, formData.currentAddress, formData.provincialAddress,
             formData.fatherName, formData.fatherOccupation, formData.fatherAge, formData.fatherContactNo,
             formData.motherName, formData.motherOccupation, formData.motherAge, formData.motherContactNo,
             formData.prevCompany1, formData.position1, formData.datesEmployed1, formData.reasonForLeaving1,
@@ -217,11 +186,8 @@ exports.handler = async (event, context) => {
             formData.legalIssues, formData.legalIssuesSpecify,
             formData.medicalHistory, formData.medicalHistorySpecify,
             formData.referredBy, formData.signatureName, formData.dateAccomplished, formData.digitalSignature,
-            profilePictureUrl // URL from Cloudinary upload
+            formData.profilePictureName
         ];
-
-        console.log('Values array length:', values.length);
-        console.log('Using complete INSERT with ALL form fields');
 
         const result = await pool.query(insertQuery, values);
         newRecordId = result.rows[0].id; // Get the ID of the newly inserted row
@@ -230,11 +196,7 @@ exports.handler = async (event, context) => {
 
     } catch (error) {
         console.error('Database error or server-side validation issue:', error);
-        return {
-            statusCode: 500,
-            headers,
-            body: JSON.stringify({ message: 'Error saving form data to database.', error: error.message }),
-        };
+        return res.status(500).json({ message: 'Error saving form data to database.', error: error.message });
     }
 
     // --- Email Sending with Excel Attachment ---
@@ -267,23 +229,13 @@ exports.handler = async (event, context) => {
         });
 
         console.log('Email sent successfully!');
-        return {
-            statusCode: 200,
-            headers,
-            body: JSON.stringify({ message: 'Form submitted and email sent successfully!', dataId: newRecordId }),
-        };
+        res.status(200).json({ message: 'Form submitted and email sent successfully!', dataId: newRecordId });
 
     } catch (emailError) {
         console.error('Error sending email:', emailError);
         // Even if email fails, we should still confirm form submission to user if DB save was successful
-        return {
-            statusCode: 200,
-            headers,
-            body: JSON.stringify({ 
-                message: 'Form submitted successfully, but failed to send email notification.', 
-                dataId: newRecordId, 
-                emailError: emailError.message 
-            }),
-        };
+        res.status(200).json({ message: 'Form submitted successfully, but failed to send email notification.', dataId: newRecordId, emailError: emailError.message });
     }
-};
+});
+
+}; // End of exports.handler function
