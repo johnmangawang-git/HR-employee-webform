@@ -173,56 +173,34 @@ exports.handler = async (event, context) => {
     let newRecordId;
     try {
         // Prepare data for insertion. Ensure all fields are handled.
-        // Complete INSERT with ALL form fields
+        // Temporary: Essential fields + image URL (to test Cloudinary upload)
         const insertQuery = `
       INSERT INTO applications (
-        full_name, nick_name, mobile_no, email_add, birth_date, civil_status, age, birth_place,
-        nationality, religion, sss_no, philhealth_no, hdmf_no, national_id_no, drivers_license, tin_no,
-        current_address, provincial_address,
-        father_name, father_occupation, father_age, father_contact_no,
-        mother_name, mother_occupation, mother_age, mother_contact_no,
-        prev_company_1, position_1, dates_employed_1, reason_for_leaving_1,
-        prev_company_2, position_2, dates_employed_2, reason_for_leaving_2,
-        key_skills, certifications, languages,
-        ref_1_name, ref_1_relationship, ref_1_contact_no,
-        ref_2_name, ref_2_relationship, ref_2_contact_no,
-        past_employment_issues, past_employment_issues_specify,
-        legal_issues, legal_issues_specify,
-        medical_history, medical_history_specify,
-        referred_by, signature_name, date_accomplished, digital_signature,
+        full_name, email_add, mobile_no, birth_date, current_address,
+        signature_name, date_accomplished, digital_signature, 
         profile_picture_url, submission_timestamp
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16,
-        $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30,
-        $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44,
-        $45, $46, $47, $48, $49, $50, $51, NOW()
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, NOW()
       ) RETURNING id;
     `;
 
-        // Complete values array with ALL form fields
+        // Temporary: Essential values + image URL (to test Cloudinary upload)
         const values = [
-            formData.fullName, formData.nickName, formData.mobileNo, formData.emailAdd, 
-            formData.birthDate, formData.civilStatus, formData.age, formData.birthPlace,
-            formData.nationality, formData.religion, formData.sssNo, formData.philhealthNo, 
-            formData.hdmfNo, formData.nationalIdNo, formData.driversLicense, formData.tinNo,
-            formData.currentAddress, formData.provincialAddress,
-            formData.fatherName, formData.fatherOccupation, formData.fatherAge, formData.fatherContactNo,
-            formData.motherName, formData.motherOccupation, formData.motherAge, formData.motherContactNo,
-            formData.prevCompany1, formData.position1, formData.datesEmployed1, formData.reasonForLeaving1,
-            formData.prevCompany2, formData.position2, formData.datesEmployed2, formData.reasonForLeaving2,
-            formData.keySkills, formData.certifications, formData.languages,
-            formData.ref1Name, formData.ref1Relationship, formData.ref1ContactNo,
-            formData.ref2Name, formData.ref2Relationship, formData.ref2ContactNo,
-            formData.pastEmploymentIssues, formData.pastEmploymentIssuesSpecify,
-            formData.legalIssues, formData.legalIssuesSpecify,
-            formData.medicalHistory, formData.medicalHistorySpecify,
-            formData.referredBy, formData.signatureName, formData.dateAccomplished, formData.digitalSignature,
+            formData.fullName,
+            formData.emailAdd,
+            formData.mobileNo,
+            formData.birthDate,
+            formData.currentAddress,
+            formData.signatureName,
+            formData.dateAccomplished,
+            formData.digitalSignature,
             profilePictureUrl // URL from Cloudinary upload
         ];
 
         console.log('Values array length:', values.length);
-        console.log('Expected: 50 values for database columns');
-        console.log('Using complete INSERT with ALL form fields');
+        console.log('Expected: 9 values for essential columns');
+        console.log('Profile picture URL:', profilePictureUrl);
+        console.log('Using essential INSERT for testing Cloudinary upload');
         
         // Debug: Log first few values to see what we're inserting
         console.log('First 10 values:', values.slice(0, 10));
