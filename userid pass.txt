@@ -1,2 +1,21 @@
-the user ID is: hradmin@smegphillipines.com  
+the user ID is: hradmin@smegphilippines.com
 and the password is: hradminpassword
+
+https://console.cloudinary.com/
+Cloud name: ddcafwfkb
+api key:268153951414975
+skey:7mJ80mF14ilbfbWH9H2OL02CsnQ
+
+
+=================================
+
+Main form: https://your-site.netlify.app/ - Should be clean, no admin buttons
+Admin dashboard: https://your-site.netlify.app/admin.html - Secure admin interface
+
+=====================================
+Quick Tests:result
+
+Check your Cloudinary dashboard >>> i did not see anything here
+Check your database >> i see my tables
+Check your email >> i did not received any email which is fine, keep this turned off.
+Try admin download >> admin download is working correctly.

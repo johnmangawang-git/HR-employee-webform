@@ -734,11 +734,7 @@
             <!-- Form sections will be dynamically generated here by JavaScript -->
         </form>
 
-        <div style="margin-top: 40px; text-align: center;">
-            <button id="downloadDataButton" class="submit-button" style="background: var(--gradient-1);">
-                Download All Submitted Data (Admin)
-            </button>
-        </div>
+        <!-- Admin download button removed for security - moved to separate admin page -->
     </div>
 
     <!-- Custom Modal for General Messages -->
@@ -750,25 +746,7 @@
         </div>
     </div>
 
-    <!-- Admin Login Modal -->
-    <div id="adminLoginModal" class="modal-overlay">
-        <div class="modal-content">
-            <h3>Admin Login</h3>
-            <form id="adminLoginForm">
-                <div class="form-group">
-                    <label for="adminUsername">Username (Email):</label>
-                    <input type="email" id="adminUsername" name="username" required autocomplete="username">
-                </div>
-                <div class="form-group">
-                    <label for="adminPassword">Password:</label>
-                    <input type="password" id="adminPassword" name="password" required autocomplete="current-password">
-                </div>
-                <span id="adminLoginErrorMessage" class="error-message"></span>
-                <button type="submit" class="admin-login-button">Login & Download</button>
-            </form>
-            <button class="close-button" style="margin-top: 20px;" onclick="hideModal('adminLoginModal')">Cancel</button>
-        </div>
-    </div>
+    <!-- Admin login modal removed - moved to separate admin page -->
 
     <!-- Loading Indicator -->
     <div id="loadingOverlay" class="loading-overlay">
@@ -1588,81 +1566,7 @@
                 }
             });
 
-            // --- Admin Download Button Logic ---
-            const downloadDataButton = document.getElementById('downloadDataButton');
-            const adminLoginForm = document.getElementById('adminLoginForm');
-
-            downloadDataButton.addEventListener('click', () => {
-                adminLoginModal.classList.add('visible');
-                document.getElementById('adminUsername').focus(); // Focus on username field
-            });
-
-            adminLoginForm.addEventListener('submit', async (event) => {
-                event.preventDefault();
-                adminLoginErrorMessage.textContent = ''; // Clear previous errors
-                showLoading();
-
-                const username = document.getElementById('adminUsername').value;
-                const password = document.getElementById('adminPassword').value;
-
-                console.log('Frontend sending username:', username);
-                console.log('Frontend sending password length:', password.length);
-
-                try {
-                    // Use window.location.origin to ensure an absolute URL for Netlify Functions
-                    const downloadUrl = `${window.location.origin}/.netlify/functions/download-data`;
-                    console.log('Attempting to fetch from:', downloadUrl); // Log the constructed URL
-
-                    const response = await fetch(downloadUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ username, password }),
-                    });
-
-                    if (response.ok) {
-                        // Check content type to determine if it's a file download or JSON error
-                        const contentType = response.headers.get('content-type');
-                        
-                        if (contentType && contentType.includes('application/zip')) {
-                            // Success! Download the ZIP file
-                            const blob = await response.blob();
-                            const url = window.URL.createObjectURL(blob);
-                            const a = document.createElement('a');
-                            a.href = url;
-                            a.download = `HR_Applications_Complete_${new Date().toISOString().slice(0, 10)}.zip`;
-                            document.body.appendChild(a);
-                            a.click();
-                            a.remove();
-                            window.URL.revokeObjectURL(url); // Clean up the URL object
-
-                            hideModal('adminLoginModal');
-                            showModal('Download Successful', 'All HR application data has been downloaded as a ZIP file containing the Excel spreadsheet.', 'success');
-                        } else {
-                            // Unknown content type, try to handle as text
-                            const textResponse = await response.text();
-                            console.error('Unexpected content type:', contentType, 'Response:', textResponse);
-                            adminLoginErrorMessage.textContent = 'Unexpected server response. Please try again.';
-                        }
-                    } else {
-                        // Error response - should be JSON
-                        try {
-                            const errorResult = await response.json();
-                            adminLoginErrorMessage.textContent = errorResult.message || 'Authentication failed. Please check your credentials.';
-                            console.error('Admin login failed:', errorResult);
-                        } catch (parseError) {
-                            console.error('Failed to parse error response:', parseError);
-                            adminLoginErrorMessage.textContent = 'Authentication failed. Please check your credentials.';
-                        }
-                    }
-                } catch (error) {
-                    console.error('Network error during admin login/download:', error);
-                    adminLoginErrorMessage.textContent = 'Network error or server issue. Please try again.';
-                } finally {
-                    hideLoading();
-                }
-            });
+            // Admin download functionality removed - moved to separate admin page
         });
     </script>
 </body>

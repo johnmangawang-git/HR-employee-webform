@@ -1,7 +1,7 @@
 // Native Netlify function for form submission (without Express)
 const { Pool } = require('pg'); // PostgreSQL client for Supabase
-const ExcelJS = require('exceljs'); // For Excel file generation
-const nodemailer = require('nodemailer'); // For sending emails
+// ExcelJS removed (only used for email attachments)
+// Email functionality removed as requested
 const cloudinary = require('cloudinary').v2; // For image upload
 
 // Initialize PostgreSQL Pool for Supabase
@@ -19,48 +19,9 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Configure Nodemailer transporter using environment variables
-const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
-    secure: process.env.SMTP_PORT == 465, // Use 'true' if port is 465 (SSL/TLS), 'false' otherwise
-    auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-    },
-});
+// Email transporter removed as requested
 
-// Function to generate Excel buffer from form data
-async function generateExcelBuffer(formData) {
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('HR Application Data');
-
-    // Define columns - you can customize this to order/select fields
-    const columns = Object.keys(formData).map(key => ({
-        header: key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()), // Convert camelCase to Title Case
-        key: key,
-        width: 25
-    }));
-    worksheet.columns = columns;
-
-    // Add data row
-    worksheet.addRow(formData);
-
-    // Auto-fit columns (optional, can be performance heavy for many columns)
-    worksheet.columns.forEach(column => {
-        let maxLength = 0;
-        column.eachCell({ includeEmpty: true }, function (cell) {
-            const columnLength = cell.value ? cell.value.toString().length : 10;
-            if (columnLength > maxLength) {
-                maxLength = columnLength;
-            }
-        });
-        column.width = maxLength < 10 ? 10 : maxLength + 2; // Minimum width 10, plus some padding
-    });
-
-    // Generate buffer
-    return await workbook.xlsx.writeBuffer();
-}
+// Excel generation function removed (only used for email)
 
 exports.handler = async (event, context) => {
     // Handle CORS
@@ -147,6 +108,14 @@ exports.handler = async (event, context) => {
 
     // --- File Upload to Cloudinary ---
     let profilePictureUrl = null;
+    console.log('=== CLOUDINARY DEBUG START ===');
+    console.log('Has profilePictureBase64:', !!formData.profilePictureBase64);
+    console.log('Base64 length:', formData.profilePictureBase64 ? formData.profilePictureBase64.length : 0);
+    console.log('Cloudinary config check:');
+    console.log('- Cloud name:', !!process.env.CLOUDINARY_CLOUD_NAME);
+    console.log('- API key:', !!process.env.CLOUDINARY_API_KEY);
+    console.log('- API secret:', !!process.env.CLOUDINARY_API_SECRET);
+    
     if (formData.profilePictureBase64) {
         try {
             console.log('Uploading profile picture to Cloudinary...');
@@ -162,45 +131,73 @@ exports.handler = async (event, context) => {
             
             profilePictureUrl = uploadResult.secure_url;
             console.log('Profile picture uploaded successfully:', profilePictureUrl);
+            console.log('Upload result:', uploadResult);
         } catch (uploadError) {
             console.error('Error uploading to Cloudinary:', uploadError);
+            console.error('Upload error details:', uploadError.message);
             // Continue without image - don't fail the entire form submission
             console.log('Continuing form submission without profile picture');
         }
+    } else {
+        console.log('No profile picture base64 data found');
     }
+    console.log('=== CLOUDINARY DEBUG END ===');
 
     // --- Database Integration (PostgreSQL via Supabase) ---
     let newRecordId;
     try {
         // Prepare data for insertion. Ensure all fields are handled.
-        // Temporary: Essential fields + image URL (to test Cloudinary upload)
+        // Complete INSERT with ALL form fields for v2.0
         const insertQuery = `
       INSERT INTO applications (
-        full_name, email_add, mobile_no, birth_date, current_address,
-        signature_name, date_accomplished, digital_signature, 
+        full_name, nick_name, mobile_no, email_add, birth_date, civil_status, age, birth_place,
+        nationality, religion, sss_no, philhealth_no, hdmf_no, national_id_no, drivers_license, tin_no,
+        current_address, provincial_address,
+        father_name, father_occupation, father_age, father_contact_no,
+        mother_name, mother_occupation, mother_age, mother_contact_no,
+        prev_company_1, position_1, dates_employed_1, reason_for_leaving_1,
+        prev_company_2, position_2, dates_employed_2, reason_for_leaving_2,
+        key_skills, certifications, languages,
+        ref_1_name, ref_1_relationship, ref_1_contact_no,
+        ref_2_name, ref_2_relationship, ref_2_contact_no,
+        past_employment_issues, past_employment_issues_specify,
+        legal_issues, legal_issues_specify,
+        medical_history, medical_history_specify,
+        referred_by, signature_name, date_accomplished, digital_signature,
         profile_picture_url, submission_timestamp
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, NOW()
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16,
+        $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30,
+        $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44,
+        $45, $46, $47, $48, $49, $50, NOW()
       ) RETURNING id;
     `;
 
-        // Temporary: Essential values + image URL (to test Cloudinary upload)
+        // Complete values array with ALL form fields for v2.0
         const values = [
-            formData.fullName,
-            formData.emailAdd,
-            formData.mobileNo,
-            formData.birthDate,
-            formData.currentAddress,
-            formData.signatureName,
-            formData.dateAccomplished,
-            formData.digitalSignature,
+            formData.fullName, formData.nickName, formData.mobileNo, formData.emailAdd, 
+            formData.birthDate, formData.civilStatus, formData.age, formData.birthPlace,
+            formData.nationality, formData.religion, formData.sssNo, formData.philhealthNo, 
+            formData.hdmfNo, formData.nationalIdNo, formData.driversLicense, formData.tinNo,
+            formData.currentAddress, formData.provincialAddress,
+            formData.fatherName, formData.fatherOccupation, formData.fatherAge, formData.fatherContactNo,
+            formData.motherName, formData.motherOccupation, formData.motherAge, formData.motherContactNo,
+            formData.prevCompany1, formData.position1, formData.datesEmployed1, formData.reasonForLeaving1,
+            formData.prevCompany2, formData.position2, formData.datesEmployed2, formData.reasonForLeaving2,
+            formData.keySkills, formData.certifications, formData.languages,
+            formData.ref1Name, formData.ref1Relationship, formData.ref1ContactNo,
+            formData.ref2Name, formData.ref2Relationship, formData.ref2ContactNo,
+            formData.pastEmploymentIssues, formData.pastEmploymentIssuesSpecify,
+            formData.legalIssues, formData.legalIssuesSpecify,
+            formData.medicalHistory, formData.medicalHistorySpecify,
+            formData.referredBy, formData.signatureName, formData.dateAccomplished, formData.digitalSignature,
             profilePictureUrl // URL from Cloudinary upload
         ];
 
         console.log('Values array length:', values.length);
-        console.log('Expected: 9 values for essential columns');
+        console.log('Expected: 49 values for all columns + NOW()');
         console.log('Profile picture URL:', profilePictureUrl);
-        console.log('Using essential INSERT for testing Cloudinary upload');
+        console.log('Using complete INSERT with ALL form fields for v2.0');
         
         // Debug: Log first few values to see what we're inserting
         console.log('First 10 values:', values.slice(0, 10));
@@ -220,53 +217,15 @@ exports.handler = async (event, context) => {
         };
     }
 
-    // --- Email Sending with Excel Attachment ---
-    try {
-        const excelBuffer = await generateExcelBuffer(formData);
-        const emailRecipient = process.env.RECIPIENT_EMAIL || 'john.mangawang@smegphilippines.com'; // Use env var or fallback
-
-        await transporter.sendMail({
-            from: process.env.SENDER_EMAIL, // Sender email from environment variable
-            to: emailRecipient,
-            subject: `New HR Application Form Submission - ID: ${newRecordId}`,
-            html: `
-        <p>Dear HR Team,</p>
-        <p>A new HR application form has been submitted. Details are attached in the Excel file.</p>
-        <p><strong>Applicant Name:</strong> ${formData.fullName || 'N/A'}</p>
-        <p><strong>Email:</strong> ${formData.emailAdd || 'N/A'}</p>
-        <p><strong>Mobile:</strong> ${formData.mobileNo || 'N/A'}</p>
-        <p>You can find the full details in the attached spreadsheet.</p>
-        <p>Thank you,</p>
-        <p>Your HR Application System</p>
-      `,
-            attachments: [
-                {
-                    filename: `HR_Application_${formData.fullName.replace(/\s/g, '_')}_${newRecordId}.xlsx`,
-                    content: excelBuffer,
-                    contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                },
-                // Digital signature is now a checkbox agreement, no separate attachment needed
-            ],
-        });
-
-        console.log('Email sent successfully!');
-        return {
-            statusCode: 200,
-            headers,
-            body: JSON.stringify({ message: 'Form submitted and email sent successfully!', dataId: newRecordId }),
-        };
-
-    } catch (emailError) {
-        console.error('Error sending email:', emailError);
-        // Even if email fails, we should still confirm form submission to user if DB save was successful
-        return {
-            statusCode: 200,
-            headers,
-            body: JSON.stringify({ 
-                message: 'Form submitted successfully, but failed to send email notification.', 
-                dataId: newRecordId, 
-                emailError: emailError.message 
-            }),
-        };
-    }
+    // Email functionality removed as requested
+    console.log('Form submission completed successfully - no email sent');
+    return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ 
+            message: 'Form submitted successfully!', 
+            dataId: newRecordId,
+            imageUrl: profilePictureUrl 
+        }),
+    };
 };

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Admin Dashboard - Mondo Cucina Inc.</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔒</text></svg>">
+    <style>
+        /* Admin Dashboard Styles */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --text-color-dark: #2c3e50;
+            --text-color-light: #fff;
+            --bg-light: #ecf0f1;
+            --border-color: #bdc3c7;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-light) 0%, #d5dbdb 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .admin-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px var(--shadow);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .admin-header {
+            margin-bottom: 30px;
+        }
+
+        .admin-header h1 {
+            color: var(--primary-color);
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+
+        .admin-header p {
+            color: var(--secondary-color);
+            font-size: 1.1em;
+        }
+
+        .security-notice {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+
+        .login-form {
+            text-align: left;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-color-dark);
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary-color);
+            color: var(--text-color-light);
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .login-button:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .login-button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            color: var(--accent-color);
+            font-size: 0.9em;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .success-message {
+            color: var(--success-color);
+            font-size: 0.9em;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 15px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .back-link {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .back-link a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-size: 0.9em;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Security Features */
+        .ip-info {
+            font-size: 0.8em;
+            color: #7f8c8d;
+            margin-top: 20px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>🔒 HR Admin Dashboard</h1>
+            <p>Secure access to HR application data</p>
+        </div>
+
+        <div class="security-notice">
+            <strong>⚠️ Authorized Personnel Only</strong><br>
+            This area is restricted to authorized HR staff. All access attempts are logged and monitored.
+        </div>
+
+        <form id="adminLoginForm" class="login-form">
+            <div class="form-group">
+                <label for="adminUsername">👤 Username (Email):</label>
+                <input type="email" id="adminUsername" name="username" required autocomplete="username" placeholder="Enter your HR email">
+            </div>
+            
+            <div class="form-group">
+                <label for="adminPassword">🔑 Password:</label>
+                <input type="password" id="adminPassword" name="password" required autocomplete="current-password" placeholder="Enter your password">
+            </div>
+
+            <button type="submit" id="loginButton" class="login-button">
+                🔓 Login & Download Data
+            </button>
+
+            <div id="errorMessage" class="error-message"></div>
+            <div id="successMessage" class="success-message"></div>
+            
+            <div id="loading" class="loading">
+                <p>🔄 Authenticating and preparing download...</p>
+            </div>
+        </form>
+
+        <div class="ip-info">
+            <strong>Security Info:</strong><br>
+            Session will timeout after 30 minutes of inactivity.<br>
+            Your IP address and access time are logged for security purposes.
+        </div>
+
+        <div class="back-link">
+            <a href="index.html">← Back to HR Application Form</a>
+        </div>
+    </div>
+
+    <script>
+        // Admin Dashboard JavaScript
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('adminLoginForm');
+            const loginButton = document.getElementById('loginButton');
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            const loading = document.getElementById('loading');
+
+            // Security: Log access attempt
+            console.log('Admin dashboard accessed at:', new Date().toISOString());
+
+            loginForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                
+                // Clear previous messages
+                errorMessage.textContent = '';
+                successMessage.textContent = '';
+                
+                // Show loading state
+                loginButton.disabled = true;
+                loginButton.textContent = '🔄 Authenticating...';
+                loading.classList.add('show');
+
+                const username = document.getElementById('adminUsername').value;
+                const password = document.getElementById('adminPassword').value;
+
+                try {
+                    const response = await fetch('/.netlify/functions/download-data', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ username, password }),
+                    });
+
+                    if (response.ok) {
+                        const contentType = response.headers.get('content-type');
+                        
+                        if (contentType && contentType.includes('application/zip')) {
+                            // Success! Download the ZIP file
+                            const blob = await response.blob();
+                            const url = window.URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = `HR_Applications_Complete_${new Date().toISOString().slice(0, 10)}.zip`;
+                            document.body.appendChild(a);
+                            a.click();
+                            a.remove();
+                            window.URL.revokeObjectURL(url);
+
+                            successMessage.textContent = '✅ Download successful! Check your downloads folder.';
+                            
+                            // Reset form after successful download
+                            setTimeout(() => {
+                                loginForm.reset();
+                                successMessage.textContent = '';
+                            }, 3000);
+                        } else {
+                            errorMessage.textContent = '❌ Unexpected server response. Please try again.';
+                        }
+                    } else {
+                        const errorResult = await response.json();
+                        errorMessage.textContent = '❌ ' + (errorResult.message || 'Authentication failed. Please check your credentials.');
+                    }
+                } catch (error) {
+                    console.error('Network error:', error);
+                    errorMessage.textContent = '❌ Network error. Please check your connection and try again.';
+                } finally {
+                    // Reset button state
+                    loginButton.disabled = false;
+                    loginButton.textContent = '🔓 Login & Download Data';
+                    loading.classList.remove('show');
+                }
+            });
+
+            // Security: Auto-logout after 30 minutes of inactivity
+            let inactivityTimer;
+            function resetInactivityTimer() {
+                clearTimeout(inactivityTimer);
+                inactivityTimer = setTimeout(() => {
+                    alert('⚠️ Session expired due to inactivity. Please refresh the page.');
+                    location.reload();
+                }, 30 * 60 * 1000); // 30 minutes
+            }
+
+            // Reset timer on user activity
+            document.addEventListener('click', resetInactivityTimer);
+            document.addEventListener('keypress', resetInactivityTimer);
+            resetInactivityTimer(); // Start timer
+        });
+    </script>
+</body>
+</html>
