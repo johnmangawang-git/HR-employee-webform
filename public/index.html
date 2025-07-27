@@ -670,57 +670,7 @@
             }
         }
 
-        /* Admin Login Modal specific styles */
-        #adminLoginModal .modal-content {
-            padding: 40px;
-        }
 
-            #adminLoginModal .modal-content h3 {
-                margin-bottom: 25px;
-                font-size: 2em;
-            }
-
-        #adminLoginModal .form-group {
-            margin-bottom: 20px;
-            text-align: left; /* Align labels/inputs within the modal */
-        }
-
-            #adminLoginModal .form-group label {
-                font-size: 1em;
-                font-weight: 600;
-            }
-
-            #adminLoginModal .form-group input {
-                padding: 10px 15px;
-                border-radius: 8px;
-                font-size: 1em;
-            }
-
-        #adminLoginModal .admin-login-button {
-            background: var(--gradient-2);
-            color: var(--text-color-light);
-            padding: 12px 25px;
-            border-radius: 10px;
-            font-size: 1.1em;
-            font-weight: 700;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            margin-top: 15px;
-        }
-
-            #adminLoginModal .admin-login-button:hover {
-                background: var(--gradient-1);
-                transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-            }
-
-        #adminLoginModal .error-message {
-            text-align: center;
-            margin-top: 10px;
-        }
     </style>
 </head>
 <body>
@@ -752,6 +702,8 @@
     <div id="loadingOverlay" class="loading-overlay">
         <div class="spinner"></div>
     </div>
+
+
 
     <script type="module">
         // --- Custom Modal Functions ---
@@ -1568,6 +1520,313 @@
 
             // Admin download functionality removed - moved to separate admin page
         });
+
+        // Print Form Function
+        window.printForm = function() {
+            const formData = {};
+            
+            // Collect all form data
+            const allInputs = document.querySelectorAll('#hrApplicationForm input, #hrApplicationForm select, #hrApplicationForm textarea');
+            allInputs.forEach(input => {
+                if (input.type === 'radio') {
+                    if (input.checked) {
+                        formData[input.name] = input.value;
+                    }
+                } else if (input.type === 'checkbox') {
+                    formData[input.name] = input.checked ? 'Yes' : 'No';
+                } else if (input.type === 'file') {
+                    // Handle file display in print
+                    if (input.files.length > 0) {
+                        formData[input.name] = input.files[0].name;
+                    }
+                } else {
+                    formData[input.name] = input.value || '';
+                }
+            });
+
+            // Generate print HTML
+            const printHTML = generatePrintHTML(formData);
+            
+            // Insert into print form div
+            document.getElementById('printForm').innerHTML = printHTML;
+            
+            // Print
+            window.print();
+        };
+
+        function generatePrintHTML(data) {
+            return `
+                <div class="print-page">
+                    <div class="print-header">
+                        <div class="print-logo">mondo cucina</div>
+                        <div class="photo-placeholder">
+                            ATTACH 2X2 PICTURE
+                        </div>
+                    </div>
+                    
+                    <div class="print-title">PERSONAL INFORMATION FORM</div>
+                    
+                    <div class="print-section">
+                        <div class="section-header">PERSONAL INFORMATION</div>
+                        
+                        <div class="field-row">
+                            <div class="field-label">COMPLETE NAME:</div>
+                            <div class="field-value">${data.fullName || ''}</div>
+                        </div>
+                        
+                        <div class="field-grid-3" style="margin-top: 10px;">
+                            <div style="text-align: center; font-style: italic; font-size: 10px;">FIRST NAME</div>
+                            <div style="text-align: center; font-style: italic; font-size: 10px;">MIDDLE NAME</div>
+                            <div style="text-align: center; font-style: italic; font-size: 10px;">LAST NAME</div>
+                        </div>
+                        
+                        <div class="field-grid">
+                            <div class="field-row">
+                                <div class="field-label">NICK NAME:</div>
+                                <div class="field-value">${data.nickName || ''}</div>
+                            </div>
+                            <div class="field-row">
+                                <div class="field-label">MOBILE NO.:</div>
+                                <div class="field-value">${data.mobileNo || ''}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-grid">
+                            <div class="field-row">
+                                <div class="field-label">BIRTH DATE:</div>
+                                <div class="field-value">${data.birthDate || ''}</div>
+                            </div>
+                            <div class="field-row">
+                                <div class="field-label">EMAIL ADD:</div>
+                                <div class="field-value">${data.emailAdd || ''}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-grid">
+                            <div class="field-row">
+                                <div class="field-label">CIVIL STATUS:</div>
+                                <div class="field-value">${data.civilStatus || ''}</div>
+                            </div>
+                            <div class="field-row">
+                                <div class="field-label">AGE:</div>
+                                <div class="field-value">${data.age || ''}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-grid">
+                            <div class="field-row">
+                                <div class="field-label">BIRTH PLACE:</div>
+                                <div class="field-value">${data.birthPlace || ''}</div>
+                            </div>
+                            <div class="field-row">
+                                <div class="field-label">NATIONALITY:</div>
+                                <div class="field-value">${data.nationality || ''}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-grid">
+                            <div class="field-row">
+                                <div class="field-label">RELIGION:</div>
+                                <div class="field-value">${data.religion || ''}</div>
+                            </div>
+                            <div class="field-row">
+                                <div class="field-label">SSS NO:</div>
+                                <div class="field-value">${data.sssNo || ''}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-grid">
+                            <div class="field-row">
+                                <div class="field-label">PHILHEALTH NO:</div>
+                                <div class="field-value">${data.philhealthNo || ''}</div>
+                            </div>
+                            <div class="field-row">
+                                <div class="field-label">HDMF NO:</div>
+                                <div class="field-value">${data.hdmfNo || ''}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-grid">
+                            <div class="field-row">
+                                <div class="field-label">NATIONAL ID NO:</div>
+                                <div class="field-value">${data.nationalIdNo || ''}</div>
+                            </div>
+                            <div class="field-row">
+                                <div class="field-label">DRIVER'S LICENSE:</div>
+                                <div class="field-value">${data.driversLicense || ''}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-row">
+                            <div class="field-label">TIN NO:</div>
+                            <div class="field-value">${data.tinNo || ''}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="print-section">
+                        <div class="field-row">
+                            <div class="field-label">CURRENT ADDRESS:</div>
+                            <div class="field-value">${data.currentAddress || ''}</div>
+                        </div>
+                        
+                        <div class="field-row">
+                            <div class="field-label">PROVINCIAL ADDRESS:</div>
+                            <div class="field-value">${data.provincialAddress || ''}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="print-section">
+                        <div class="field-grid">
+                            <div>
+                                <div class="field-row">
+                                    <div class="field-label">FATHER'S NAME:</div>
+                                    <div class="field-value">${data.fatherName || ''}</div>
+                                </div>
+                                <div class="field-row">
+                                    <div class="field-label">OCCUPATION:</div>
+                                    <div class="field-value">${data.fatherOccupation || ''}</div>
+                                </div>
+                                <div class="field-row">
+                                    <div class="field-label">AGE:</div>
+                                    <div class="field-value">${data.fatherAge || ''}</div>
+                                </div>
+                                <div class="field-row">
+                                    <div class="field-label">CONTACT NO.:</div>
+                                    <div class="field-value">${data.fatherContactNo || ''}</div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="field-row">
+                                    <div class="field-label">MOTHER'S NAME:</div>
+                                    <div class="field-value">${data.motherName || ''}</div>
+                                </div>
+                                <div class="field-row">
+                                    <div class="field-label">OCCUPATION:</div>
+                                    <div class="field-value">${data.motherOccupation || ''}</div>
+                                </div>
+                                <div class="field-row">
+                                    <div class="field-label">AGE:</div>
+                                    <div class="field-value">${data.motherAge || ''}</div>
+                                </div>
+                                <div class="field-row">
+                                    <div class="field-label">CONTACT NO.:</div>
+                                    <div class="field-value">${data.motherContactNo || ''}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="print-section">
+                        <div class="field-grid">
+                            <div class="field-row">
+                                <div class="field-label">SPOUSE/PARTNER'S NAME:</div>
+                                <div class="field-value">${data.spouseName || ''}</div>
+                            </div>
+                            <div></div>
+                        </div>
+                        <div class="field-grid">
+                            <div class="field-row">
+                                <div class="field-label">OCCUPATION:</div>
+                                <div class="field-value">${data.spouseOccupation || ''}</div>
+                            </div>
+                            <div></div>
+                        </div>
+                        <div class="field-grid">
+                            <div class="field-row">
+                                <div class="field-label">AGE:</div>
+                                <div class="field-value">${data.spouseAge || ''}</div>
+                            </div>
+                            <div></div>
+                        </div>
+                        <div class="field-grid">
+                            <div class="field-row">
+                                <div class="field-label">CONTACT NO.:</div>
+                                <div class="field-value">${data.spouseContactNo || ''}</div>
+                            </div>
+                            <div></div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-section">
+                        <table class="print-table">
+                            <thead>
+                                <tr>
+                                    <th>SIBLINGS NAME</th>
+                                    <th>AGE</th>
+                                    <th>OCCUPATION</th>
+                                    <th>COMPANY/SCHOOL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${generateSiblingsRows(data)}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="table-section">
+                        <table class="print-table">
+                            <thead>
+                                <tr>
+                                    <th>CHILDREN'S NAME</th>
+                                    <th>AGE</th>
+                                    <th>GENDER</th>
+                                    <th>OCCUPATION/COMPANY/SCHOOL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${generateChildrenRows(data)}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="print-section">
+                        <div class="section-header">EDUCATIONAL BACKGROUND (start with most highest)</div>
+                    </div>
+                    
+                    <div class="page-number">Page 1</div>
+                </div>
+            `;
+        }
+
+        function generateSiblingsRows(data) {
+            let rows = '';
+            for (let i = 1; i <= 5; i++) {
+                const name = data[`sibling${i}Name`] || '';
+                const age = data[`sibling${i}Age`] || '';
+                const occupation = data[`sibling${i}Occupation`] || '';
+                const company = data[`sibling${i}Company`] || '';
+                
+                rows += `
+                    <tr>
+                        <td>${name}</td>
+                        <td>${age}</td>
+                        <td>${occupation}</td>
+                        <td>${company}</td>
+                    </tr>
+                `;
+            }
+            return rows;
+        }
+
+        function generateChildrenRows(data) {
+            let rows = '';
+            for (let i = 1; i <= 5; i++) {
+                const name = data[`child${i}Name`] || '';
+                const age = data[`child${i}Age`] || '';
+                const gender = data[`child${i}Gender`] || '';
+                const occupation = data[`child${i}Occupation`] || '';
+                
+                rows += `
+                    <tr>
+                        <td>${name}</td>
+                        <td>${age}</td>
+                        <td>${gender}</td>
+                        <td>${occupation}</td>
+                    </tr>
+                `;
+            }
+            return rows;
+        }
     </script>
 </body>
 </html>
