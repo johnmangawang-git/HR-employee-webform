@@ -147,7 +147,7 @@ exports.handler = async (event, context) => {
     let newRecordId;
     try {
         // Prepare data for insertion. Ensure all fields are handled.
-        // Complete INSERT with ALL form fields for v2.0
+        // Complete INSERT with ALL form fields for v2.0 - Updated to match database schema
         const insertQuery = `
       INSERT INTO applications (
         full_name, nick_name, mobile_no, email_add, birth_date, civil_status, age, birth_place,
@@ -164,16 +164,16 @@ exports.handler = async (event, context) => {
         legal_issues, legal_issues_specify,
         medical_history, medical_history_specify,
         referred_by, signature_name, date_accomplished, digital_signature,
-        profile_picture_url, submission_timestamp
+        profile_picture_url
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16,
         $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30,
         $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44,
-        $45, $46, $47, $48, $49, $50, NOW()
+        $45, $46, $47, $48, $49, $50
       ) RETURNING id;
     `;
 
-        // Complete values array with ALL form fields for v2.0
+        // Complete values array with ALL form fields for v2.0 - Updated to match database schema
         const values = [
             formData.fullName, formData.nickName, formData.mobileNo, formData.emailAdd, 
             formData.birthDate, formData.civilStatus, formData.age, formData.birthPlace,
@@ -195,7 +195,7 @@ exports.handler = async (event, context) => {
         ];
 
         console.log('Values array length:', values.length);
-        console.log('Expected: 49 values for all columns + NOW()');
+        console.log('Expected: 50 values for all columns (no NOW() needed)');
         console.log('Profile picture URL:', profilePictureUrl);
         console.log('Using complete INSERT with ALL form fields for v2.0');
         
