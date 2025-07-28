@@ -147,6 +147,8 @@ exports.handler = async (event, context) => {
 
     // --- Database Integration (PostgreSQL via Supabase) ---
     let newRecordId;
+    let values; // Declare values outside try block for error handling
+    
     try {
         // Prepare data for insertion. Ensure all fields are handled.
         // Simplified INSERT with only existing database columns (temporary fix)
@@ -176,7 +178,7 @@ exports.handler = async (event, context) => {
     `;
 
         // Simplified values array with only existing database columns (temporary fix)
-        const values = [
+        values = [
             formData.fullName, formData.nickName, formData.mobileNo, formData.emailAdd, 
             formData.birthDate, formData.civilStatus, formData.age, formData.birthPlace,
             formData.nationality, formData.religion, formData.sssNo, formData.philhealthNo, 
@@ -213,8 +215,8 @@ exports.handler = async (event, context) => {
     } catch (error) {
         console.error('Database error or server-side validation issue:', error);
         console.error('Error details:', error.stack);
-        console.error('Values array:', values);
-        console.error('Values length:', values.length);
+        console.error('Values array:', values || 'undefined');
+        console.error('Values length:', values ? values.length : 'undefined');
         
         return {
             statusCode: 500,
@@ -223,7 +225,7 @@ exports.handler = async (event, context) => {
                 message: 'Error saving form data to database.', 
                 error: error.message,
                 details: error.code || 'Unknown error code',
-                valuesLength: values.length
+                valuesLength: values ? values.length : 'undefined'
             }),
         };
     }
