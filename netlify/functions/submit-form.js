@@ -151,7 +151,7 @@ exports.handler = async (event, context) => {
     
     try {
         // Prepare data for insertion. Ensure all fields are handled.
-        // Simplified INSERT with only existing database columns (temporary fix)
+        // Complete INSERT with ALL database columns including family fields
         const insertQuery = `
       INSERT INTO applications (
         full_name, nick_name, mobile_no, email_add, birth_date, civil_status, age, birth_place,
@@ -159,6 +159,13 @@ exports.handler = async (event, context) => {
         current_address, provincial_address,
         father_name, father_occupation, father_age, father_contact_no,
         mother_name, mother_occupation, mother_age, mother_contact_no,
+        spouse_name, spouse_occupation, spouse_age, spouse_contact_no,
+        sibling_1_name, sibling_1_age, sibling_1_occupation, sibling_1_company,
+        sibling_2_name, sibling_2_age, sibling_2_occupation, sibling_2_company,
+        sibling_3_name, sibling_3_age, sibling_3_occupation, sibling_3_company,
+        child_1_name, child_1_age, child_1_gender, child_1_occupation,
+        child_2_name, child_2_age, child_2_gender, child_2_occupation,
+        child_3_name, child_3_age, child_3_gender, child_3_occupation,
         prev_company_1, position_1, dates_employed_1, reason_for_leaving_1,
         prev_company_2, position_2, dates_employed_2, reason_for_leaving_2,
         key_skills, certifications, languages,
@@ -173,40 +180,136 @@ exports.handler = async (event, context) => {
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16,
         $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30,
         $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44,
-        $45, $46, $47, $48, $49, $50
+        $45, $46, $47, $48, $49, $50, $51, $52, $53, $54, $55, $56, $57, $58,
+        $59, $60, $61, $62, $63, $64, $65, $66, $67, $68, $69, $70, $71, $72,
+        $73, $74, $75, $76, $77, $78, $79, $80, $81, $82
       ) RETURNING id;
     `;
 
-        // Simplified values array with ONLY existing database columns (excluding new family fields)
-        values = [
-            formData.fullName, formData.nickName, formData.mobileNo, formData.emailAdd, 
-            formData.birthDate, formData.civilStatus, formData.age, formData.birthPlace,
-            formData.nationality, formData.religion, formData.sssNo, formData.philhealthNo, 
-            formData.hdmfNo, formData.nationalIdNo, formData.driversLicense, formData.tinNo,
-            formData.currentAddress, formData.provincialAddress,
-            formData.fatherName, formData.fatherOccupation, formData.fatherAge, formData.fatherContactNo,
-            formData.motherName, formData.motherOccupation, formData.motherAge, formData.motherContactNo,
-            // NOTE: Skipping spouse, siblings, and children fields - not in database yet
-            formData.prevCompany1, formData.position1, formData.datesEmployed1, formData.reasonForLeaving1,
-            formData.prevCompany2, formData.position2, formData.datesEmployed2, formData.reasonForLeaving2,
-            formData.keySkills, formData.certifications, formData.languages,
-            formData.ref1Name, formData.ref1Relationship, formData.ref1ContactNo,
-            formData.ref2Name, formData.ref2Relationship, formData.ref2ContactNo,
-            formData.pastEmploymentIssues, formData.pastEmploymentIssuesSpecify,
-            formData.legalIssues, formData.legalIssuesSpecify,
-            formData.medicalHistory, formData.medicalHistorySpecify,
-            formData.referredBy, formData.signatureName, formData.dateAccomplished, formData.digitalSignature,
-            profilePictureUrl // URL from Cloudinary upload
-        ];
+        // Complete 70 values array matching ALL database columns including family fields
+        values = [];
+        
+        // Personal Information (16 fields)
+        values.push(formData.fullName);
+        values.push(formData.nickName);
+        values.push(formData.mobileNo);
+        values.push(formData.emailAdd);
+        values.push(formData.birthDate);
+        values.push(formData.civilStatus);
+        values.push(formData.age);
+        values.push(formData.birthPlace);
+        values.push(formData.nationality);
+        values.push(formData.religion);
+        values.push(formData.sssNo);
+        values.push(formData.philhealthNo);
+        values.push(formData.hdmfNo);
+        values.push(formData.nationalIdNo);
+        values.push(formData.driversLicense);
+        values.push(formData.tinNo);
+        
+        // Address Information (2 fields)
+        values.push(formData.currentAddress);
+        values.push(formData.provincialAddress);
+        
+        // Family Background - Parents (8 fields)
+        values.push(formData.fatherName);
+        values.push(formData.fatherOccupation);
+        values.push(formData.fatherAge);
+        values.push(formData.fatherContactNo);
+        values.push(formData.motherName);
+        values.push(formData.motherOccupation);
+        values.push(formData.motherAge);
+        values.push(formData.motherContactNo);
+        
+        // Spouse/Partner Information (4 fields)
+        values.push(formData.spouseName);
+        values.push(formData.spouseOccupation);
+        values.push(formData.spouseAge);
+        values.push(formData.spouseContactNo);
+        
+        // Siblings Information (12 fields - 3 siblings x 4 fields each)
+        values.push(formData.sibling1Name);
+        values.push(formData.sibling1Age);
+        values.push(formData.sibling1Occupation);
+        values.push(formData.sibling1Company);
+        values.push(formData.sibling2Name);
+        values.push(formData.sibling2Age);
+        values.push(formData.sibling2Occupation);
+        values.push(formData.sibling2Company);
+        values.push(formData.sibling3Name);
+        values.push(formData.sibling3Age);
+        values.push(formData.sibling3Occupation);
+        values.push(formData.sibling3Company);
+        
+        // Children Information (12 fields - 3 children x 4 fields each)
+        values.push(formData.child1Name);
+        values.push(formData.child1Age);
+        values.push(formData.child1Gender);
+        values.push(formData.child1Occupation);
+        values.push(formData.child2Name);
+        values.push(formData.child2Age);
+        values.push(formData.child2Gender);
+        values.push(formData.child2Occupation);
+        values.push(formData.child3Name);
+        values.push(formData.child3Age);
+        values.push(formData.child3Gender);
+        values.push(formData.child3Occupation);
+        
+        // Employment History (8 fields)
+        values.push(formData.prevCompany1);
+        values.push(formData.position1);
+        values.push(formData.datesEmployed1);
+        values.push(formData.reasonForLeaving1);
+        values.push(formData.prevCompany2);
+        values.push(formData.position2);
+        values.push(formData.datesEmployed2);
+        values.push(formData.reasonForLeaving2);
+        
+        // Competencies (3 fields)
+        values.push(formData.keySkills);
+        values.push(formData.certifications);
+        values.push(formData.languages);
+        
+        // Character References (6 fields)
+        values.push(formData.ref1Name);
+        values.push(formData.ref1Relationship);
+        values.push(formData.ref1ContactNo);
+        values.push(formData.ref2Name);
+        values.push(formData.ref2Relationship);
+        values.push(formData.ref2ContactNo);
+        
+        // Background Check Questions (6 fields)
+        values.push(formData.pastEmploymentIssues);
+        values.push(formData.pastEmploymentIssuesSpecify);
+        values.push(formData.legalIssues);
+        values.push(formData.legalIssuesSpecify);
+        values.push(formData.medicalHistory);
+        values.push(formData.medicalHistorySpecify);
+        
+        // Additional Information & Signature (4 fields)
+        values.push(formData.referredBy);
+        values.push(formData.signatureName);
+        values.push(formData.dateAccomplished);
+        values.push(formData.digitalSignature);
+        
+        // File Upload (1 field)
+        values.push(profilePictureUrl);
+        
+        // Total: 10+6+2+8+4+12+12+8+3+6+6+1+3+1 = 82 values (matches database schema)
 
         console.log('Values array length:', values.length);
-        console.log('Expected: 50 values for existing database columns');
+        console.log('Expected: 82 values for ALL database columns including family fields');
         console.log('Profile picture URL:', profilePictureUrl);
-        console.log('Using simplified INSERT with existing database columns only');
+        console.log('Using complete INSERT with ALL database columns');
         
-        // Debug: Log first few values to see what we're inserting
+        // Debug: Log ALL values to identify the issue
+        console.log('ALL VALUES:', values);
         console.log('First 10 values:', values.slice(0, 10));
         console.log('Last 10 values:', values.slice(-10));
+        
+        // Count non-undefined values
+        const nonUndefinedValues = values.filter(v => v !== undefined);
+        console.log('Non-undefined values count:', nonUndefinedValues.length);
 
         const result = await pool.query(insertQuery, values);
         newRecordId = result.rows[0].id; // Get the ID of the newly inserted row
