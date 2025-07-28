@@ -32,6 +32,8 @@ exports.handler = async (event, context) => {
         'Content-Type': 'application/json',
     };
 
+    try {
+
     if (event.httpMethod === 'OPTIONS') {
         return { statusCode: 200, headers, body: '' };
     }
@@ -147,7 +149,7 @@ exports.handler = async (event, context) => {
     let newRecordId;
     try {
         // Prepare data for insertion. Ensure all fields are handled.
-        // Complete INSERT with ALL form fields including new family sections
+        // Simplified INSERT with only existing database columns (temporary fix)
         const insertQuery = `
       INSERT INTO applications (
         full_name, nick_name, mobile_no, email_add, birth_date, civil_status, age, birth_place,
@@ -155,13 +157,6 @@ exports.handler = async (event, context) => {
         current_address, provincial_address,
         father_name, father_occupation, father_age, father_contact_no,
         mother_name, mother_occupation, mother_age, mother_contact_no,
-        spouse_name, spouse_occupation, spouse_age, spouse_contact_no,
-        sibling_1_name, sibling_1_age, sibling_1_occupation, sibling_1_company,
-        sibling_2_name, sibling_2_age, sibling_2_occupation, sibling_2_company,
-        sibling_3_name, sibling_3_age, sibling_3_occupation, sibling_3_company,
-        child_1_name, child_1_age, child_1_gender, child_1_occupation,
-        child_2_name, child_2_age, child_2_gender, child_2_occupation,
-        child_3_name, child_3_age, child_3_gender, child_3_occupation,
         prev_company_1, position_1, dates_employed_1, reason_for_leaving_1,
         prev_company_2, position_2, dates_employed_2, reason_for_leaving_2,
         key_skills, certifications, languages,
@@ -176,13 +171,11 @@ exports.handler = async (event, context) => {
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16,
         $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30,
         $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44,
-        $45, $46, $47, $48, $49, $50, $51, $52, $53, $54, $55, $56, $57, $58,
-        $59, $60, $61, $62, $63, $64, $65, $66, $67, $68, $69, $70, $71, $72,
-        $73, $74
+        $45, $46, $47, $48, $49, $50
       ) RETURNING id;
     `;
 
-        // Complete values array with ALL form fields including new family sections
+        // Simplified values array with only existing database columns (temporary fix)
         const values = [
             formData.fullName, formData.nickName, formData.mobileNo, formData.emailAdd, 
             formData.birthDate, formData.civilStatus, formData.age, formData.birthPlace,
@@ -191,13 +184,6 @@ exports.handler = async (event, context) => {
             formData.currentAddress, formData.provincialAddress,
             formData.fatherName, formData.fatherOccupation, formData.fatherAge, formData.fatherContactNo,
             formData.motherName, formData.motherOccupation, formData.motherAge, formData.motherContactNo,
-            formData.spouseName, formData.spouseOccupation, formData.spouseAge, formData.spouseContactNo,
-            formData.sibling1Name, formData.sibling1Age, formData.sibling1Occupation, formData.sibling1Company,
-            formData.sibling2Name, formData.sibling2Age, formData.sibling2Occupation, formData.sibling2Company,
-            formData.sibling3Name, formData.sibling3Age, formData.sibling3Occupation, formData.sibling3Company,
-            formData.child1Name, formData.child1Age, formData.child1Gender, formData.child1Occupation,
-            formData.child2Name, formData.child2Age, formData.child2Gender, formData.child2Occupation,
-            formData.child3Name, formData.child3Age, formData.child3Gender, formData.child3Occupation,
             formData.prevCompany1, formData.position1, formData.datesEmployed1, formData.reasonForLeaving1,
             formData.prevCompany2, formData.position2, formData.datesEmployed2, formData.reasonForLeaving2,
             formData.keySkills, formData.certifications, formData.languages,
@@ -211,9 +197,9 @@ exports.handler = async (event, context) => {
         ];
 
         console.log('Values array length:', values.length);
-        console.log('Expected: 74 values for all columns including new family fields');
+        console.log('Expected: 50 values for existing database columns');
         console.log('Profile picture URL:', profilePictureUrl);
-        console.log('Using complete INSERT with ALL form fields including family sections');
+        console.log('Using simplified INSERT with existing database columns only');
         
         // Debug: Log first few values to see what we're inserting
         console.log('First 10 values:', values.slice(0, 10));
@@ -226,10 +212,19 @@ exports.handler = async (event, context) => {
 
     } catch (error) {
         console.error('Database error or server-side validation issue:', error);
+        console.error('Error details:', error.stack);
+        console.error('Values array:', values);
+        console.error('Values length:', values.length);
+        
         return {
             statusCode: 500,
             headers,
-            body: JSON.stringify({ message: 'Error saving form data to database.', error: error.message }),
+            body: JSON.stringify({ 
+                message: 'Error saving form data to database.', 
+                error: error.message,
+                details: error.code || 'Unknown error code',
+                valuesLength: values.length
+            }),
         };
     }
 
@@ -244,4 +239,16 @@ exports.handler = async (event, context) => {
             imageUrl: profilePictureUrl 
         }),
     };
+
+    } catch (unexpectedError) {
+        console.error('Unexpected error in handler:', unexpectedError);
+        return {
+            statusCode: 500,
+            headers,
+            body: JSON.stringify({ 
+                message: 'Unexpected server error occurred.', 
+                error: unexpectedError.message || 'Unknown error'
+            }),
+        };
+    }
 };
