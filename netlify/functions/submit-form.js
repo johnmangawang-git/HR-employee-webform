@@ -177,7 +177,7 @@ exports.handler = async (event, context) => {
       ) RETURNING id;
     `;
 
-        // Simplified values array with only existing database columns (temporary fix)
+        // Simplified values array with ONLY existing database columns (excluding new family fields)
         values = [
             formData.fullName, formData.nickName, formData.mobileNo, formData.emailAdd, 
             formData.birthDate, formData.civilStatus, formData.age, formData.birthPlace,
@@ -186,6 +186,7 @@ exports.handler = async (event, context) => {
             formData.currentAddress, formData.provincialAddress,
             formData.fatherName, formData.fatherOccupation, formData.fatherAge, formData.fatherContactNo,
             formData.motherName, formData.motherOccupation, formData.motherAge, formData.motherContactNo,
+            // NOTE: Skipping spouse, siblings, and children fields - not in database yet
             formData.prevCompany1, formData.position1, formData.datesEmployed1, formData.reasonForLeaving1,
             formData.prevCompany2, formData.position2, formData.datesEmployed2, formData.reasonForLeaving2,
             formData.keySkills, formData.certifications, formData.languages,
