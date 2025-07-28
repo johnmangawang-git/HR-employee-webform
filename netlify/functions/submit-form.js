@@ -159,14 +159,13 @@ exports.handler = async (event, context) => {
         current_address, provincial_address,
         father_name, father_occupation,
         mother_name, mother_occupation,
-        prev_company_1, position_1, dates_employed_1, reason_for_leaving_1,
         key_skills, certifications, languages,
         ref_1_name, ref_1_relationship,
         past_employment_issues, past_employment_issues_specify,
         profile_picture_url
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16,
-        $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30
+        $17, $18, $19, $20, $21, $22, $23, $24, $25, $26
       ) RETURNING id;
     `;
 
@@ -206,12 +205,8 @@ exports.handler = async (event, context) => {
         
         // SKIP: Spouse, Siblings, Children fields - not in actual database yet
         
-        // Employment History (4 fields) - REMOVED 4 MORE TO GET TO 41
-        values.push(formData.prevCompany1);
-        values.push(formData.position1);
-        values.push(formData.datesEmployed1);
-        values.push(formData.reasonForLeaving1);
-        // REMOVED: prevCompany2, position2, datesEmployed2, reasonForLeaving2
+        // Employment History - REMOVED ALL 4 FIELDS TO GET TO 30
+        // REMOVED: prevCompany1, position1, datesEmployed1, reasonForLeaving1
         
         // Competencies (3 fields)
         values.push(formData.keySkills);
@@ -238,15 +233,15 @@ exports.handler = async (event, context) => {
         console.log('Government IDs (6):', values.slice(10, 16));
         console.log('Address (2):', values.slice(16, 18));
         console.log('Parents (4):', values.slice(18, 22));
-        console.log('Employment (4):', values.slice(22, 26));
-        console.log('Competencies (3):', values.slice(26, 29));
-        console.log('References (2):', values.slice(29, 31));
-        console.log('Background (2):', values.slice(31, 33));
-        console.log('File (1):', values.slice(33, 34));
-        console.log('Total values:', values.length, 'Expected: 30');
+        console.log('Employment (0): REMOVED');
+        console.log('Competencies (3):', values.slice(22, 25));
+        console.log('References (2):', values.slice(25, 27));
+        console.log('Background (2):', values.slice(27, 29));
+        console.log('File (1):', values.slice(29, 30));
+        console.log('Total values:', values.length, 'Expected: 26');
 
         console.log('Values array length:', values.length);
-        console.log('Expected: 30 values for existing database columns only');
+        console.log('Expected: 26 values for existing database columns only');
         console.log('Profile picture URL:', profilePictureUrl);
         console.log('Using INSERT with existing database columns only (no family fields)');
         
