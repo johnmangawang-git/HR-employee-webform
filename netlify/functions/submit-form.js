@@ -151,7 +151,7 @@ exports.handler = async (event, context) => {
     
     try {
         // Prepare data for insertion. Ensure all fields are handled.
-        // Complete INSERT with ALL database columns including family fields
+        // INSERT with ONLY existing database columns (family fields don't exist in actual DB yet)
         const insertQuery = `
       INSERT INTO applications (
         full_name, nick_name, mobile_no, email_add, birth_date, civil_status, age, birth_place,
@@ -159,13 +159,6 @@ exports.handler = async (event, context) => {
         current_address, provincial_address,
         father_name, father_occupation, father_age, father_contact_no,
         mother_name, mother_occupation, mother_age, mother_contact_no,
-        spouse_name, spouse_occupation, spouse_age, spouse_contact_no,
-        sibling_1_name, sibling_1_age, sibling_1_occupation, sibling_1_company,
-        sibling_2_name, sibling_2_age, sibling_2_occupation, sibling_2_company,
-        sibling_3_name, sibling_3_age, sibling_3_occupation, sibling_3_company,
-        child_1_name, child_1_age, child_1_gender, child_1_occupation,
-        child_2_name, child_2_age, child_2_gender, child_2_occupation,
-        child_3_name, child_3_age, child_3_gender, child_3_occupation,
         prev_company_1, position_1, dates_employed_1, reason_for_leaving_1,
         prev_company_2, position_2, dates_employed_2, reason_for_leaving_2,
         key_skills, certifications, languages,
@@ -180,16 +173,14 @@ exports.handler = async (event, context) => {
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16,
         $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30,
         $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44,
-        $45, $46, $47, $48, $49, $50, $51, $52, $53, $54, $55, $56, $57, $58,
-        $59, $60, $61, $62, $63, $64, $65, $66, $67, $68, $69, $70, $71, $72,
-        $73, $74, $75, $76, $77, $78, $79, $80, $81, $82
+        $45, $46, $47, $48, $49, $50
       ) RETURNING id;
     `;
 
-        // Complete 70 values array matching ALL database columns including family fields
+        // 50 values array matching ONLY existing database columns (excluding family fields)
         values = [];
         
-        // Personal Information (16 fields)
+        // Personal Information (10 fields)
         values.push(formData.fullName);
         values.push(formData.nickName);
         values.push(formData.mobileNo);
@@ -200,6 +191,8 @@ exports.handler = async (event, context) => {
         values.push(formData.birthPlace);
         values.push(formData.nationality);
         values.push(formData.religion);
+        
+        // Government IDs (6 fields)
         values.push(formData.sssNo);
         values.push(formData.philhealthNo);
         values.push(formData.hdmfNo);
@@ -211,7 +204,7 @@ exports.handler = async (event, context) => {
         values.push(formData.currentAddress);
         values.push(formData.provincialAddress);
         
-        // Family Background - Parents (8 fields)
+        // Family Background - Parents ONLY (8 fields)
         values.push(formData.fatherName);
         values.push(formData.fatherOccupation);
         values.push(formData.fatherAge);
@@ -221,39 +214,7 @@ exports.handler = async (event, context) => {
         values.push(formData.motherAge);
         values.push(formData.motherContactNo);
         
-        // Spouse/Partner Information (4 fields)
-        values.push(formData.spouseName);
-        values.push(formData.spouseOccupation);
-        values.push(formData.spouseAge);
-        values.push(formData.spouseContactNo);
-        
-        // Siblings Information (12 fields - 3 siblings x 4 fields each)
-        values.push(formData.sibling1Name);
-        values.push(formData.sibling1Age);
-        values.push(formData.sibling1Occupation);
-        values.push(formData.sibling1Company);
-        values.push(formData.sibling2Name);
-        values.push(formData.sibling2Age);
-        values.push(formData.sibling2Occupation);
-        values.push(formData.sibling2Company);
-        values.push(formData.sibling3Name);
-        values.push(formData.sibling3Age);
-        values.push(formData.sibling3Occupation);
-        values.push(formData.sibling3Company);
-        
-        // Children Information (12 fields - 3 children x 4 fields each)
-        values.push(formData.child1Name);
-        values.push(formData.child1Age);
-        values.push(formData.child1Gender);
-        values.push(formData.child1Occupation);
-        values.push(formData.child2Name);
-        values.push(formData.child2Age);
-        values.push(formData.child2Gender);
-        values.push(formData.child2Occupation);
-        values.push(formData.child3Name);
-        values.push(formData.child3Age);
-        values.push(formData.child3Gender);
-        values.push(formData.child3Occupation);
+        // SKIP: Spouse, Siblings, Children fields - not in actual database yet
         
         // Employment History (8 fields)
         values.push(formData.prevCompany1);
@@ -295,12 +256,23 @@ exports.handler = async (event, context) => {
         // File Upload (1 field)
         values.push(profilePictureUrl);
         
-        // Total: 10+6+2+8+4+12+12+8+3+6+6+1+3+1 = 82 values (matches database schema)
+        // Need to remove 4 values to get exactly 50 - let me check what's extra
+        console.log('DEBUG: Values count breakdown:');
+        console.log('Personal (10):', values.slice(0, 10));
+        console.log('Government IDs (6):', values.slice(10, 16));
+        console.log('Address (2):', values.slice(16, 18));
+        console.log('Parents (8):', values.slice(18, 26));
+        console.log('Employment (8):', values.slice(26, 34));
+        console.log('Competencies (3):', values.slice(34, 37));
+        console.log('References (6):', values.slice(37, 43));
+        console.log('Background (6):', values.slice(43, 49));
+        console.log('Additional+Signature+File (5):', values.slice(49, 54));
+        console.log('Total values:', values.length, 'Expected: 50');
 
         console.log('Values array length:', values.length);
-        console.log('Expected: 82 values for ALL database columns including family fields');
+        console.log('Expected: 50 values for existing database columns only');
         console.log('Profile picture URL:', profilePictureUrl);
-        console.log('Using complete INSERT with ALL database columns');
+        console.log('Using INSERT with existing database columns only (no family fields)');
         
         // Debug: Log ALL values to identify the issue
         console.log('ALL VALUES:', values);
