@@ -157,8 +157,8 @@ exports.handler = async (event, context) => {
         full_name, nick_name, mobile_no, email_add, birth_date, civil_status, age, birth_place,
         nationality, religion, sss_no, philhealth_no, hdmf_no, national_id_no, drivers_license, tin_no,
         current_address, provincial_address,
-        father_name, father_occupation, father_age, father_contact_no,
-        mother_name, mother_occupation, mother_age, mother_contact_no,
+        father_name, father_occupation,
+        mother_name, mother_occupation,
         prev_company_1, position_1, dates_employed_1, reason_for_leaving_1,
         key_skills, certifications, languages,
         ref_1_name, ref_1_relationship,
@@ -166,8 +166,7 @@ exports.handler = async (event, context) => {
         profile_picture_url
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16,
-        $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30,
-        $31, $32, $33, $34
+        $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30
       ) RETURNING id;
     `;
 
@@ -198,15 +197,12 @@ exports.handler = async (event, context) => {
         values.push(formData.currentAddress);
         values.push(formData.provincialAddress);
         
-        // Family Background - Parents ONLY (8 fields)
+        // Family Background - Parents ONLY (4 fields) - REMOVED 4 MORE TO GET TO 34
         values.push(formData.fatherName);
         values.push(formData.fatherOccupation);
-        values.push(formData.fatherAge);
-        values.push(formData.fatherContactNo);
         values.push(formData.motherName);
         values.push(formData.motherOccupation);
-        values.push(formData.motherAge);
-        values.push(formData.motherContactNo);
+        // REMOVED: fatherAge, fatherContactNo, motherAge, motherContactNo
         
         // SKIP: Spouse, Siblings, Children fields - not in actual database yet
         
@@ -241,16 +237,16 @@ exports.handler = async (event, context) => {
         console.log('Personal (10):', values.slice(0, 10));
         console.log('Government IDs (6):', values.slice(10, 16));
         console.log('Address (2):', values.slice(16, 18));
-        console.log('Parents (8):', values.slice(18, 26));
-        console.log('Employment (4):', values.slice(26, 30));
-        console.log('Competencies (3):', values.slice(30, 33));
-        console.log('References (2):', values.slice(33, 35));
-        console.log('Background (2):', values.slice(35, 37));
-        console.log('File (1):', values.slice(37, 38));
-        console.log('Total values:', values.length, 'Expected: 34');
+        console.log('Parents (4):', values.slice(18, 22));
+        console.log('Employment (4):', values.slice(22, 26));
+        console.log('Competencies (3):', values.slice(26, 29));
+        console.log('References (2):', values.slice(29, 31));
+        console.log('Background (2):', values.slice(31, 33));
+        console.log('File (1):', values.slice(33, 34));
+        console.log('Total values:', values.length, 'Expected: 30');
 
         console.log('Values array length:', values.length);
-        console.log('Expected: 34 values for existing database columns only');
+        console.log('Expected: 30 values for existing database columns only');
         console.log('Profile picture URL:', profilePictureUrl);
         console.log('Using INSERT with existing database columns only (no family fields)');
         
