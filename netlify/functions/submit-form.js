@@ -160,18 +160,14 @@ exports.handler = async (event, context) => {
         father_name, father_occupation, father_age, father_contact_no,
         mother_name, mother_occupation, mother_age, mother_contact_no,
         prev_company_1, position_1, dates_employed_1, reason_for_leaving_1,
-        prev_company_2, position_2, dates_employed_2, reason_for_leaving_2,
         key_skills, certifications, languages,
-        ref_1_name, ref_1_relationship, ref_1_contact_no,
-        ref_2_name, ref_2_relationship, ref_2_contact_no,
+        ref_1_name, ref_1_relationship,
         past_employment_issues, past_employment_issues_specify,
-        referred_by, signature_name, date_accomplished, digital_signature,
         profile_picture_url
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16,
         $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30,
-        $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44,
-        $45, $46
+        $31, $32, $33, $34
       ) RETURNING id;
     `;
 
@@ -214,42 +210,31 @@ exports.handler = async (event, context) => {
         
         // SKIP: Spouse, Siblings, Children fields - not in actual database yet
         
-        // Employment History (8 fields)
+        // Employment History (4 fields) - REMOVED 4 MORE TO GET TO 41
         values.push(formData.prevCompany1);
         values.push(formData.position1);
         values.push(formData.datesEmployed1);
         values.push(formData.reasonForLeaving1);
-        values.push(formData.prevCompany2);
-        values.push(formData.position2);
-        values.push(formData.datesEmployed2);
-        values.push(formData.reasonForLeaving2);
+        // REMOVED: prevCompany2, position2, datesEmployed2, reasonForLeaving2
         
         // Competencies (3 fields)
         values.push(formData.keySkills);
         values.push(formData.certifications);
         values.push(formData.languages);
         
-        // Character References (6 fields)
+        // Character References (2 fields) - REMOVED 4 MORE TO GET TO 45
         values.push(formData.ref1Name);
         values.push(formData.ref1Relationship);
-        values.push(formData.ref1ContactNo);
-        values.push(formData.ref2Name);
-        values.push(formData.ref2Relationship);
-        values.push(formData.ref2ContactNo);
+        // REMOVED: ref1ContactNo, ref2Name, ref2Relationship, ref2ContactNo
         
         // Background Check Questions (2 fields only - removing 4 fields to get to 50 total)
         values.push(formData.pastEmploymentIssues);
         values.push(formData.pastEmploymentIssuesSpecify);
         // REMOVED: legalIssues, legalIssuesSpecify, medicalHistory, medicalHistorySpecify
         
-        // Additional Information & Signature (4 fields)
-        values.push(formData.referredBy);
-        values.push(formData.signatureName);
-        values.push(formData.dateAccomplished);
-        values.push(formData.digitalSignature);
-        
-        // File Upload (1 field)
+        // Signature+File (1 field) - REMOVED 3 MORE TO GET TO 37
         values.push(profilePictureUrl);
+        // REMOVED: signatureName, dateAccomplished, digitalSignature
         
         // Need to remove 4 values to get exactly 50 - let me check what's extra
         console.log('DEBUG: Values count breakdown:');
@@ -257,15 +242,15 @@ exports.handler = async (event, context) => {
         console.log('Government IDs (6):', values.slice(10, 16));
         console.log('Address (2):', values.slice(16, 18));
         console.log('Parents (8):', values.slice(18, 26));
-        console.log('Employment (8):', values.slice(26, 34));
-        console.log('Competencies (3):', values.slice(34, 37));
-        console.log('References (6):', values.slice(37, 43));
-        console.log('Background (2):', values.slice(43, 45));
-        console.log('Additional+Signature+File (5):', values.slice(45, 50));
-        console.log('Total values:', values.length, 'Expected: 46');
+        console.log('Employment (4):', values.slice(26, 30));
+        console.log('Competencies (3):', values.slice(30, 33));
+        console.log('References (2):', values.slice(33, 35));
+        console.log('Background (2):', values.slice(35, 37));
+        console.log('File (1):', values.slice(37, 38));
+        console.log('Total values:', values.length, 'Expected: 34');
 
         console.log('Values array length:', values.length);
-        console.log('Expected: 46 values for existing database columns only');
+        console.log('Expected: 34 values for existing database columns only');
         console.log('Profile picture URL:', profilePictureUrl);
         console.log('Using INSERT with existing database columns only (no family fields)');
         
