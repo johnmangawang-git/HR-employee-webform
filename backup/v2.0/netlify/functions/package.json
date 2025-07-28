@@ -1,0 +1,20 @@
+{
+  "name": "functions",
+  "version": "1.0.0",
+  "description": "Netlify functions for HR employee webform",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "exceljs": "^4.4.0",
+    "express": "^5.1.0",
+    "nodemailer": "^7.0.5",
+    "pg": "^8.12.0",
+    "serverless-http": "^3.2.0"
+  }
+}

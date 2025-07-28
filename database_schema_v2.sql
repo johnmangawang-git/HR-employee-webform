@@ -43,6 +43,40 @@ CREATE TABLE IF NOT EXISTS applications (
     mother_age INTEGER,
     mother_contact_no VARCHAR(20),
     
+    -- Spouse/Partner Information
+    spouse_name VARCHAR(255),
+    spouse_occupation VARCHAR(255),
+    spouse_age INTEGER,
+    spouse_contact_no VARCHAR(20),
+    
+    -- Siblings Information (up to 3 siblings)
+    sibling_1_name VARCHAR(255),
+    sibling_1_age INTEGER,
+    sibling_1_occupation VARCHAR(255),
+    sibling_1_company VARCHAR(255),
+    sibling_2_name VARCHAR(255),
+    sibling_2_age INTEGER,
+    sibling_2_occupation VARCHAR(255),
+    sibling_2_company VARCHAR(255),
+    sibling_3_name VARCHAR(255),
+    sibling_3_age INTEGER,
+    sibling_3_occupation VARCHAR(255),
+    sibling_3_company VARCHAR(255),
+    
+    -- Children Information (up to 3 children)
+    child_1_name VARCHAR(255),
+    child_1_age INTEGER,
+    child_1_gender VARCHAR(10),
+    child_1_occupation VARCHAR(255),
+    child_2_name VARCHAR(255),
+    child_2_age INTEGER,
+    child_2_gender VARCHAR(10),
+    child_2_occupation VARCHAR(255),
+    child_3_name VARCHAR(255),
+    child_3_age INTEGER,
+    child_3_gender VARCHAR(10),
+    child_3_occupation VARCHAR(255),
+    
     -- Employment History
     prev_company_1 VARCHAR(255),
     position_1 VARCHAR(255),

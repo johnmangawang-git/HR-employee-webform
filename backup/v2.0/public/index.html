@@ -467,202 +467,6 @@
                 box-shadow: 0 5px 15px var(--shadow-medium);
             }
 
-        /* Print Button */
-        .print-button {
-            background: var(--gradient-1);
-            color: var(--text-color-light);
-            border: none;
-            padding: 12px 25px;
-            border-radius: 10px;
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            margin: 10px;
-        }
-
-            .print-button:hover {
-                background: var(--gradient-2);
-                transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-            }
-
-        /* Print Styles */
-        @media print {
-            * {
-                -webkit-print-color-adjust: exact !important;
-                color-adjust: exact !important;
-            }
-
-            body {
-                background: white !important;
-                font-family: Arial, sans-serif;
-                font-size: 12px;
-                line-height: 1.2;
-                margin: 0;
-                padding: 0;
-            }
-
-            .form-container {
-                background: white !important;
-                box-shadow: none !important;
-                border: none !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                max-width: none !important;
-                width: 100% !important;
-            }
-
-            .form-header, .form-section, .submit-button, .print-button, .modal-overlay, .loading-overlay {
-                display: none !important;
-            }
-
-            .print-form {
-                display: block !important;
-                width: 100%;
-                height: 100vh;
-                page-break-inside: avoid;
-            }
-
-            .print-page {
-                width: 8.5in;
-                height: 11in;
-                margin: 0;
-                padding: 0.5in;
-                page-break-after: always;
-                border: 2px solid #000;
-                box-sizing: border-box;
-                position: relative;
-            }
-
-            .print-page:last-child {
-                page-break-after: auto;
-            }
-
-            .print-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: flex-start;
-                margin-bottom: 20px;
-                border-bottom: 1px solid #000;
-                padding-bottom: 10px;
-            }
-
-            .print-logo {
-                font-size: 24px;
-                font-weight: bold;
-                color: #000;
-            }
-
-            .print-title {
-                text-align: center;
-                font-size: 16px;
-                font-weight: bold;
-                margin: 10px 0;
-            }
-
-            .photo-placeholder {
-                width: 120px;
-                height: 150px;
-                border: 2px solid #000;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 10px;
-                text-align: center;
-            }
-
-            .print-section {
-                margin-bottom: 15px;
-            }
-
-            .section-header {
-                background-color: #666 !important;
-                color: white !important;
-                padding: 5px;
-                font-weight: bold;
-                text-align: center;
-                font-size: 12px;
-                margin-bottom: 10px;
-            }
-
-            .field-row {
-                display: flex;
-                margin-bottom: 8px;
-                align-items: center;
-            }
-
-            .field-label {
-                font-weight: bold;
-                margin-right: 10px;
-                min-width: 120px;
-                font-size: 11px;
-            }
-
-            .field-value {
-                border-bottom: 1px solid #000;
-                flex: 1;
-                padding: 2px 5px;
-                min-height: 16px;
-                font-size: 11px;
-            }
-
-            .field-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 20px;
-                margin-bottom: 15px;
-            }
-
-            .field-grid-3 {
-                display: grid;
-                grid-template-columns: 1fr 1fr 1fr;
-                gap: 15px;
-                margin-bottom: 15px;
-            }
-
-            .full-width {
-                grid-column: 1 / -1;
-            }
-
-            .table-section {
-                margin-bottom: 20px;
-            }
-
-            .print-table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-bottom: 15px;
-            }
-
-            .print-table th,
-            .print-table td {
-                border: 1px solid #000;
-                padding: 5px;
-                text-align: center;
-                font-size: 10px;
-            }
-
-            .print-table th {
-                background-color: #666 !important;
-                color: white !important;
-                font-weight: bold;
-            }
-
-            .print-table td {
-                height: 25px;
-            }
-
-            .page-number {
-                position: absolute;
-                bottom: 0.3in;
-                right: 0.5in;
-                font-size: 10px;
-                color: #666;
-            }
-        }
-
         /* Responsive Design */
         @media (max-width: 768px) {
             body {
@@ -866,7 +670,57 @@
             }
         }
 
+        /* Admin Login Modal specific styles */
+        #adminLoginModal .modal-content {
+            padding: 40px;
+        }
 
+            #adminLoginModal .modal-content h3 {
+                margin-bottom: 25px;
+                font-size: 2em;
+            }
+
+        #adminLoginModal .form-group {
+            margin-bottom: 20px;
+            text-align: left; /* Align labels/inputs within the modal */
+        }
+
+            #adminLoginModal .form-group label {
+                font-size: 1em;
+                font-weight: 600;
+            }
+
+            #adminLoginModal .form-group input {
+                padding: 10px 15px;
+                border-radius: 8px;
+                font-size: 1em;
+            }
+
+        #adminLoginModal .admin-login-button {
+            background: var(--gradient-2);
+            color: var(--text-color-light);
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            margin-top: 15px;
+        }
+
+            #adminLoginModal .admin-login-button:hover {
+                background: var(--gradient-1);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            }
+
+        #adminLoginModal .error-message {
+            text-align: center;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -879,8 +733,6 @@
         <form id="hrApplicationForm">
             <!-- Form sections will be dynamically generated here by JavaScript -->
         </form>
-
-
 
         <!-- Admin download button removed for security - moved to separate admin page -->
     </div>
@@ -900,13 +752,6 @@
     <div id="loadingOverlay" class="loading-overlay">
         <div class="spinner"></div>
     </div>
-
-    <!-- Print Form (Hidden) -->
-    <div id="printForm" class="print-form" style="display: none;">
-        <!-- Print content will be generated by JavaScript -->
-    </div>
-
-
 
     <script type="module">
         // --- Custom Modal Functions ---
@@ -990,44 +835,6 @@
                     { label: "Mother's Occupation", type: "text", name: "motherOccupation" },
                     { label: "Mother's Age", type: "number", name: "motherAge", min: "0", max: "120" },
                     { label: "Mother's Contact No.", type: "tel", name: "motherContactNo", pattern: "^[0-9]{10,15}$", errorMessage: "Please enter a valid mobile number (10-15 digits)." },
-                    { label: "Spouse/Partner's Name", type: "text", name: "spouseName" },
-                    { label: "Spouse/Partner's Occupation", type: "text", name: "spouseOccupation" },
-                    { label: "Spouse/Partner's Age", type: "number", name: "spouseAge", min: "0", max: "120" },
-                    { label: "Spouse/Partner's Contact No.", type: "tel", name: "spouseContactNo", pattern: "^[0-9]{10,15}$", errorMessage: "Please enter a valid mobile number (10-15 digits)." },
-                ]
-            },
-            {
-                section: "Siblings Information",
-                fields: [
-                    { label: "Sibling 1 Name", type: "text", name: "sibling1Name" },
-                    { label: "Sibling 1 Age", type: "number", name: "sibling1Age", min: "0", max: "120" },
-                    { label: "Sibling 1 Occupation", type: "text", name: "sibling1Occupation" },
-                    { label: "Sibling 1 Company/School", type: "text", name: "sibling1Company" },
-                    { label: "Sibling 2 Name", type: "text", name: "sibling2Name" },
-                    { label: "Sibling 2 Age", type: "number", name: "sibling2Age", min: "0", max: "120" },
-                    { label: "Sibling 2 Occupation", type: "text", name: "sibling2Occupation" },
-                    { label: "Sibling 2 Company/School", type: "text", name: "sibling2Company" },
-                    { label: "Sibling 3 Name", type: "text", name: "sibling3Name" },
-                    { label: "Sibling 3 Age", type: "number", name: "sibling3Age", min: "0", max: "120" },
-                    { label: "Sibling 3 Occupation", type: "text", name: "sibling3Occupation" },
-                    { label: "Sibling 3 Company/School", type: "text", name: "sibling3Company" },
-                ]
-            },
-            {
-                section: "Children Information",
-                fields: [
-                    { label: "Child 1 Name", type: "text", name: "child1Name" },
-                    { label: "Child 1 Age", type: "number", name: "child1Age", min: "0", max: "50" },
-                    { label: "Child 1 Gender", type: "select", name: "child1Gender", options: ["Male", "Female"] },
-                    { label: "Child 1 Occupation/Company/School", type: "text", name: "child1Occupation" },
-                    { label: "Child 2 Name", type: "text", name: "child2Name" },
-                    { label: "Child 2 Age", type: "number", name: "child2Age", min: "0", max: "50" },
-                    { label: "Child 2 Gender", type: "select", name: "child2Gender", options: ["Male", "Female"] },
-                    { label: "Child 2 Occupation/Company/School", type: "text", name: "child2Occupation" },
-                    { label: "Child 3 Name", type: "text", name: "child3Name" },
-                    { label: "Child 3 Age", type: "number", name: "child3Age", min: "0", max: "50" },
-                    { label: "Child 3 Gender", type: "select", name: "child3Gender", options: ["Male", "Female"] },
-                    { label: "Child 3 Occupation/Company/School", type: "text", name: "child3Occupation" },
                 ]
             },
             {
@@ -1761,313 +1568,6 @@
 
             // Admin download functionality removed - moved to separate admin page
         });
-
-        // Print Form Function
-        window.printForm = function() {
-            const formData = {};
-            
-            // Collect all form data
-            const allInputs = document.querySelectorAll('#hrApplicationForm input, #hrApplicationForm select, #hrApplicationForm textarea');
-            allInputs.forEach(input => {
-                if (input.type === 'radio') {
-                    if (input.checked) {
-                        formData[input.name] = input.value;
-                    }
-                } else if (input.type === 'checkbox') {
-                    formData[input.name] = input.checked ? 'Yes' : 'No';
-                } else if (input.type === 'file') {
-                    // Handle file display in print
-                    if (input.files.length > 0) {
-                        formData[input.name] = input.files[0].name;
-                    }
-                } else {
-                    formData[input.name] = input.value || '';
-                }
-            });
-
-            // Generate print HTML
-            const printHTML = generatePrintHTML(formData);
-            
-            // Insert into print form div
-            document.getElementById('printForm').innerHTML = printHTML;
-            
-            // Print
-            window.print();
-        };
-
-        function generatePrintHTML(data) {
-            return `
-                <div class="print-page">
-                    <div class="print-header">
-                        <div class="print-logo">mondo cucina</div>
-                        <div class="photo-placeholder">
-                            ATTACH 2X2 PICTURE
-                        </div>
-                    </div>
-                    
-                    <div class="print-title">PERSONAL INFORMATION FORM</div>
-                    
-                    <div class="print-section">
-                        <div class="section-header">PERSONAL INFORMATION</div>
-                        
-                        <div class="field-row">
-                            <div class="field-label">COMPLETE NAME:</div>
-                            <div class="field-value">${data.fullName || ''}</div>
-                        </div>
-                        
-                        <div class="field-grid-3" style="margin-top: 10px;">
-                            <div style="text-align: center; font-style: italic; font-size: 10px;">FIRST NAME</div>
-                            <div style="text-align: center; font-style: italic; font-size: 10px;">MIDDLE NAME</div>
-                            <div style="text-align: center; font-style: italic; font-size: 10px;">LAST NAME</div>
-                        </div>
-                        
-                        <div class="field-grid">
-                            <div class="field-row">
-                                <div class="field-label">NICK NAME:</div>
-                                <div class="field-value">${data.nickName || ''}</div>
-                            </div>
-                            <div class="field-row">
-                                <div class="field-label">MOBILE NO.:</div>
-                                <div class="field-value">${data.mobileNo || ''}</div>
-                            </div>
-                        </div>
-                        
-                        <div class="field-grid">
-                            <div class="field-row">
-                                <div class="field-label">BIRTH DATE:</div>
-                                <div class="field-value">${data.birthDate || ''}</div>
-                            </div>
-                            <div class="field-row">
-                                <div class="field-label">EMAIL ADD:</div>
-                                <div class="field-value">${data.emailAdd || ''}</div>
-                            </div>
-                        </div>
-                        
-                        <div class="field-grid">
-                            <div class="field-row">
-                                <div class="field-label">CIVIL STATUS:</div>
-                                <div class="field-value">${data.civilStatus || ''}</div>
-                            </div>
-                            <div class="field-row">
-                                <div class="field-label">AGE:</div>
-                                <div class="field-value">${data.age || ''}</div>
-                            </div>
-                        </div>
-                        
-                        <div class="field-grid">
-                            <div class="field-row">
-                                <div class="field-label">BIRTH PLACE:</div>
-                                <div class="field-value">${data.birthPlace || ''}</div>
-                            </div>
-                            <div class="field-row">
-                                <div class="field-label">NATIONALITY:</div>
-                                <div class="field-value">${data.nationality || ''}</div>
-                            </div>
-                        </div>
-                        
-                        <div class="field-grid">
-                            <div class="field-row">
-                                <div class="field-label">RELIGION:</div>
-                                <div class="field-value">${data.religion || ''}</div>
-                            </div>
-                            <div class="field-row">
-                                <div class="field-label">SSS NO:</div>
-                                <div class="field-value">${data.sssNo || ''}</div>
-                            </div>
-                        </div>
-                        
-                        <div class="field-grid">
-                            <div class="field-row">
-                                <div class="field-label">PHILHEALTH NO:</div>
-                                <div class="field-value">${data.philhealthNo || ''}</div>
-                            </div>
-                            <div class="field-row">
-                                <div class="field-label">HDMF NO:</div>
-                                <div class="field-value">${data.hdmfNo || ''}</div>
-                            </div>
-                        </div>
-                        
-                        <div class="field-grid">
-                            <div class="field-row">
-                                <div class="field-label">NATIONAL ID NO:</div>
-                                <div class="field-value">${data.nationalIdNo || ''}</div>
-                            </div>
-                            <div class="field-row">
-                                <div class="field-label">DRIVER'S LICENSE:</div>
-                                <div class="field-value">${data.driversLicense || ''}</div>
-                            </div>
-                        </div>
-                        
-                        <div class="field-row">
-                            <div class="field-label">TIN NO:</div>
-                            <div class="field-value">${data.tinNo || ''}</div>
-                        </div>
-                    </div>
-                    
-                    <div class="print-section">
-                        <div class="field-row">
-                            <div class="field-label">CURRENT ADDRESS:</div>
-                            <div class="field-value">${data.currentAddress || ''}</div>
-                        </div>
-                        
-                        <div class="field-row">
-                            <div class="field-label">PROVINCIAL ADDRESS:</div>
-                            <div class="field-value">${data.provincialAddress || ''}</div>
-                        </div>
-                    </div>
-                    
-                    <div class="print-section">
-                        <div class="field-grid">
-                            <div>
-                                <div class="field-row">
-                                    <div class="field-label">FATHER'S NAME:</div>
-                                    <div class="field-value">${data.fatherName || ''}</div>
-                                </div>
-                                <div class="field-row">
-                                    <div class="field-label">OCCUPATION:</div>
-                                    <div class="field-value">${data.fatherOccupation || ''}</div>
-                                </div>
-                                <div class="field-row">
-                                    <div class="field-label">AGE:</div>
-                                    <div class="field-value">${data.fatherAge || ''}</div>
-                                </div>
-                                <div class="field-row">
-                                    <div class="field-label">CONTACT NO.:</div>
-                                    <div class="field-value">${data.fatherContactNo || ''}</div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="field-row">
-                                    <div class="field-label">MOTHER'S NAME:</div>
-                                    <div class="field-value">${data.motherName || ''}</div>
-                                </div>
-                                <div class="field-row">
-                                    <div class="field-label">OCCUPATION:</div>
-                                    <div class="field-value">${data.motherOccupation || ''}</div>
-                                </div>
-                                <div class="field-row">
-                                    <div class="field-label">AGE:</div>
-                                    <div class="field-value">${data.motherAge || ''}</div>
-                                </div>
-                                <div class="field-row">
-                                    <div class="field-label">CONTACT NO.:</div>
-                                    <div class="field-value">${data.motherContactNo || ''}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="print-section">
-                        <div class="field-grid">
-                            <div class="field-row">
-                                <div class="field-label">SPOUSE/PARTNER'S NAME:</div>
-                                <div class="field-value">${data.spouseName || ''}</div>
-                            </div>
-                            <div></div>
-                        </div>
-                        <div class="field-grid">
-                            <div class="field-row">
-                                <div class="field-label">OCCUPATION:</div>
-                                <div class="field-value">${data.spouseOccupation || ''}</div>
-                            </div>
-                            <div></div>
-                        </div>
-                        <div class="field-grid">
-                            <div class="field-row">
-                                <div class="field-label">AGE:</div>
-                                <div class="field-value">${data.spouseAge || ''}</div>
-                            </div>
-                            <div></div>
-                        </div>
-                        <div class="field-grid">
-                            <div class="field-row">
-                                <div class="field-label">CONTACT NO.:</div>
-                                <div class="field-value">${data.spouseContactNo || ''}</div>
-                            </div>
-                            <div></div>
-                        </div>
-                    </div>
-                    
-                    <div class="table-section">
-                        <table class="print-table">
-                            <thead>
-                                <tr>
-                                    <th>SIBLINGS NAME</th>
-                                    <th>AGE</th>
-                                    <th>OCCUPATION</th>
-                                    <th>COMPANY/SCHOOL</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${generateSiblingsRows(data)}
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <div class="table-section">
-                        <table class="print-table">
-                            <thead>
-                                <tr>
-                                    <th>CHILDREN'S NAME</th>
-                                    <th>AGE</th>
-                                    <th>GENDER</th>
-                                    <th>OCCUPATION/COMPANY/SCHOOL</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${generateChildrenRows(data)}
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <div class="print-section">
-                        <div class="section-header">EDUCATIONAL BACKGROUND (start with most highest)</div>
-                    </div>
-                    
-                    <div class="page-number">Page 1</div>
-                </div>
-            `;
-        }
-
-        function generateSiblingsRows(data) {
-            let rows = '';
-            for (let i = 1; i <= 5; i++) {
-                const name = data[`sibling${i}Name`] || '';
-                const age = data[`sibling${i}Age`] || '';
-                const occupation = data[`sibling${i}Occupation`] || '';
-                const company = data[`sibling${i}Company`] || '';
-                
-                rows += `
-                    <tr>
-                        <td>${name}</td>
-                        <td>${age}</td>
-                        <td>${occupation}</td>
-                        <td>${company}</td>
-                    </tr>
-                `;
-            }
-            return rows;
-        }
-
-        function generateChildrenRows(data) {
-            let rows = '';
-            for (let i = 1; i <= 5; i++) {
-                const name = data[`child${i}Name`] || '';
-                const age = data[`child${i}Age`] || '';
-                const gender = data[`child${i}Gender`] || '';
-                const occupation = data[`child${i}Occupation`] || '';
-                
-                rows += `
-                    <tr>
-                        <td>${name}</td>
-                        <td>${age}</td>
-                        <td>${gender}</td>
-                        <td>${occupation}</td>
-                    </tr>
-                `;
-            }
-            return rows;
-        }
     </script>
 </body>
 </html>
