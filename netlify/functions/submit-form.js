@@ -165,15 +165,13 @@ exports.handler = async (event, context) => {
         ref_1_name, ref_1_relationship, ref_1_contact_no,
         ref_2_name, ref_2_relationship, ref_2_contact_no,
         past_employment_issues, past_employment_issues_specify,
-        legal_issues, legal_issues_specify,
-        medical_history, medical_history_specify,
         referred_by, signature_name, date_accomplished, digital_signature,
         profile_picture_url
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16,
         $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30,
         $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44,
-        $45, $46, $47, $48, $49, $50
+        $45, $46
       ) RETURNING id;
     `;
 
@@ -239,13 +237,10 @@ exports.handler = async (event, context) => {
         values.push(formData.ref2Relationship);
         values.push(formData.ref2ContactNo);
         
-        // Background Check Questions (6 fields)
+        // Background Check Questions (2 fields only - removing 4 fields to get to 50 total)
         values.push(formData.pastEmploymentIssues);
         values.push(formData.pastEmploymentIssuesSpecify);
-        values.push(formData.legalIssues);
-        values.push(formData.legalIssuesSpecify);
-        values.push(formData.medicalHistory);
-        values.push(formData.medicalHistorySpecify);
+        // REMOVED: legalIssues, legalIssuesSpecify, medicalHistory, medicalHistorySpecify
         
         // Additional Information & Signature (4 fields)
         values.push(formData.referredBy);
@@ -265,12 +260,12 @@ exports.handler = async (event, context) => {
         console.log('Employment (8):', values.slice(26, 34));
         console.log('Competencies (3):', values.slice(34, 37));
         console.log('References (6):', values.slice(37, 43));
-        console.log('Background (6):', values.slice(43, 49));
-        console.log('Additional+Signature+File (5):', values.slice(49, 54));
-        console.log('Total values:', values.length, 'Expected: 50');
+        console.log('Background (2):', values.slice(43, 45));
+        console.log('Additional+Signature+File (5):', values.slice(45, 50));
+        console.log('Total values:', values.length, 'Expected: 46');
 
         console.log('Values array length:', values.length);
-        console.log('Expected: 50 values for existing database columns only');
+        console.log('Expected: 46 values for existing database columns only');
         console.log('Profile picture URL:', profilePictureUrl);
         console.log('Using INSERT with existing database columns only (no family fields)');
         
