@@ -343,11 +343,11 @@
             </div>
         </form>
 
-        <!-- Print Applicant Data Section -->
-        <div class="admin-section" id="printSection"
+        <!-- Save as PDF Section -->
+        <div class="admin-section" id="pdfSection"
             style="margin-top: 30px; padding-top: 30px; border-top: 2px solid var(--border-color); display: none;">
-            <h3 style="color: var(--primary-color); margin-bottom: 20px;">🖨️ Print Applicant Form</h3>
-            <p style="color: #666; margin-bottom: 20px;">Select an applicant to print their completed application form</p>
+            <h3 style="color: var(--primary-color); margin-bottom: 20px;">📄 Save Applicant Form as PDF</h3>
+            <p style="color: #666; margin-bottom: 20px;">Select an applicant to save their completed application form as PDF</p>
             
             <div class="form-group">
                 <label for="applicantSelect">👤 Select Applicant:</label>
@@ -356,11 +356,11 @@
                 </select>
             </div>
             
-            <button type="button" id="printButton" class="login-button" style="background: var(--success-color); margin-top: 15px;" disabled>
-                🖨️ Print Selected Application
+            <button type="button" id="pdfButton" class="login-button" style="background: var(--success-color); margin-top: 15px;" disabled>
+                📄 Save Selected Application as PDF
             </button>
             
-            <div id="printMessage" class="success-message"></div>
+            <div id="pdfMessage" class="success-message"></div>
         </div>
 
         <!-- Print Blank Form Section -->
@@ -444,8 +444,8 @@
 
     successMessage.textContent = '✅ Download successful! Check your downloads folder.';
 
-    // Show print section after successful login
-    showPrintSection();
+    // Show PDF section after successful login
+    showPdfSection();
 
     // Reset form after successful download
     setTimeout(() => {
@@ -495,17 +495,17 @@
     </script>
 
     <script>
-        // Print Applicant Data Functionality
+        // PDF Generation Functionality
         document.addEventListener('DOMContentLoaded', function() {
-            const printSection = document.getElementById('printSection');
+            const pdfSection = document.getElementById('pdfSection');
             const applicantSelect = document.getElementById('applicantSelect');
-            const printButton = document.getElementById('printButton');
-            const printMessage = document.getElementById('printMessage');
+            const pdfButton = document.getElementById('pdfButton');
+            const pdfMessage = document.getElementById('pdfMessage');
             let applicantsData = [];
 
-            // Show print section after successful login
-            window.showPrintSection = function() {
-                printSection.style.display = 'block';
+            // Show PDF section after successful login
+            window.showPdfSection = function() {
+                pdfSection.style.display = 'block';
                 loadApplicants();
             };
 
@@ -549,101 +549,124 @@
 
             // Handle applicant selection
             applicantSelect.addEventListener('change', function() {
-                printButton.disabled = this.value === '';
-                printMessage.textContent = '';
+                pdfButton.disabled = this.value === '';
+                pdfMessage.textContent = '';
             });
 
-            // Handle print button click
-            printButton.addEventListener('click', function() {
+            // Handle PDF button click
+            pdfButton.addEventListener('click', function() {
                 const selectedIndex = applicantSelect.value;
                 if (selectedIndex !== '') {
                     const selectedApplicant = applicantsData[selectedIndex];
-                    printApplicantForm(selectedApplicant);
+                    generatePdfForm(selectedApplicant);
                 }
             });
 
-            // Print applicant form
-            function printApplicantForm(applicantData) {
-                const printContent = generatePrintHTML(applicantData);
+            // Generate PDF form
+            function generatePdfForm(applicantData) {
+                const pdfContent = generatePdfHTML(applicantData);
                 
-                let printDiv = document.getElementById('printFormDiv');
-                if (!printDiv) {
-                    printDiv = document.createElement('div');
-                    printDiv.id = 'printFormDiv';
-                    printDiv.className = 'print-form';
-                    printDiv.style.display = 'none';
-                    document.body.appendChild(printDiv);
-                }
+                // Create a new window for PDF generation
+                const pdfWindow = window.open('', '_blank');
+                pdfWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>HR Application - ${applicantData.full_name}</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; margin: 20px; }
+                            .pdf-container { max-width: 800px; margin: 0 auto; }
+                            .pdf-header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px; }
+                            .pdf-title { font-size: 24px; font-weight: bold; color: #333; margin-bottom: 10px; }
+                            .pdf-subtitle { font-size: 16px; color: #666; }
+                            .pdf-section { margin-bottom: 25px; }
+                            .section-title { background: #f0f0f0; padding: 10px; font-weight: bold; margin-bottom: 15px; }
+                            .field-row { display: flex; margin-bottom: 10px; }
+                            .field-label { font-weight: bold; min-width: 150px; margin-right: 15px; }
+                            .field-value { flex: 1; border-bottom: 1px solid #ccc; padding-bottom: 2px; }
+                            .footer { margin-top: 40px; text-align: center; font-size: 12px; color: #666; }
+                        </style>
+                    </head>
+                    <body>
+                        ${pdfContent}
+                        <script>
+                            window.onload = function() {
+                                setTimeout(function() {
+                                    window.print();
+                                    setTimeout(function() {
+                                        window.close();
+                                    }, 1000);
+                                }, 500);
+                            };
+                        </script>
+                    </body>
+                    </html>
+                `);
+                pdfWindow.document.close();
                 
-                printDiv.innerHTML = printContent;
-                window.print();
-                printMessage.textContent = '✅ Print dialog opened successfully!';
+                pdfMessage.textContent = '✅ PDF generation window opened! Use Ctrl+P or Cmd+P and select "Save as PDF"';
             }
 
-            // Generate print HTML (based on current 9 database fields)
-            function generatePrintHTML(data) {
+            // Generate PDF HTML (based on current 9 database fields)
+            function generatePdfHTML(data) {
                 return `
-                    <div class="print-page">
-                        <div class="print-header">
-                            <div class="print-logo">mondo cucina</div>
-                            <div class="photo-placeholder">
-                                ${data.profile_picture_url ? 'PROFILE PHOTO' : 'ATTACH 2X2 PICTURE'}
-                            </div>
+                    <div class="pdf-container">
+                        <div class="pdf-header">
+                            <div class="pdf-title">MONDO CUCINA INC.</div>
+                            <div class="pdf-subtitle">HR Application Form</div>
                         </div>
                         
-                        <div class="print-title">PERSONAL INFORMATION FORM</div>
-                        
-                        <div class="print-section">
-                            <div class="section-header">PERSONAL INFORMATION</div>
+                        <div class="pdf-section">
+                            <div class="section-title">PERSONAL INFORMATION</div>
                             
                             <div class="field-row">
-                                <div class="field-label">COMPLETE NAME:</div>
+                                <div class="field-label">Complete Name:</div>
                                 <div class="field-value">${data.full_name || ''}</div>
                             </div>
                             
                             <div class="field-row">
-                                <div class="field-label">EMAIL ADDRESS:</div>
+                                <div class="field-label">Email Address:</div>
                                 <div class="field-value">${data.email_add || ''}</div>
                             </div>
                             
                             <div class="field-row">
-                                <div class="field-label">MOBILE NO.:</div>
+                                <div class="field-label">Mobile Number:</div>
                                 <div class="field-value">${data.mobile_no || ''}</div>
                             </div>
                             
                             <div class="field-row">
-                                <div class="field-label">BIRTH DATE:</div>
+                                <div class="field-label">Birth Date:</div>
                                 <div class="field-value">${data.birth_date ? new Date(data.birth_date).toLocaleDateString() : ''}</div>
                             </div>
                             
                             <div class="field-row">
-                                <div class="field-label">CURRENT ADDRESS:</div>
+                                <div class="field-label">Current Address:</div>
                                 <div class="field-value">${data.current_address || ''}</div>
                             </div>
                             
                             <div class="field-row">
-                                <div class="field-label">SIGNATURE NAME:</div>
+                                <div class="field-label">Signature Name:</div>
                                 <div class="field-value">${data.signature_name || ''}</div>
                             </div>
                             
                             <div class="field-row">
-                                <div class="field-label">DATE ACCOMPLISHED:</div>
+                                <div class="field-label">Date Accomplished:</div>
                                 <div class="field-value">${data.date_accomplished ? new Date(data.date_accomplished).toLocaleDateString() : ''}</div>
                             </div>
                             
                             <div class="field-row">
-                                <div class="field-label">DIGITAL SIGNATURE:</div>
+                                <div class="field-label">Digital Signature:</div>
                                 <div class="field-value">${data.digital_signature || ''}</div>
                             </div>
                             
                             <div class="field-row">
-                                <div class="field-label">SUBMISSION DATE:</div>
+                                <div class="field-label">Submission Date:</div>
                                 <div class="field-value">${data.submission_timestamp ? new Date(data.submission_timestamp).toLocaleDateString() : ''}</div>
                             </div>
                         </div>
                         
-                        <div style="position: absolute; bottom: 0.3in; right: 0.5in; font-size: 10px; color: #666;">
-                            Generated: ${new Date().toLocaleDateString()}
+                        <div class="footer">
+                            Generated on: ${new Date().toLocaleDateString()} | Mondo Cucina Inc. HR Department
                         </div>
                     </div>
                 `;
