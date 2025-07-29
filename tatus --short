@@ -1,0 +1,564 @@
+[1mdiff --git a/public/admin.html b/public/admin.html[m
+[1mindex ba2f09d9..a5a8ed24 100644[m
+[1m--- a/public/admin.html[m
+[1m+++ b/public/admin.html[m
+[36m@@ -1,10 +1,12 @@[m
+ <!DOCTYPE html>[m
+ <html lang="en">[m
+[32m+[m
+ <head>[m
+     <meta charset="UTF-8">[m
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">[m
+     <title>HR Admin Dashboard - Mondo Cucina Inc.</title>[m
+[31m-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔒</text></svg>">[m
+[32m+[m[32m    <link rel="icon"[m
+[32m+[m[32m        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔒</text></svg>">[m
+     <style>[m
+         /* Admin Dashboard Styles */[m
+         :root {[m
+[36m@@ -171,8 +173,139 @@[m
+             background: #f8f9fa;[m
+             border-radius: 5px;[m
+         }[m
+[32m+[m
+[32m+[m[32m        /* Print Styles */[m
+[32m+[m[32m        @media print {[m
+[32m+[m[32m            body {[m
+[32m+[m[32m                background: white !important;[m
+[32m+[m[32m                font-family: Arial, sans-serif;[m
+[32m+[m[32m                font-size: 12px;[m
+[32m+[m[32m                margin: 0;[m
+[32m+[m[32m                padding: 0;[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            .admin-container {[m
+[32m+[m[32m                display: none !important;[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            .print-form {[m
+[32m+[m[32m                display: block !important;[m
+[32m+[m[32m                width: 100%;[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            .print-page {[m
+[32m+[m[32m                width: 8.5in;[m
+[32m+[m[32m                height: 11in;[m
+[32m+[m[32m                margin: 0;[m
+[32m+[m[32m                padding: 0.5in;[m
+[32m+[m[32m                border: 2px solid #000;[m
+[32m+[m[32m                box-sizing: border-box;[m
+[32m+[m[32m                position: relative;[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            .print-header {[m
+[32m+[m[32m                display: flex;[m
+[32m+[m[32m                justify-content: space-between;[m
+[32m+[m[32m                margin-bottom: 20px;[m
+[32m+[m[32m                border-bottom: 1px solid #000;[m
+[32m+[m[32m                padding-bottom: 10px;[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            .print-logo {[m
+[32m+[m[32m                font-size: 24px;[m
+[32m+[m[32m                font-weight: bold;[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            .print-title {[m
+[32m+[m[32m                text-align: center;[m
+[32m+[m[32m                font-size: 16px;[m
+[32m+[m[32m                font-weight: bold;[m
+[32m+[m[32m                margin: 10px 0;[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            .photo-placeholder {[m
+[32m+[m[32m                width: 120px;[m
+[32m+[m[32m                height: 150px;[m
+[32m+[m[32m                border: 2px solid #000;[m
+[32m+[m[32m                display: flex;[m
+[32m+[m[32m                align-items: center;[m
+[32m+[m[32m                justify-content: center;[m
+[32m+[m[32m                font-size: 10px;[m
+[32m+[m[32m                text-align: center;[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            .section-header {[m
+[32m+[m[32m                background-color: #666 !important;[m
+[32m+[m[32m                color: white !important;[m
+[32m+[m[32m                padding: 5px;[m
+[32m+[m[32m                font-weight: bold;[m
+[32m+[m[32m                text-align: center;[m
+[32m+[m[32m                font-size: 12px;[m
+[32m+[m[32m                margin-bottom: 10px;[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            .field-row {[m
+[32m+[m[32m                display: flex;[m
+[32m+[m[32m                margin-bottom: 8px;[m
+[32m+[m[32m                align-items: center;[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            .field-label {[m
+[32m+[m[32m                font-weight: bold;[m
+[32m+[m[32m                margin-right: 10px;[m
+[32m+[m[32m                min-width: 120px;[m
+[32m+[m[32m                font-size: 11px;[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            .field-value {[m
+[32m+[m[32m                border-bottom: 1px solid #000;[m
+[32m+[m[32m                flex: 1;[m
+[32m+[m[32m                padding: 2px 5px;[m
+[32m+[m[32m                min-height: 16px;[m
+[32m+[m[32m                font-size: 11px;[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            .field-grid {[m
+[32m+[m[32m                display: grid;[m
+[32m+[m[32m                grid-template-columns: 1fr 1fr;[m
+[32m+[m[32m                gap: 20px;[m
+[32m+[m[32m                margin-bottom: 15px;[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            .field-grid-3 {[m
+[32m+[m[32m                display: grid;[m
+[32m+[m[32m                grid-template-columns: 1fr 1fr 1fr;[m
+[32m+[m[32m                gap: 15px;[m
+[32m+[m[32m                margin-bottom: 15px;[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            .print-table {[m
+[32m+[m[32m                width: 100%;[m
+[32m+[m[32m                border-collapse: collapse;[m
+[32m+[m[32m                margin-bottom: 15px;[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            .print-table th,[m
+[32m+[m[32m            .print-table td {[m
+[32m+[m[32m                border: 1px solid #000;[m
+[32m+[m[32m                padding: 5px;[m
+[32m+[m[32m                text-align: center;[m
+[32m+[m[32m                font-size: 10px;[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            .print-table th {[m
+[32m+[m[32m                background-color: #666 !important;[m
+[32m+[m[32m                color: white !important;[m
+[32m+[m[32m                font-weight: bold;[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            .print-table td {[m
+[32m+[m[32m                height: 25px;[m
+[32m+[m[32m            }[m
+[32m+[m[32m        }[m
+     </style>[m
+ </head>[m
+[32m+[m
+ <body>[m
+     <div class="admin-container">[m
+         <div class="admin-header">[m
+[36m@@ -188,12 +321,14 @@[m
+         <form id="adminLoginForm" class="login-form">[m
+             <div class="form-group">[m
+                 <label for="adminUsername">👤 Username (Email):</label>[m
+[31m-                <input type="email" id="adminUsername" name="username" required autocomplete="username" placeholder="Enter your HR email">[m
+[32m+[m[32m                <input type="email" id="adminUsername" name="username" required autocomplete="username"[m
+[32m+[m[32m                    placeholder="Enter your HR email">[m
+             </div>[m
+[31m-            [m
+[32m+[m
+             <div class="form-group">[m
+                 <label for="adminPassword">🔑 Password:</label>[m
+[31m-                <input type="password" id="adminPassword" name="password" required autocomplete="current-password" placeholder="Enter your password">[m
+[32m+[m[32m                <input type="password" id="adminPassword" name="password" required autocomplete="current-password"[m
+[32m+[m[32m                    placeholder="Enter your password">[m
+             </div>[m
+ [m
+             <button type="submit" id="loginButton" class="login-button">[m
+[36m@@ -202,12 +337,44 @@[m
+ [m
+             <div id="errorMessage" class="error-message"></div>[m
+             <div id="successMessage" class="success-message"></div>[m
+[31m-            [m
+[32m+[m
+             <div id="loading" class="loading">[m
+                 <p>🔄 Authenticating and preparing download...</p>[m
+             </div>[m
+         </form>[m
+ [m
+[32m+[m[32m        <!-- Print Applicant Data Section -->[m
+[32m+[m[32m        <div class="admin-section" id="printSection"[m
+[32m+[m[32m            style="margin-top: 30px; padding-top: 30px; border-top: 2px solid var(--border-color); display: none;">[m
+[32m+[m[32m            <h3 style="color: var(--primary-color); margin-bottom: 20px;">🖨️ Print Applicant Form</h3>[m
+[32m+[m[32m            <p style="color: #666; margin-bottom: 20px;">Select an applicant to print their completed application form</p>[m
+[32m+[m[41m            [m
+[32m+[m[32m            <div class="form-group">[m
+[32m+[m[32m                <label for="applicantSelect">👤 Select Applicant:</label>[m
+[32m+[m[32m                <select id="applicantSelect" style="width: 100%; padding: 12px 15px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1em;">[m
+[32m+[m[32m                    <option value="">Loading applicants...</option>[m
+[32m+[m[32m                </select>[m
+[32m+[m[32m            </div>[m
+[32m+[m[41m            [m
+[32m+[m[32m            <button type="button" id="printButton" class="login-button" style="background: var(--success-color); margin-top: 15px;" disabled>[m
+[32m+[m[32m                🖨️ Print Selected Application[m
+[32m+[m[32m            </button>[m
+[32m+[m[41m            [m
+[32m+[m[32m            <div id="printMessage" class="success-message"></div>[m
+[32m+[m[32m        </div>[m
+[32m+[m
+[32m+[m[32m        <!-- Print Blank Form Section -->[m
+[32m+[m[32m        <div class="admin-section"[m
+[32m+[m[32m            style="margin-top: 30px; padding-top: 30px; border-top: 2px solid var(--border-color);">[m
+[32m+[m[32m            <h3 style="color: var(--primary-color); margin-bottom: 20px;">📄 Print Blank Form</h3>[m
+[32m+[m[32m            <p style="color: #666; margin-bottom: 20px;">Generate a printable blank application form for manual[m
+[32m+[m[32m                completion.</p>[m
+[32m+[m[32m            <button type="button" id="printBlankFormButton" class="login-button" onclick="printBlankForm()"[m
+[32m+[m[32m                style="background: var(--success-color);">[m
+[32m+[m[32m                📄 Print Blank Form[m
+[32m+[m[32m            </button>[m
+[32m+[m[32m        </div>[m
+[32m+[m
+         <div class="ip-info">[m
+             <strong>Security Info:</strong><br>[m
+             Session will timeout after 30 minutes of inactivity.<br>[m
+[36m@@ -219,97 +386,264 @@[m
+         </div>[m
+     </div>[m
+ [m
+[31m-    <script>[m
+[31m-        // Admin Dashboard JavaScript[m
+[31m-        document.addEventListener('DOMContentLoaded', function() {[m
+[31m-            const loginForm = document.getElementById('adminLoginForm');[m
+[31m-            const loginButton = document.getElementById('loginButton');[m
+[31m-            const errorMessage = document.getElementById('errorMessage');[m
+[31m-            const successMessage = document.getElementById('successMessage');[m
+[31m-            const loading = document.getElementById('loading');[m
+[31m-[m
+[31m-            // Security: Log access attempt[m
+[31m-            console.log('Admin dashboard accessed at:', new Date().toISOString());[m
+[31m-[m
+[31m-            loginForm.addEventListener('submit', async (event) => {[m
+[31m-                event.preventDefault();[m
+[31m-                [m
+[31m-                // Clear previous messages[m
+[31m-                errorMessage.textContent = '';[m
+[31m-                successMessage.textContent = '';[m
+[31m-                [m
+[31m-                // Show loading state[m
+[31m-                loginButton.disabled = true;[m
+[31m-                loginButton.textContent = '🔄 Authenticating...';[m
+[31m-                loading.classList.add('show');[m
+[32m+[m[32m    <!-- Print Form (Hidden) -->[m
+[32m+[m[32m    <div id="printForm" class="print-form" style="display: none;">[m
+[32m+[m[32m        <!-- Print content will be generated by JavaScript -->[m
+[32m+[m[32m    </div>[m
+ [m
+[31m-                const username = document.getElementById('adminUsername').value;[m
+[31m-                const password = document.getElementById('adminPassword').value;[m
+[32m+[m[32m    <script></script>[m
+[32m+[m[32m    // Admin Dashboard JavaScript[m
+[32m+[m[32m    document.addEventListener('DOMContentLoaded', function () {[m
+[32m+[m[32m    const loginForm = document.getElementById('adminLoginForm');[m
+[32m+[m[32m    const loginButton = document.getElementById('loginButton');[m
+[32m+[m[32m    const errorMessage = document.getElementById('errorMessage');[m
+[32m+[m[32m    const successMessage = document.getElementById('successMessage');[m
+[32m+[m[32m    const loading = document.getElementById('loading');[m
+[32m+[m
+[32m+[m[32m    // Security: Log access attempt[m
+[32m+[m[32m    console.log('Admin dashboard accessed at:', new Date().toISOString());[m
+[32m+[m
+[32m+[m[32m    loginForm.addEventListener('submit', async (event) => {[m
+[32m+[m[32m    event.preventDefault();[m
+[32m+[m
+[32m+[m[32m    // Clear previous messages[m
+[32m+[m[32m    errorMessage.textContent = '';[m
+[32m+[m[32m    successMessage.textContent = '';[m
+[32m+[m
+[32m+[m[32m    // Show loading state[m
+[32m+[m[32m    loginButton.disabled = true;[m
+[32m+[m[32m    loginButton.textContent = '🔄 Authenticating...';[m
+[32m+[m[32m    loading.classList.add('show');[m
+[32m+[m
+[32m+[m[32m    const username = document.getElementById('adminUsername').value;[m
+[32m+[m[32m    const password = document.getElementById('adminPassword').value;[m
+[32m+[m
+[32m+[m[32m    try {[m
+[32m+[m[32m    const response = await fetch('/.netlify/functions/download-data', {[m
+[32m+[m[32m    method: 'POST',[m
+[32m+[m[32m    headers: {[m
+[32m+[m[32m    'Content-Type': 'application/json',[m
+[32m+[m[32m    },[m
+[32m+[m[32m    body: JSON.stringify({ username, password }),[m
+[32m+[m[32m    });[m
+[32m+[m
+[32m+[m[32m    if (response.ok) {[m
+[32m+[m[32m    const contentType = response.headers.get('content-type');[m
+[32m+[m
+[32m+[m[32m    if (contentType && contentType.includes('application/zip')) {[m
+[32m+[m[32m    // Success! Download the ZIP file[m
+[32m+[m[32m    const blob = await response.blob();[m
+[32m+[m[32m    const url = window.URL.createObjectURL(blob);[m
+[32m+[m[32m    const a = document.createElement('a');[m
+[32m+[m[32m    a.href = url;[m
+[32m+[m[32m    a.download = `HR_Applications_Complete_${new Date().toISOString().slice(0, 10)}.zip`;[m
+[32m+[m[32m    document.body.appendChild(a);[m
+[32m+[m[32m    a.click();[m
+[32m+[m[32m    a.remove();[m
+[32m+[m[32m    window.URL.revokeObjectURL(url);[m
+[32m+[m
+[32m+[m[32m    successMessage.textContent = '✅ Download successful! Check your downloads folder.';[m
+[32m+[m
+[32m+[m[32m    // Show print section after successful login[m
+[32m+[m[32m    showPrintSection();[m
+[32m+[m
+[32m+[m[32m    // Reset form after successful download[m
+[32m+[m[32m    setTimeout(() => {[m
+[32m+[m[32m    loginForm.reset();[m
+[32m+[m[32m    successMessage.textContent = '';[m
+[32m+[m[32m    }, 3000);[m
+[32m+[m[32m    } else {[m
+[32m+[m[32m    errorMessage.textContent = '❌ Unexpected server response. Please try again.';[m
+[32m+[m[32m    }[m
+[32m+[m[32m    } else {[m
+[32m+[m[32m    const errorResult = await response.json();[m
+[32m+[m[32m    errorMessage.textContent = '❌ ' + (errorResult.message || 'Authentication failed. Please check your credentials.');[m
+[32m+[m[32m    }[m
+[32m+[m[32m    } catch (error) {[m
+[32m+[m[32m    console.error('Network error:', error);[m
+[32m+[m[32m    errorMessage.textContent = '❌ Network error. Please check your connection and try again.';[m
+[32m+[m[32m    } finally {[m
+[32m+[m[32m    // Reset button state[m
+[32m+[m[32m    loginButton.disabled = false;[m
+[32m+[m[32m    loginButton.textContent = '🔓 Login & Download Data';[m
+[32m+[m[32m    loading.classList.remove('show');[m
+[32m+[m[32m    }[m
+[32m+[m[32m    });[m
+[32m+[m
+[32m+[m[32m    // Security: Auto-logout after 30 minutes of inactivity[m
+[32m+[m[32m    let inactivityTimer;[m
+[32m+[m[32m    function resetInactivityTimer() {[m
+[32m+[m[32m    clearTimeout(inactivityTimer);[m
+[32m+[m[32m    inactivityTimer = setTimeout(() => {[m
+[32m+[m[32m    alert('⚠️ Session expired due to inactivity. Please refresh the page.');[m
+[32m+[m[32m    location.reload();[m
+[32m+[m[32m    }, 30 * 60 * 1000); // 30 minutes[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    // Reset timer on user activity[m
+[32m+[m[32m    document.addEventListener('click', resetInactivityTimer);[m
+[32m+[m[32m    document.addEventListener('keypress', resetInactivityTimer);[m
+[32m+[m[32m    resetInactivityTimer(); // Start timer[m
+[32m+[m[32m    });[m
+[32m+[m
+[32m+[m[32m    // Print Blank Form Function[m
+[32m+[m[32m    window.printBla[m
+[32m+[m[32m</body>[m
+ [m
+[32m+[m[32m</html>    <sc[m
+[32m+[m[32mript>[m
+[32m+[m[32m        // Print Applicant Data Functionality[m
+[32m+[m[32m        document.addEventListener('DOMContentLoaded', function() {[m
+[32m+[m[32m            const printSection = document.getElementById('printSection');[m
+[32m+[m[32m            const applicantSelect = document.getElementById('applicantSelect');[m
+[32m+[m[32m            const printButton = document.getElementById('printButton');[m
+[32m+[m[32m            const printMessage = document.getElementById('printMessage');[m
+[32m+[m[32m            let applicantsData = [];[m
+[32m+[m
+[32m+[m[32m            // Show print section after successful login[m
+[32m+[m[32m            window.showPrintSection = function() {[m
+[32m+[m[32m                printSection.style.display = 'block';[m
+[32m+[m[32m                loadApplicants();[m
+[32m+[m[32m            };[m
+[32m+[m
+[32m+[m[32m            // Load applicants for dropdown[m
+[32m+[m[32m            async function loadApplicants() {[m
+                 try {[m
+[31m-                    const response = await fetch('/.netlify/functions/download-data', {[m
+[32m+[m[32m                    const response = await fetch('/.netlify/functions/get-applicants', {[m
+                         method: 'POST',[m
+                         headers: {[m
+                             'Content-Type': 'application/json',[m
+                         },[m
+[31m-                        body: JSON.stringify({ username, password }),[m
+[32m+[m[32m                        body: JSON.stringify({[m
+[32m+[m[32m                            username: document.getElementById('adminUsername').value,[m
+[32m+[m[32m                            password: document.getElementById('adminPassword').value[m
+[32m+[m[32m                        })[m
+                     });[m
+ [m
+                     if (response.ok) {[m
+[31m-                        const contentType = response.headers.get('content-type');[m
+[31m-                        [m
+[31m-                        if (contentType && contentType.includes('application/zip')) {[m
+[31m-                            // Success! Download the ZIP file[m
+[31m-                            const blob = await response.blob();[m
+[31m-                            const url = window.URL.createObjectURL(blob);[m
+[31m-                            const a = document.createElement('a');[m
+[31m-                            a.href = url;[m
+[31m-                            a.download = `HR_Applications_Complete_${new Date().toISOString().slice(0, 10)}.zip`;[m
+[31m-                            document.body.appendChild(a);[m
+[31m-                            a.click();[m
+[31m-                            a.remove();[m
+[31m-                            window.URL.revokeObjectURL(url);[m
+[31m-[m
+[31m-                            successMessage.textContent = '✅ Download successful! Check your downloads folder.';[m
+[31m-                            [m
+[31m-                            // Reset form after successful download[m
+[31m-                            setTimeout(() => {[m
+[31m-                                loginForm.reset();[m
+[31m-                                successMessage.textContent = '';[m
+[31m-                            }, 3000);[m
+[31m-                        } else {[m
+[31m-                            errorMessage.textContent = '❌ Unexpected server response. Please try again.';[m
+[31m-                        }[m
+[32m+[m[32m                        applicantsData = await response.json();[m
+[32m+[m[32m                        populateApplicantDropdown();[m
+                     } else {[m
+[31m-                        const errorResult = await response.json();[m
+[31m-                        errorMessage.textContent = '❌ ' + (errorResult.message || 'Authentication failed. Please check your credentials.');[m
+[32m+[m[32m                        applicantSelect.innerHTML = '<option value="">Error loading applicants</option>';[m
+                     }[m
+                 } catch (error) {[m
+[31m-                    console.error('Network error:', error);[m
+[31m-                    errorMessage.textContent = '❌ Network error. Please check your connection and try again.';[m
+[31m-                } finally {[m
+[31m-                    // Reset button state[m
+[31m-                    loginButton.disabled = false;[m
+[31m-                    loginButton.textContent = '🔓 Login & Download Data';[m
+[31m-                    loading.classList.remove('show');[m
+[32m+[m[32m                    console.error('Error loading applicants:', error);[m
+[32m+[m[32m                    applicantSelect.innerHTML = '<option value="">Error loading applicants</option>';[m
+[32m+[m[32m                }[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            // Populate dropdown with applicants[m
+[32m+[m[32m            function populateApplicantDropdown() {[m
+[32m+[m[32m                applicantSelect.innerHTML = '<option value="">Select an applicant...</option>';[m
+[32m+[m[41m                [m
+[32m+[m[32m                applicantsData.forEach((applicant, index) => {[m
+[32m+[m[32m                    const option = document.createElement('option');[m
+[32m+[m[32m                    option.value = index;[m
+[32m+[m[32m                    option.textContent = `${applicant.full_name} - ${applicant.email_add} (${new Date(applicant.submission_timestamp).toLocaleDateString()})`;[m
+[32m+[m[32m                    applicantSelect.appendChild(option);[m
+[32m+[m[32m                });[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            // Handle applicant selection[m
+[32m+[m[32m            applicantSelect.addEventListener('change', function() {[m
+[32m+[m[32m                printButton.disabled = this.value === '';[m
+[32m+[m[32m                printMessage.textContent = '';[m
+[32m+[m[32m            });[m
+[32m+[m
+[32m+[m[32m            // Handle print button click[m
+[32m+[m[32m            printButton.addEventListener('click', function() {[m
+[32m+[m[32m                const selectedIndex = applicantSelect.value;[m
+[32m+[m[32m                if (selectedIndex !== '') {[m
+[32m+[m[32m                    const selectedApplicant = applicantsData[selectedIndex];[m
+[32m+[m[32m                    printApplicantForm(selectedApplicant);[m
+                 }[m
+             });[m
+ [m
+[31m-            // Security: Auto-logout after 30 minutes of inactivity[m
+[31m-            let inactivityTimer;[m
+[31m-            function resetInactivityTimer() {[m
+[31m-                clearTimeout(inactivityTimer);[m
+[31m-                inactivityTimer = setTimeout(() => {[m
+[31m-                    alert('⚠️ Session expired due to inactivity. Please refresh the page.');[m
+[31m-                    location.reload();[m
+[31m-                }, 30 * 60 * 1000); // 30 minutes[m
+[32m+[m[32m            // Print applicant form[m
+[32m+[m[32m            function printApplicantForm(applicantData) {[m
+[32m+[m[32m                const printContent = generatePrintHTML(applicantData);[m
+[32m+[m[41m                [m
+[32m+[m[32m                let printDiv = document.getElementById('printFormDiv');[m
+[32m+[m[32m                if (!printDiv) {[m
+[32m+[m[32m                    printDiv = document.createElement('div');[m
+[32m+[m[32m                    printDiv.id = 'printFormDiv';[m
+[32m+[m[32m                    printDiv.className = 'print-form';[m
+[32m+[m[32m                    printDiv.style.display = 'none';[m
+[32m+[m[32m                    document.body.appendChild(printDiv);[m
+[32m+[m[32m                }[m
+[32m+[m[41m                [m
+[32m+[m[32m                printDiv.innerHTML = printContent;[m
+[32m+[m[32m                window.print();[m
+[32m+[m[32m                printMessage.textContent = '✅ Print dialog opened successfully!';[m
+             }[m
+ [m
+[31m-            // Reset timer on user activity[m
+[31m-            document.addEventListener('click', resetInactivityTimer);[m
+[31m-            document.addEventListener('keypress', resetInactivityTimer);[m
+[31m-            resetInactivityTimer(); // Start timer[m
+[32m+[m[32m            // Generate print HTML (based on current 9 database fields)[m
+[32m+[m[32m            function generatePrintHTML(data) {[m
+[32m+[m[32m                return `[m
+[32m+[m[32m                    <div class="print-page">[m
+[32m+[m[32m                        <div class="print-header">[m
+[32m+[m[32m                            <div class="print-logo">mondo cucina</div>[m
+[32m+[m[32m                            <div class="photo-placeholder">[m
+[32m+[m[32m                                ${data.profile_picture_url ? 'PROFILE PHOTO' : 'ATTACH 2X2 PICTURE'}[m
+[32m+[m[32m                            </div>[m
+[32m+[m[32m                        </div>[m
+[32m+[m[41m                        [m
+[32m+[m[32m                        <div class="print-title">PERSONAL INFORMATION FORM</div>[m
+[32m+[m[41m                        [m
+[32m+[m[32m                        <div class="print-section">[m
+[32m+[m[32m                            <div class="section-header">PERSONAL INFORMATION</div>[m
+[32m+[m[41m                            [m
+[32m+[m[32m                            <div class="field-row">[m
+[32m+[m[32m                                <div class="field-label">COMPLETE NAME:</div>[m
+[32m+[m[32m                                <div class="field-value">${data.full_name || ''}</div>[m
+[32m+[m[32m                            </div>[m
+[32m+[m[41m                            [m
+[32m+[m[32m                            <div class="field-row">[m
+[32m+[m[32m                                <div class="field-label">EMAIL ADDRESS:</div>[m
+[32m+[m[32m                                <div class="field-value">${data.email_add || ''}</div>[m
+[32m+[m[32m                            </div>[m
+[32m+[m[41m                            [m
+[32m+[m[32m                            <div class="field-row">[m
+[32m+[m[32m                                <div class="field-label">MOBILE NO.:</div>[m
+[32m+[m[32m                                <div class="field-value">${data.mobile_no || ''}</div>[m
+[32m+[m[32m                            </div>[m
+[32m+[m[41m                            [m
+[32m+[m[32m                            <div class="field-row">[m
+[32m+[m[32m                                <div class="field-label">BIRTH DATE:</div>[m
+[32m+[m[32m                                <div class="field-value">${data.birth_date ? new Date(data.birth_date).toLocaleDateString() : ''}</div>[m
+[32m+[m[32m                            </div>[m
+[32m+[m[41m                            [m
+[32m+[m[32m                            <div class="field-row">[m
+[32m+[m[32m                                <div class="field-label">CURRENT ADDRESS:</div>[m
+[32m+[m[32m                                <div class="field-value">${data.current_address || ''}</div>[m
+[32m+[m[32m                            </div>[m
+[32m+[m[41m                            [m
+[32m+[m[32m                            <div class="field-row">[m
+[32m+[m[32m                                <div class="field-label">SIGNATURE NAME:</div>[m
+[32m+[m[32m                                <div class="field-value">${data.signature_name || ''}</div>[m
+[32m+[m[32m                            </div>[m
+[32m+[m[41m                            [m
+[32m+[m[32m                            <div class="field-row">[m
+[32m+[m[32m                                <div class="field-label">DATE ACCOMPLISHED:</div>[m
+[32m+[m[32m                                <div class="field-value">${data.date_accomplished ? new Date(data.date_accomplished).toLocaleDateString() : ''}</div>[m
+[32m+[m[32m                            </div>[m
+[32m+[m[41m                            [m
+[32m+[m[32m                            <div class="field-row">[m
+[32m+[m[32m                                <div class="field-label">DIGITAL SIGNATURE:</div>[m
+[32m+[m[32m                                <div class="field-value">${data.digital_signature || ''}</div>[m
+[32m+[m[32m                            </div>[m
+[32m+[m[41m                            [m
+[32m+[m[32m                            <div class="field-row">[m
+[32m+[m[32m                                <div class="field-label">SUBMISSION DATE:</div>[m
+[32m+[m[32m                                <div class="field-value">${data.submission_timestamp ? new Date(data.submission_timestamp).toLocaleDateString() : ''}</div>[m
+[32m+[m[32m                            </div>[m
+[32m+[m[32m                        </div>[m
+[32m+[m[41m                        [m
+[32m+[m[32m                        <div style="position: absolute; bottom: 0.3in; right: 0.5in; font-size: 10px; color: #666;">[m
+[32m+[m[32m                            Generated: ${new Date().toLocaleDateString()}[m
+[32m+[m[32m                        </div>[m
+[32m+[m[32m                    </div>[m
+[32m+[m[32m                `;[m
+[32m+[m[32m            }[m
+         });[m
+[31m-    </script>[m
+[31m-</body>[m
+[31m-</html>[m
+\ No newline at end of file[m
+[32m+[m[32m    </script>[m
+\ No newline at end of file[m

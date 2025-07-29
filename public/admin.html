@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HR Admin Dashboard - Mondo Cucina Inc.</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔒</text></svg>">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔒</text></svg>">
     <style>
         /* Admin Dashboard Styles */
         :root {
@@ -171,8 +173,139 @@
             background: #f8f9fa;
             border-radius: 5px;
         }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white !important;
+                font-family: Arial, sans-serif;
+                font-size: 12px;
+                margin: 0;
+                padding: 0;
+            }
+
+            .admin-container {
+                display: none !important;
+            }
+
+            .print-form {
+                display: block !important;
+                width: 100%;
+            }
+
+            .print-page {
+                width: 8.5in;
+                height: 11in;
+                margin: 0;
+                padding: 0.5in;
+                border: 2px solid #000;
+                box-sizing: border-box;
+                position: relative;
+            }
+
+            .print-header {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 20px;
+                border-bottom: 1px solid #000;
+                padding-bottom: 10px;
+            }
+
+            .print-logo {
+                font-size: 24px;
+                font-weight: bold;
+            }
+
+            .print-title {
+                text-align: center;
+                font-size: 16px;
+                font-weight: bold;
+                margin: 10px 0;
+            }
+
+            .photo-placeholder {
+                width: 120px;
+                height: 150px;
+                border: 2px solid #000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 10px;
+                text-align: center;
+            }
+
+            .section-header {
+                background-color: #666 !important;
+                color: white !important;
+                padding: 5px;
+                font-weight: bold;
+                text-align: center;
+                font-size: 12px;
+                margin-bottom: 10px;
+            }
+
+            .field-row {
+                display: flex;
+                margin-bottom: 8px;
+                align-items: center;
+            }
+
+            .field-label {
+                font-weight: bold;
+                margin-right: 10px;
+                min-width: 120px;
+                font-size: 11px;
+            }
+
+            .field-value {
+                border-bottom: 1px solid #000;
+                flex: 1;
+                padding: 2px 5px;
+                min-height: 16px;
+                font-size: 11px;
+            }
+
+            .field-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+                margin-bottom: 15px;
+            }
+
+            .field-grid-3 {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 15px;
+                margin-bottom: 15px;
+            }
+
+            .print-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 15px;
+            }
+
+            .print-table th,
+            .print-table td {
+                border: 1px solid #000;
+                padding: 5px;
+                text-align: center;
+                font-size: 10px;
+            }
+
+            .print-table th {
+                background-color: #666 !important;
+                color: white !important;
+                font-weight: bold;
+            }
+
+            .print-table td {
+                height: 25px;
+            }
+        }
     </style>
 </head>
+
 <body>
     <div class="admin-container">
         <div class="admin-header">
@@ -188,12 +321,14 @@
         <form id="adminLoginForm" class="login-form">
             <div class="form-group">
                 <label for="adminUsername">👤 Username (Email):</label>
-                <input type="email" id="adminUsername" name="username" required autocomplete="username" placeholder="Enter your HR email">
+                <input type="email" id="adminUsername" name="username" required autocomplete="username"
+                    placeholder="Enter your HR email">
             </div>
-            
+
             <div class="form-group">
                 <label for="adminPassword">🔑 Password:</label>
-                <input type="password" id="adminPassword" name="password" required autocomplete="current-password" placeholder="Enter your password">
+                <input type="password" id="adminPassword" name="password" required autocomplete="current-password"
+                    placeholder="Enter your password">
             </div>
 
             <button type="submit" id="loginButton" class="login-button">
@@ -202,11 +337,43 @@
 
             <div id="errorMessage" class="error-message"></div>
             <div id="successMessage" class="success-message"></div>
-            
+
             <div id="loading" class="loading">
                 <p>🔄 Authenticating and preparing download...</p>
             </div>
         </form>
+
+        <!-- Print Applicant Data Section -->
+        <div class="admin-section" id="printSection"
+            style="margin-top: 30px; padding-top: 30px; border-top: 2px solid var(--border-color); display: none;">
+            <h3 style="color: var(--primary-color); margin-bottom: 20px;">🖨️ Print Applicant Form</h3>
+            <p style="color: #666; margin-bottom: 20px;">Select an applicant to print their completed application form</p>
+            
+            <div class="form-group">
+                <label for="applicantSelect">👤 Select Applicant:</label>
+                <select id="applicantSelect" style="width: 100%; padding: 12px 15px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1em;">
+                    <option value="">Loading applicants...</option>
+                </select>
+            </div>
+            
+            <button type="button" id="printButton" class="login-button" style="background: var(--success-color); margin-top: 15px;" disabled>
+                🖨️ Print Selected Application
+            </button>
+            
+            <div id="printMessage" class="success-message"></div>
+        </div>
+
+        <!-- Print Blank Form Section -->
+        <div class="admin-section"
+            style="margin-top: 30px; padding-top: 30px; border-top: 2px solid var(--border-color);">
+            <h3 style="color: var(--primary-color); margin-bottom: 20px;">📄 Print Blank Form</h3>
+            <p style="color: #666; margin-bottom: 20px;">Generate a printable blank application form for manual
+                completion.</p>
+            <button type="button" id="printBlankFormButton" class="login-button" onclick="printBlankForm()"
+                style="background: var(--success-color);">
+                📄 Print Blank Form
+            </button>
+        </div>
 
         <div class="ip-info">
             <strong>Security Info:</strong><br>
@@ -219,97 +386,264 @@
         </div>
     </div>
 
-    <script>
-        // Admin Dashboard JavaScript
+    <!-- Print Form (Hidden) -->
+    <div id="printForm" class="print-form" style="display: none;">
+        <!-- Print content will be generated by JavaScript -->
+    </div>
+
+    <script></script>
+    // Admin Dashboard JavaScript
+    document.addEventListener('DOMContentLoaded', function () {
+    const loginForm = document.getElementById('adminLoginForm');
+    const loginButton = document.getElementById('loginButton');
+    const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
+    const loading = document.getElementById('loading');
+
+    // Security: Log access attempt
+    console.log('Admin dashboard accessed at:', new Date().toISOString());
+
+    loginForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    // Clear previous messages
+    errorMessage.textContent = '';
+    successMessage.textContent = '';
+
+    // Show loading state
+    loginButton.disabled = true;
+    loginButton.textContent = '🔄 Authenticating...';
+    loading.classList.add('show');
+
+    const username = document.getElementById('adminUsername').value;
+    const password = document.getElementById('adminPassword').value;
+
+    try {
+    const response = await fetch('/.netlify/functions/download-data', {
+    method: 'POST',
+    headers: {
+    'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ username, password }),
+    });
+
+    if (response.ok) {
+    const contentType = response.headers.get('content-type');
+
+    if (contentType && contentType.includes('application/zip')) {
+    // Success! Download the ZIP file
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `HR_Applications_Complete_${new Date().toISOString().slice(0, 10)}.zip`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+
+    successMessage.textContent = '✅ Download successful! Check your downloads folder.';
+
+    // Show print section after successful login
+    showPrintSection();
+
+    // Reset form after successful download
+    setTimeout(() => {
+    loginForm.reset();
+    successMessage.textContent = '';
+    }, 3000);
+    } else {
+    errorMessage.textContent = '❌ Unexpected server response. Please try again.';
+    }
+    } else {
+    const errorResult = await response.json();
+    errorMessage.textContent = '❌ ' + (errorResult.message || 'Authentication failed. Please check your credentials.');
+    }
+    } catch (error) {
+    console.error('Network error:', error);
+    errorMessage.textContent = '❌ Network error. Please check your connection and try again.';
+    } finally {
+    // Reset button state
+    loginButton.disabled = false;
+    loginButton.textContent = '🔓 Login & Download Data';
+    loading.classList.remove('show');
+    }
+    });
+
+    // Security: Auto-logout after 30 minutes of inactivity
+    let inactivityTimer;
+    function resetInactivityTimer() {
+    clearTimeout(inactivityTimer);
+    inactivityTimer = setTimeout(() => {
+    alert('⚠️ Session expired due to inactivity. Please refresh the page.');
+    location.reload();
+    }, 30 * 60 * 1000); // 30 minutes
+    }
+
+    // Reset timer on user activity
+    document.addEventListener('click', resetInactivityTimer);
+    document.addEventListener('keypress', resetInactivityTimer);
+    resetInactivityTimer(); // Start timer
+    });
+
+    // Print Blank Form Function
+    window.printBla
+</body>
+
+</html>    <sc
+ript>
+        // Print Applicant Data Functionality
         document.addEventListener('DOMContentLoaded', function() {
-            const loginForm = document.getElementById('adminLoginForm');
-            const loginButton = document.getElementById('loginButton');
-            const errorMessage = document.getElementById('errorMessage');
-            const successMessage = document.getElementById('successMessage');
-            const loading = document.getElementById('loading');
+            const printSection = document.getElementById('printSection');
+            const applicantSelect = document.getElementById('applicantSelect');
+            const printButton = document.getElementById('printButton');
+            const printMessage = document.getElementById('printMessage');
+            let applicantsData = [];
 
-            // Security: Log access attempt
-            console.log('Admin dashboard accessed at:', new Date().toISOString());
+            // Show print section after successful login
+            window.showPrintSection = function() {
+                printSection.style.display = 'block';
+                loadApplicants();
+            };
 
-            loginForm.addEventListener('submit', async (event) => {
-                event.preventDefault();
-                
-                // Clear previous messages
-                errorMessage.textContent = '';
-                successMessage.textContent = '';
-                
-                // Show loading state
-                loginButton.disabled = true;
-                loginButton.textContent = '🔄 Authenticating...';
-                loading.classList.add('show');
-
-                const username = document.getElementById('adminUsername').value;
-                const password = document.getElementById('adminPassword').value;
-
+            // Load applicants for dropdown
+            async function loadApplicants() {
                 try {
-                    const response = await fetch('/.netlify/functions/download-data', {
+                    const response = await fetch('/.netlify/functions/get-applicants', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({ username, password }),
+                        body: JSON.stringify({
+                            username: document.getElementById('adminUsername').value,
+                            password: document.getElementById('adminPassword').value
+                        })
                     });
 
                     if (response.ok) {
-                        const contentType = response.headers.get('content-type');
-                        
-                        if (contentType && contentType.includes('application/zip')) {
-                            // Success! Download the ZIP file
-                            const blob = await response.blob();
-                            const url = window.URL.createObjectURL(blob);
-                            const a = document.createElement('a');
-                            a.href = url;
-                            a.download = `HR_Applications_Complete_${new Date().toISOString().slice(0, 10)}.zip`;
-                            document.body.appendChild(a);
-                            a.click();
-                            a.remove();
-                            window.URL.revokeObjectURL(url);
-
-                            successMessage.textContent = '✅ Download successful! Check your downloads folder.';
-                            
-                            // Reset form after successful download
-                            setTimeout(() => {
-                                loginForm.reset();
-                                successMessage.textContent = '';
-                            }, 3000);
-                        } else {
-                            errorMessage.textContent = '❌ Unexpected server response. Please try again.';
-                        }
+                        applicantsData = await response.json();
+                        populateApplicantDropdown();
                     } else {
-                        const errorResult = await response.json();
-                        errorMessage.textContent = '❌ ' + (errorResult.message || 'Authentication failed. Please check your credentials.');
+                        applicantSelect.innerHTML = '<option value="">Error loading applicants</option>';
                     }
                 } catch (error) {
-                    console.error('Network error:', error);
-                    errorMessage.textContent = '❌ Network error. Please check your connection and try again.';
-                } finally {
-                    // Reset button state
-                    loginButton.disabled = false;
-                    loginButton.textContent = '🔓 Login & Download Data';
-                    loading.classList.remove('show');
+                    console.error('Error loading applicants:', error);
+                    applicantSelect.innerHTML = '<option value="">Error loading applicants</option>';
+                }
+            }
+
+            // Populate dropdown with applicants
+            function populateApplicantDropdown() {
+                applicantSelect.innerHTML = '<option value="">Select an applicant...</option>';
+                
+                applicantsData.forEach((applicant, index) => {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.textContent = `${applicant.full_name} - ${applicant.email_add} (${new Date(applicant.submission_timestamp).toLocaleDateString()})`;
+                    applicantSelect.appendChild(option);
+                });
+            }
+
+            // Handle applicant selection
+            applicantSelect.addEventListener('change', function() {
+                printButton.disabled = this.value === '';
+                printMessage.textContent = '';
+            });
+
+            // Handle print button click
+            printButton.addEventListener('click', function() {
+                const selectedIndex = applicantSelect.value;
+                if (selectedIndex !== '') {
+                    const selectedApplicant = applicantsData[selectedIndex];
+                    printApplicantForm(selectedApplicant);
                 }
             });
 
-            // Security: Auto-logout after 30 minutes of inactivity
-            let inactivityTimer;
-            function resetInactivityTimer() {
-                clearTimeout(inactivityTimer);
-                inactivityTimer = setTimeout(() => {
-                    alert('⚠️ Session expired due to inactivity. Please refresh the page.');
-                    location.reload();
-                }, 30 * 60 * 1000); // 30 minutes
+            // Print applicant form
+            function printApplicantForm(applicantData) {
+                const printContent = generatePrintHTML(applicantData);
+                
+                let printDiv = document.getElementById('printFormDiv');
+                if (!printDiv) {
+                    printDiv = document.createElement('div');
+                    printDiv.id = 'printFormDiv';
+                    printDiv.className = 'print-form';
+                    printDiv.style.display = 'none';
+                    document.body.appendChild(printDiv);
+                }
+                
+                printDiv.innerHTML = printContent;
+                window.print();
+                printMessage.textContent = '✅ Print dialog opened successfully!';
             }
 
-            // Reset timer on user activity
-            document.addEventListener('click', resetInactivityTimer);
-            document.addEventListener('keypress', resetInactivityTimer);
-            resetInactivityTimer(); // Start timer
+            // Generate print HTML (based on current 9 database fields)
+            function generatePrintHTML(data) {
+                return `
+                    <div class="print-page">
+                        <div class="print-header">
+                            <div class="print-logo">mondo cucina</div>
+                            <div class="photo-placeholder">
+                                ${data.profile_picture_url ? 'PROFILE PHOTO' : 'ATTACH 2X2 PICTURE'}
+                            </div>
+                        </div>
+                        
+                        <div class="print-title">PERSONAL INFORMATION FORM</div>
+                        
+                        <div class="print-section">
+                            <div class="section-header">PERSONAL INFORMATION</div>
+                            
+                            <div class="field-row">
+                                <div class="field-label">COMPLETE NAME:</div>
+                                <div class="field-value">${data.full_name || ''}</div>
+                            </div>
+                            
+                            <div class="field-row">
+                                <div class="field-label">EMAIL ADDRESS:</div>
+                                <div class="field-value">${data.email_add || ''}</div>
+                            </div>
+                            
+                            <div class="field-row">
+                                <div class="field-label">MOBILE NO.:</div>
+                                <div class="field-value">${data.mobile_no || ''}</div>
+                            </div>
+                            
+                            <div class="field-row">
+                                <div class="field-label">BIRTH DATE:</div>
+                                <div class="field-value">${data.birth_date ? new Date(data.birth_date).toLocaleDateString() : ''}</div>
+                            </div>
+                            
+                            <div class="field-row">
+                                <div class="field-label">CURRENT ADDRESS:</div>
+                                <div class="field-value">${data.current_address || ''}</div>
+                            </div>
+                            
+                            <div class="field-row">
+                                <div class="field-label">SIGNATURE NAME:</div>
+                                <div class="field-value">${data.signature_name || ''}</div>
+                            </div>
+                            
+                            <div class="field-row">
+                                <div class="field-label">DATE ACCOMPLISHED:</div>
+                                <div class="field-value">${data.date_accomplished ? new Date(data.date_accomplished).toLocaleDateString() : ''}</div>
+                            </div>
+                            
+                            <div class="field-row">
+                                <div class="field-label">DIGITAL SIGNATURE:</div>
+                                <div class="field-value">${data.digital_signature || ''}</div>
+                            </div>
+                            
+                            <div class="field-row">
+                                <div class="field-label">SUBMISSION DATE:</div>
+                                <div class="field-value">${data.submission_timestamp ? new Date(data.submission_timestamp).toLocaleDateString() : ''}</div>
+                            </div>
+                        </div>
+                        
+                        <div style="position: absolute; bottom: 0.3in; right: 0.5in; font-size: 10px; color: #666;">
+                            Generated: ${new Date().toLocaleDateString()}
+                        </div>
+                    </div>
+                `;
+            }
         });
     </script>
-</body>
-</html>
