@@ -155,7 +155,7 @@ exports.handler = async (event, context) => {
         const insertQuery = `
       INSERT INTO applications (
         full_name, nick_name, mobile_no, email_add, birth_date, civil_status, age, birth_place,
-        nationality, religion, sss_no, philhealth_no, hdmf_no, national_id_no, drivers_license, tin_no,
+        nationality, religion, sss_no, philhealth_no,
         current_address, provincial_address,
         key_skills, certifications, languages,
         ref_1_name, ref_1_relationship,
@@ -163,7 +163,7 @@ exports.handler = async (event, context) => {
         profile_picture_url
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16,
-        $17, $18, $19, $20, $21, $22
+        $17, $18
       ) RETURNING id;
     `;
 
@@ -182,13 +182,10 @@ exports.handler = async (event, context) => {
         values.push(formData.nationality);
         values.push(formData.religion);
         
-        // Government IDs (6 fields)
+        // Government IDs (2 fields) - REMOVED 4 MORE TO GET TO 22
         values.push(formData.sssNo);
         values.push(formData.philhealthNo);
-        values.push(formData.hdmfNo);
-        values.push(formData.nationalIdNo);
-        values.push(formData.driversLicense);
-        values.push(formData.tinNo);
+        // REMOVED: hdmfNo, nationalIdNo, driversLicense, tinNo
         
         // Address Information (2 fields)
         values.push(formData.currentAddress);
@@ -224,18 +221,18 @@ exports.handler = async (event, context) => {
         // Need to remove 4 values to get exactly 50 - let me check what's extra
         console.log('DEBUG: Values count breakdown:');
         console.log('Personal (10):', values.slice(0, 10));
-        console.log('Government IDs (6):', values.slice(10, 16));
-        console.log('Address (2):', values.slice(16, 18));
+        console.log('Government IDs (2):', values.slice(10, 12));
+        console.log('Address (2):', values.slice(12, 14));
         console.log('Parents (0): REMOVED');
         console.log('Employment (0): REMOVED');
-        console.log('Competencies (3):', values.slice(18, 21));
-        console.log('References (2):', values.slice(21, 23));
-        console.log('Background (2):', values.slice(23, 25));
-        console.log('File (1):', values.slice(25, 26));
-        console.log('Total values:', values.length, 'Expected: 22');
+        console.log('Competencies (3):', values.slice(14, 17));
+        console.log('References (2):', values.slice(17, 19));
+        console.log('Background (2):', values.slice(19, 21));
+        console.log('File (1):', values.slice(21, 22));
+        console.log('Total values:', values.length, 'Expected: 18');
 
         console.log('Values array length:', values.length);
-        console.log('Expected: 22 values for existing database columns only');
+        console.log('Expected: 18 values for existing database columns only');
         console.log('Profile picture URL:', profilePictureUrl);
         console.log('Using INSERT with existing database columns only (no family fields)');
         
