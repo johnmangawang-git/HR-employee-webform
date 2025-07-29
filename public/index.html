@@ -1,17 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HR Application Form - Mondo Cucina Inc.</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         /* Global Styles */
         :root {
-            --primary-color: #4A90E2; /* A professional blue */
-            --secondary-color: #50E3C2; /* A complementary teal */
-            --accent-color: #FFC107; /* A subtle accent yellow */
+            --primary-color: #4A90E2;
+            /* A professional blue */
+            --secondary-color: #50E3C2;
+            /* A complementary teal */
+            --accent-color: #FFC107;
+            /* A subtle accent yellow */
             --text-color-dark: #333;
             --text-color-light: #fff;
             --bg-light: #f9f9f9;
@@ -21,9 +26,12 @@
             --shadow-light: rgba(0, 0, 0, 0.08);
             --shadow-medium: rgba(0, 0, 0, 0.15);
             --shadow-strong: rgba(0, 0, 0, 0.25);
-            --gradient-1: linear-gradient(135deg, #6a82fb, #fc5c7d); /* Soft purple-pink */
-            --gradient-2: linear-gradient(135deg, #8360c3, #2ebf91); /* Deep purple-green */
-            --gradient-3: linear-gradient(135deg, #4facfe, #00f2fe); /* Light blue-cyan */
+            --gradient-1: linear-gradient(135deg, #6a82fb, #fc5c7d);
+            /* Soft purple-pink */
+            --gradient-2: linear-gradient(135deg, #8360c3, #2ebf91);
+            /* Deep purple-green */
+            --gradient-3: linear-gradient(135deg, #4facfe, #00f2fe);
+            /* Light blue-cyan */
         }
 
         * {
@@ -36,41 +44,47 @@
             font-family: 'Inter', sans-serif;
             line-height: 1.6;
             color: var(--text-color-dark);
-            background: var(--gradient-3); /* A subtle, professional background gradient */
+            background: var(--gradient-3);
+            /* A subtle, professional background gradient */
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Align to top for longer forms */
+            align-items: flex-start;
+            /* Align to top for longer forms */
             padding: 40px 20px;
             scroll-behavior: smooth;
         }
 
         /* Form Container */
         .form-container {
-            background: linear-gradient(145deg, #ffffff, #f0f0f0); /* Light gradient for depth */
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            /* Light gradient for depth */
             border-radius: 20px;
-            box-shadow: 0 15px 30px var(--shadow-strong); /* Stronger shadow for premium feel */
+            box-shadow: 0 15px 30px var(--shadow-strong);
+            /* Stronger shadow for premium feel */
             padding: 40px;
             max-width: 900px;
             width: 100%;
             animation: fadeIn 1s ease-out;
-            border: 1px solid rgba(255, 255, 255, 0.6); /* Subtle white border for highlight */
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            /* Subtle white border for highlight */
             position: relative;
-            overflow: hidden; /* For pseudo-elements */
+            overflow: hidden;
+            /* For pseudo-elements */
         }
 
-            /* Pseudo-element for subtle background pattern/texture */
-            .form-container::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: radial-gradient(circle at top left, rgba(var(--primary-color-rgb), 0.05) 0%, transparent 20%), radial-gradient(circle at bottom right, rgba(var(--secondary-color-rgb), 0.05) 0%, transparent 20%);
-                z-index: 0;
-                pointer-events: none;
-            }
+        /* Pseudo-element for subtle background pattern/texture */
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at top left, rgba(var(--primary-color-rgb), 0.05) 0%, transparent 20%), radial-gradient(circle at bottom right, rgba(var(--secondary-color-rgb), 0.05) 0%, transparent 20%);
+            z-index: 0;
+            pointer-events: none;
+        }
 
         @keyframes fadeIn {
             from {
@@ -92,22 +106,22 @@
             z-index: 1;
         }
 
-            .form-header h1 {
-                font-size: 2.8em;
-                font-weight: 700;
-                color: var(--primary-color);
-                text-shadow: 1px 1px 3px var(--shadow-light);
-                margin-bottom: 10px;
-                background: -webkit-linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-            }
+        .form-header h1 {
+            font-size: 2.8em;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-shadow: 1px 1px 3px var(--shadow-light);
+            margin-bottom: 10px;
+            background: -webkit-linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-            .form-header p {
-                font-size: 1.1em;
-                color: #666;
-                font-weight: 300;
-            }
+        .form-header p {
+            font-size: 1.1em;
+            color: #666;
+            font-weight: 300;
+        }
 
         /* Form Sections */
         .form-section {
@@ -119,44 +133,47 @@
             border: 1px solid var(--border-color);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             position: relative;
-            z-index: 1;
+            z-index: 10;
         }
 
-            .form-section:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 12px 25px var(--shadow-strong);
-            }
+        .form-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px var(--shadow-strong);
+        }
 
-            .form-section h2 {
-                font-size: 1.8em;
-                font-weight: 600;
-                margin-bottom: 25px;
-                color: var(--primary-color);
-                padding-bottom: 10px;
-                border-bottom: 2px solid var(--secondary-color);
-                display: inline-block; /* To make border-bottom only under text */
-                position: relative;
-                background: -webkit-linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-            }
+        .form-section h2 {
+            font-size: 1.8em;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: var(--primary-color);
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--secondary-color);
+            display: inline-block;
+            /* To make border-bottom only under text */
+            position: relative;
+            background: -webkit-linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-                .form-section h2::after {
-                    content: '';
-                    position: absolute;
-                    left: 0;
-                    bottom: -2px; /* Adjust to sit right under the border */
-                    width: 100%;
-                    height: 2px;
-                    background: var(--gradient-1); /* Gradient underline */
-                    transform: scaleX(0);
-                    transform-origin: left;
-                    transition: transform 0.3s ease-out;
-                }
+        .form-section h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -2px;
+            /* Adjust to sit right under the border */
+            width: 100%;
+            height: 2px;
+            background: var(--gradient-1);
+            /* Gradient underline */
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease-out;
+        }
 
-            .form-section:hover h2::after {
-                transform: scaleX(1);
-            }
+        .form-section:hover h2::after {
+            transform: scaleX(1);
+        }
 
         /* Form Fields Layout */
         .form-fields-grid {
@@ -167,102 +184,108 @@
 
         .form-group {
             position: relative;
-            margin-bottom: 15px; /* Adjust if gap is used */
+            margin-bottom: 15px;
+            /* Adjust if gap is used */
+            z-index: 20;
         }
 
-            .form-group label {
-                display: block;
-                margin-bottom: 8px;
-                font-weight: 600;
-                color: #555;
-                font-size: 0.95em;
-            }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            font-size: 0.95em;
+        }
 
-            .form-group input[type="text"],
-            .form-group input[type="email"],
-            .form-group input[type="tel"],
-            .form-group input[type="number"],
-            .form-group input[type="date"],
-            .form-group select,
-            .form-group textarea {
-                width: 100%;
-                padding: 12px 15px;
-                border: 1px solid var(--border-color);
-                border-radius: 10px;
-                font-size: 1em;
-                color: var(--text-color-dark);
-                background-color: var(--bg-light);
-                transition: all 0.3s ease;
-                box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
-            }
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="tel"],
+        .form-group input[type="number"],
+        .form-group input[type="date"],
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 1em;
+            color: var(--text-color-dark);
+            background-color: var(--bg-light);
+            transition: all 0.3s ease;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
+            pointer-events: auto !important;
+            user-select: text !important;
+            -webkit-user-select: text !important;
+        }
 
-                .form-group input[type="text"]:focus,
-                .form-group input[type="email"]:focus,
-                .form-group input[type="tel"]:focus,
-                .form-group input[type="number"]:focus,
-                .form-group input[type="date"]:focus,
-                .form-group select:focus,
-                .form-group textarea:focus {
-                    border-color: var(--primary-color);
-                    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2), inset 0 1px 3px rgba(0, 0, 0, 0.06);
-                    outline: none;
-                    background-color: #ffffff;
-                }
+        .form-group input[type="text"]:focus,
+        .form-group input[type="email"]:focus,
+        .form-group input[type="tel"]:focus,
+        .form-group input[type="number"]:focus,
+        .form-group input[type="date"]:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2), inset 0 1px 3px rgba(0, 0, 0, 0.06);
+            outline: none;
+            background-color: #ffffff;
+        }
 
-            .form-group textarea {
-                resize: vertical;
-                min-height: 80px;
-            }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
 
         /* Radio Button Group */
         .radio-group {
             display: flex;
             gap: 20px;
             margin-top: 10px;
-            flex-wrap: wrap; /* Allow wrapping for smaller screens */
+            flex-wrap: wrap;
+            /* Allow wrapping for smaller screens */
         }
 
-            .radio-group label {
-                display: flex;
-                align-items: center;
-                cursor: pointer;
-                font-weight: 400;
-                color: #333;
-            }
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 400;
+            color: #333;
+        }
 
-            .radio-group input[type="radio"] {
-                -webkit-appearance: none;
-                -moz-appearance: none;
-                appearance: none;
-                width: 20px;
-                height: 20px;
-                border: 2px solid var(--primary-color);
-                border-radius: 50%;
-                margin-right: 8px;
-                position: relative;
-                outline: none;
-                cursor: pointer;
-                transition: all 0.2s ease;
-            }
+        .radio-group input[type="radio"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary-color);
+            border-radius: 50%;
+            margin-right: 8px;
+            position: relative;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
 
-                .radio-group input[type="radio"]:checked {
-                    background-color: var(--primary-color);
-                    border-color: var(--primary-color);
-                    box-shadow: 0 0 0 4px rgba(var(--primary-color-rgb), 0.2);
-                }
+        .radio-group input[type="radio"]:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(var(--primary-color-rgb), 0.2);
+        }
 
-                    .radio-group input[type="radio"]:checked::before {
-                        content: '';
-                        display: block;
-                        width: 10px;
-                        height: 10px;
-                        background-color: var(--text-color-light);
-                        border-radius: 50%;
-                        position: absolute;
-                        top: 50%;
-                        left: 50%;
-                        transform: translate(-50%, -50%);
-                    }
+        .radio-group input[type="radio"]:checked::before {
+            content: '';
+            display: block;
+            width: 10px;
+            height: 10px;
+            background-color: var(--text-color-light);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
 
         /* Error Messages */
         .error-message {
@@ -295,7 +318,8 @@
 
         /* Text Block for Declaration */
         .text-block {
-            background-color: #f0f8ff; /* Light blue background */
+            background-color: #f0f8ff;
+            /* Light blue background */
             border-left: 5px solid var(--primary-color);
             padding: 20px;
             border-radius: 10px;
@@ -315,15 +339,15 @@
             width: 100%;
         }
 
-            .file-upload-wrapper input[type="file"] {
-                position: absolute;
-                left: 0;
-                top: 0;
-                opacity: 0;
-                cursor: pointer;
-                width: 100%;
-                height: 100%;
-            }
+        .file-upload-wrapper input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
 
         .file-upload-button {
             display: inline-block;
@@ -341,11 +365,11 @@
             width: 100%;
         }
 
-            .file-upload-button:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-                background: var(--gradient-2);
-            }
+        .file-upload-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            background: var(--gradient-2);
+        }
 
         .file-name {
             margin-top: 10px;
@@ -358,13 +382,17 @@
         .signature-canvas-wrapper {
             border: 1px solid var(--border-color);
             border-radius: 10px;
-            overflow: hidden; /* Ensures rounded corners apply to canvas */
+            overflow: hidden;
+            /* Ensures rounded corners apply to canvas */
             box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
             background-color: #fcfcfc;
             position: relative;
-            width: 100%; /* Take full width of its grid column */
-            aspect-ratio: 3 / 1; /* Maintain aspect ratio for signature area */
-            max-height: 150px; /* Limit height for larger screens */
+            width: 100%;
+            /* Take full width of its grid column */
+            aspect-ratio: 3 / 1;
+            /* Maintain aspect ratio for signature area */
+            max-height: 150px;
+            /* Limit height for larger screens */
         }
 
         .signature-canvas {
@@ -372,37 +400,40 @@
             width: 100%;
             height: 100%;
             cursor: crosshair;
-            background-color: #fff; /* Ensure white background for signature */
+            background-color: #fff;
+            /* Ensure white background for signature */
         }
 
         .signature-buttons {
             display: flex;
             gap: 10px;
             margin-top: 10px;
-            justify-content: flex-end; /* Align buttons to the right */
+            justify-content: flex-end;
+            /* Align buttons to the right */
         }
 
-            .signature-buttons button {
-                padding: 8px 15px;
-                border-radius: 8px;
-                font-size: 0.9em;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                border: none;
-            }
+        .signature-buttons button {
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
 
-            .signature-buttons .clear-button {
-                background-color: #f44336; /* Red for clear */
-                color: var(--text-color-light);
-            }
+        .signature-buttons .clear-button {
+            background-color: #f44336;
+            /* Red for clear */
+            color: var(--text-color-light);
+        }
 
-                .signature-buttons .clear-button:hover {
-                    background-color: #d32f2f;
-                    transform: translateY(-2px);
-                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-                }
+        .signature-buttons .clear-button:hover {
+            background-color: #d32f2f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
 
         /* Checkbox Styling */
         .checkbox-wrapper {
@@ -419,7 +450,8 @@
             cursor: pointer;
             accent-color: var(--primary-color);
             flex-shrink: 0;
-            margin-top: 2px; /* Align with first line of text */
+            margin-top: 2px;
+            /* Align with first line of text */
         }
 
         .checkbox-label {
@@ -456,16 +488,16 @@
             text-transform: uppercase;
         }
 
-            .submit-button:hover {
-                background: var(--gradient-1);
-                transform: translateY(-5px);
-                box-shadow: 0 15px 35px var(--shadow-strong);
-            }
+        .submit-button:hover {
+            background: var(--gradient-1);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px var(--shadow-strong);
+        }
 
-            .submit-button:active {
-                transform: translateY(0);
-                box-shadow: 0 5px 15px var(--shadow-medium);
-            }
+        .submit-button:active {
+            transform: translateY(0);
+            box-shadow: 0 5px 15px var(--shadow-medium);
+        }
 
         /* Print Button */
         .print-button {
@@ -482,11 +514,11 @@
             margin: 10px;
         }
 
-            .print-button:hover {
-                background: var(--gradient-2);
-                transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-            }
+        .print-button:hover {
+            background: var(--gradient-2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
 
         /* Print Styles */
         @media print {
@@ -514,7 +546,12 @@
                 width: 100% !important;
             }
 
-            .form-header, .form-section, .submit-button, .print-button, .modal-overlay, .loading-overlay {
+            .form-header,
+            .form-section,
+            .submit-button,
+            .print-button,
+            .modal-overlay,
+            .loading-overlay {
                 display: none !important;
             }
 
@@ -688,13 +725,14 @@
                 border-radius: 10px;
             }
 
-                .form-section h2 {
-                    font-size: 1.5em;
-                    margin-bottom: 20px;
-                }
+            .form-section h2 {
+                font-size: 1.5em;
+                margin-bottom: 20px;
+            }
 
             .form-fields-grid {
-                grid-template-columns: 1fr; /* Stack columns on small screens */
+                grid-template-columns: 1fr;
+                /* Stack columns on small screens */
                 gap: 20px;
             }
 
@@ -715,7 +753,8 @@
             }
 
             .signature-buttons {
-                justify-content: center; /* Center buttons on small screens */
+                justify-content: center;
+                /* Center buttons on small screens */
             }
         }
 
@@ -740,9 +779,12 @@
 
         /* Utility for RGB values for rgba() */
         body {
-            --primary-color-rgb: 74, 144, 226; /* 4A90E2 */
-            --secondary-color-rgb: 80, 227, 194; /* 50E3C2 */
-            --error-color-rgb: 231, 76, 60; /* E74C3C */
+            --primary-color-rgb: 74, 144, 226;
+            /* 4A90E2 */
+            --secondary-color-rgb: 80, 227, 194;
+            /* 50E3C2 */
+            --error-color-rgb: 231, 76, 60;
+            /* E74C3C */
         }
 
         /* Custom Modal Styles */
@@ -762,10 +804,10 @@
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
 
-            .modal-overlay.visible {
-                opacity: 1;
-                visibility: visible;
-            }
+        .modal-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
 
         .modal-content {
             background: linear-gradient(145deg, #ffffff, #f0f0f0);
@@ -811,18 +853,20 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
-            .modal-content .close-button:hover {
-                background: var(--gradient-2);
-                transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-            }
+        .modal-content .close-button:hover {
+            background: var(--gradient-2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
 
         .modal-content.success h3 {
-            color: #28a745; /* Green for success */
+            color: #28a745;
+            /* Green for success */
         }
 
         .modal-content.error h3 {
-            color: var(--error-color); /* Red for error */
+            color: var(--error-color);
+            /* Red for error */
         }
 
         /* Loading Indicator */
@@ -842,10 +886,10 @@
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
 
-            .loading-overlay.visible {
-                visibility: visible;
-                opacity: 1;
-            }
+        .loading-overlay.visible {
+            visibility: visible;
+            opacity: 1;
+        }
 
         .spinner {
             border: 8px solid #f3f3f3;
@@ -865,10 +909,9 @@
                 transform: rotate(360deg);
             }
         }
-
-
     </style>
 </head>
+
 <body>
     <div class="form-container">
         <header class="form-header">
@@ -1101,13 +1144,13 @@
                     },
                     { label: "Signature Over Complete Name", type: "text", name: "signatureName", required: true, placeholder: "Your Full Name" },
                     { label: "Date Accomplished", type: "date", name: "dateAccomplished", required: true },
-                    { 
-                        label: "Agreement and Certification", 
-                        type: "checkbox", 
-                        name: "digitalSignature", 
-                        required: true, 
+                    {
+                        label: "Agreement and Certification",
+                        type: "checkbox",
+                        name: "digitalSignature",
+                        required: true,
                         checkboxText: "By checking this box, I hereby certify that all information provided in this application is true, complete, and accurate to the best of my knowledge. I understand that any false or misleading information may result in the rejection of my application or termination of employment if discovered after hiring. I authorize the company to verify the information provided and consent to background checks as deemed necessary.",
-                        errorMessage: "You must agree to the certification to proceed." 
+                        errorMessage: "You must agree to the certification to proceed."
                     },
                     { label: "Attach 2x2 Picture", type: "file", name: "profilePicture", accept: "image/*" }
                 ]
@@ -1135,6 +1178,7 @@
                 case 'tel':
                 case 'number':
                 case 'date':
+                    console.log('Creating input field:', field.name, 'type:', field.type);
                     inputElement = document.createElement('input');
                     inputElement.type = field.type;
                     inputElement.id = field.name;
@@ -1148,6 +1192,16 @@
                     if (field.name === 'adminUsername') inputElement.setAttribute('autocomplete', 'username');
                     if (field.name === 'adminPassword') inputElement.setAttribute('autocomplete', 'current-password');
                     formGroup.appendChild(inputElement); // Append here for these types
+                    console.log('Input field created and appended:', inputElement);
+
+                    // Test input functionality
+                    inputElement.addEventListener('focus', () => {
+                        console.log('Input focused:', field.name);
+                    });
+                    inputElement.addEventListener('input', (e) => {
+                        console.log('Input changed:', field.name, 'value:', e.target.value);
+                    });
+
                     break;
                 case 'textarea':
                     inputElement = document.createElement('textarea');
@@ -1279,7 +1333,14 @@
 
         // Function to dynamically generate the form
         function generateForm() {
+            console.log('Starting form generation...');
             const formContainer = document.getElementById('hrApplicationForm');
+            console.log('Form container found:', formContainer);
+
+            if (!formContainer) {
+                console.error('Form container not found!');
+                return;
+            }
             formFields.forEach(sectionData => {
                 const sectionDiv = document.createElement('section');
                 sectionDiv.classList.add('form-section');
@@ -1577,7 +1638,30 @@
 
         // Event listener for form submission
         document.addEventListener('DOMContentLoaded', async () => {
-            generateForm(); // Generate the form when the DOM is ready
+            console.log('DOM loaded, generating form...');
+
+            // Ensure loading overlay is hidden on page load
+            hideLoading();
+
+            try {
+                generateForm(); // Generate the form when the DOM is ready
+                console.log('Form generation completed.');
+
+                // Test if inputs are working
+                setTimeout(() => {
+                    const firstInput = document.querySelector('input[type="text"]');
+                    if (firstInput) {
+                        console.log('First text input found:', firstInput);
+                        firstInput.focus();
+                    } else {
+                        console.error('No text inputs found after form generation!');
+                    }
+                }, 100);
+
+            } catch (error) {
+                console.error('Error generating form:', error);
+                showModal('Error', 'There was an error loading the form. Please refresh the page.', 'error');
+            }
 
             const form = document.getElementById('hrApplicationForm');
             form.addEventListener('submit', async (event) => {
@@ -1586,21 +1670,21 @@
 
                 const validationResult = validateForm();
                 console.log('Validation result:', validationResult);
-                
+
                 if (validationResult) {
                     console.log('Client-side validation passed. Showing loading indicator...');
-                    
+
                     showLoading(); // Show loading indicator
 
                     // If validation passes, collect form data manually
                     const data = {};
-                    
+
                     // Debug: Check what form elements exist and collect their values
                     const allInputs = form.querySelectorAll('input, select, textarea');
                     console.log('Form elements found:', allInputs.length);
                     allInputs.forEach(input => {
                         console.log(`Processing: ${input.tagName}, name: ${input.name}, value: ${input.value}, type: ${input.type}`);
-                        
+
                         if (input.type === 'radio') {
                             if (input.checked) {
                                 data[input.name] = input.value;
@@ -1619,7 +1703,7 @@
                             console.log(`Input: ${input.name} = ${input.value}`);
                         }
                     });
-                    
+
                     console.log('Manually collected data:', data);
                     console.log('Data keys:', Object.keys(data));
 
@@ -1641,21 +1725,21 @@
                     if (profilePictureInput && profilePictureInput.files.length > 0) {
                         const file = profilePictureInput.files[0];
                         console.log('Processing file:', file.name, 'Type:', file.type, 'Size:', file.size);
-                        
+
                         // Validate file type
                         if (!file.type.startsWith('image/')) {
                             alert('Please select a valid image file.');
                             hideLoading();
                             return;
                         }
-                        
+
                         // Validate file size (max 5MB)
                         if (file.size > 5 * 1024 * 1024) {
                             alert('Image file size must be less than 5MB.');
                             hideLoading();
                             return;
                         }
-                        
+
                         try {
                             console.log('Converting file to base64...');
                             // Convert file to base64
@@ -1671,7 +1755,7 @@
                                 };
                                 reader.readAsDataURL(file);
                             });
-                            
+
                             data.profilePictureBase64 = base64;
                             data.profilePictureName = file.name;
                             console.log('Profile picture prepared for upload:', file.name, 'Base64 length:', base64.length);
@@ -1691,7 +1775,7 @@
                         console.log('Sending data to Netlify Function...');
                         console.log('Data being sent:', JSON.stringify(data));
                         console.log('Data size:', JSON.stringify(data).length);
-                        
+
                         // Send data to your Netlify Function
                         const response = await fetch('/.netlify/functions/submit-form', {
                             method: 'POST',
@@ -1718,7 +1802,7 @@
                         } else {
                             console.error('Error submitting form to backend:', result);
                             console.error('Detailed validation errors:', result.errors);
-                            
+
                             // Log each validation error in detail
                             if (result.errors) {
                                 Object.keys(result.errors).forEach(field => {
@@ -1730,7 +1814,7 @@
                                     console.error(`Validation error for ${field}: ${result.errors[field]}`);
                                 });
                             }
-                            
+
                             let errorMessage = 'Unknown error.';
                             if (result.message) {
                                 errorMessage = result.message;
@@ -1763,9 +1847,9 @@
         });
 
         // Print Form Function
-        window.printForm = function() {
+        window.printForm = function () {
             const formData = {};
-            
+
             // Collect all form data
             const allInputs = document.querySelectorAll('#hrApplicationForm input, #hrApplicationForm select, #hrApplicationForm textarea');
             allInputs.forEach(input => {
@@ -1787,10 +1871,10 @@
 
             // Generate print HTML
             const printHTML = generatePrintHTML(formData);
-            
+
             // Insert into print form div
             document.getElementById('printForm').innerHTML = printHTML;
-            
+
             // Print
             window.print();
         };
@@ -2036,7 +2120,7 @@
                 const age = data[`sibling${i}Age`] || '';
                 const occupation = data[`sibling${i}Occupation`] || '';
                 const company = data[`sibling${i}Company`] || '';
-                
+
                 rows += `
                     <tr>
                         <td>${name}</td>
@@ -2056,7 +2140,7 @@
                 const age = data[`child${i}Age`] || '';
                 const gender = data[`child${i}Gender`] || '';
                 const occupation = data[`child${i}Occupation`] || '';
-                
+
                 rows += `
                     <tr>
                         <td>${name}</td>
@@ -2070,4 +2154,5 @@
         }
     </script>
 </body>
+
 </html>
