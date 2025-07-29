@@ -151,88 +151,46 @@ exports.handler = async (event, context) => {
     
     try {
         // Prepare data for insertion. Ensure all fields are handled.
-        // INSERT with ONLY existing database columns (family fields don't exist in actual DB yet)
+        // REVERT TO ORIGINAL v1.0 WORKING SCHEMA (9 basic fields)
         const insertQuery = `
       INSERT INTO applications (
-        full_name, nick_name, mobile_no, email_add, birth_date, civil_status, age, birth_place,
-        nationality, religion, sss_no, philhealth_no,
-        current_address, provincial_address,
-        key_skills, certifications, languages,
-        ref_1_name, ref_1_relationship,
-        past_employment_issues, past_employment_issues_specify,
-        profile_picture_url
+        full_name, email_add, mobile_no, birth_date, current_address,
+        signature_name, date_accomplished, digital_signature, profile_picture_url
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16,
-        $17, $18
+        $1, $2, $3, $4, $5, $6, $7, $8, $9
       ) RETURNING id;
     `;
 
-        // 50 values array matching ONLY existing database columns (excluding family fields)
+        // REVERT TO ORIGINAL v1.0 WORKING VALUES (9 basic fields only)
         values = [];
         
-        // Personal Information (10 fields)
-        values.push(formData.fullName);
-        values.push(formData.nickName);
-        values.push(formData.mobileNo);
-        values.push(formData.emailAdd);
-        values.push(formData.birthDate);
-        values.push(formData.civilStatus);
-        values.push(formData.age);
-        values.push(formData.birthPlace);
-        values.push(formData.nationality);
-        values.push(formData.religion);
+        // Original v1.0 working fields
+        values.push(formData.fullName);           // $1
+        values.push(formData.emailAdd);           // $2
+        values.push(formData.mobileNo);           // $3
+        values.push(formData.birthDate);          // $4
+        values.push(formData.currentAddress);     // $5
+        values.push(formData.signatureName);      // $6
+        values.push(formData.dateAccomplished);   // $7
+        values.push(formData.digitalSignature);   // $8
+        values.push(profilePictureUrl);           // $9
         
-        // Government IDs (2 fields) - REMOVED 4 MORE TO GET TO 22
-        values.push(formData.sssNo);
-        values.push(formData.philhealthNo);
-        // REMOVED: hdmfNo, nationalIdNo, driversLicense, tinNo
-        
-        // Address Information (2 fields)
-        values.push(formData.currentAddress);
-        values.push(formData.provincialAddress);
-        
-        // Family Background - REMOVED ALL 4 PARENT FIELDS TO GET TO 26
-        // REMOVED: fatherName, fatherOccupation, motherName, motherOccupation
-        
-        // SKIP: Spouse, Siblings, Children fields - not in actual database yet
-        
-        // Employment History - REMOVED ALL 4 FIELDS TO GET TO 30
-        // REMOVED: prevCompany1, position1, datesEmployed1, reasonForLeaving1
-        
-        // Competencies (3 fields)
-        values.push(formData.keySkills);
-        values.push(formData.certifications);
-        values.push(formData.languages);
-        
-        // Character References (2 fields) - REMOVED 4 MORE TO GET TO 45
-        values.push(formData.ref1Name);
-        values.push(formData.ref1Relationship);
-        // REMOVED: ref1ContactNo, ref2Name, ref2Relationship, ref2ContactNo
-        
-        // Background Check Questions (2 fields only - removing 4 fields to get to 50 total)
-        values.push(formData.pastEmploymentIssues);
-        values.push(formData.pastEmploymentIssuesSpecify);
-        // REMOVED: legalIssues, legalIssuesSpecify, medicalHistory, medicalHistorySpecify
-        
-        // Signature+File (1 field) - REMOVED 3 MORE TO GET TO 37
-        values.push(profilePictureUrl);
-        // REMOVED: signatureName, dateAccomplished, digitalSignature
-        
-        // Need to remove 4 values to get exactly 50 - let me check what's extra
-        console.log('DEBUG: Values count breakdown:');
-        console.log('Personal (10):', values.slice(0, 10));
-        console.log('Government IDs (2):', values.slice(10, 12));
-        console.log('Address (2):', values.slice(12, 14));
-        console.log('Parents (0): REMOVED');
-        console.log('Employment (0): REMOVED');
-        console.log('Competencies (3):', values.slice(14, 17));
-        console.log('References (2):', values.slice(17, 19));
-        console.log('Background (2):', values.slice(19, 21));
-        console.log('File (1):', values.slice(21, 22));
-        console.log('Total values:', values.length, 'Expected: 18');
+        // ORIGINAL v1.0 WORKING FIELDS DEBUG
+        console.log('DEBUG: REVERTED TO v1.0 WORKING SCHEMA');
+        console.log('Original 9 fields:', values);
+        console.log('1. fullName:', values[0]);
+        console.log('2. emailAdd:', values[1]);
+        console.log('3. mobileNo:', values[2]);
+        console.log('4. birthDate:', values[3]);
+        console.log('5. currentAddress:', values[4]);
+        console.log('6. signatureName:', values[5]);
+        console.log('7. dateAccomplished:', values[6]);
+        console.log('8. digitalSignature:', values[7]);
+        console.log('9. profilePictureUrl:', values[8]);
+        console.log('Total values:', values.length, 'Expected: 9');
 
         console.log('Values array length:', values.length);
-        console.log('Expected: 18 values for existing database columns only');
+        console.log('Expected: 9 values for ORIGINAL v1.0 working schema');
         console.log('Profile picture URL:', profilePictureUrl);
         console.log('Using INSERT with existing database columns only (no family fields)');
         
